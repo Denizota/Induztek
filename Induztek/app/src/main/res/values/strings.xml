@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Induztek</string>
+    <string name="nombre_empresa">Induztek</string>
+
+
+
+    <!-- Pantalla 1: Para iniciar sesion !-->
+
+    <string name="titulo_login"> Protocolos de prueba en terreno</string>
+
+    <!-- No se que eslogan poner xd -->
+    <string name="eslogan"> Eslogan tierno lindo y adorable, hola que tal. </string>
+
+    <string name="texto_o_correo">O inicia sesión con tu correo</string>
+    <string name="enlace_olvido">¿Olvidaste tu contraseña?</string>
+    <string name="btn_ingresar">Ingresar</string>
+    <string name="texto_o_redes">O inicia sesion con</string>
+    <!-- No es es texto, son placeholders. Pq... Eso no tiene texto... Ok...? -->
+    <string name="cd_google">Iniciar sesión con Google</string>
+    <string name="cd_linkedin">Iniciar sesión con LinkedIn</string>
+    <string name="cd_facebook">Iniciar sesión con Facebook</string>
+    <string name="texto_sin_cuenta">¿No tienes una cuenta?</string> <!--No pueden crear cuentas. Es solo una solicitud. ok??!?!?! -->
+    <string name="enlace_registrate">¡Regístrate aquí!</string>
+
+    <!-- Pantalla 2: Solicitar acceso para creacion de cuenta -->
+    <string name="titulo_solicitar_acceso">Solicitar acceso</string>
+    <string name="subtitulo_solicitar_acceso">Solo para personal de Induztek o personas relacionadas. ¡¡ El jefe técnico podrá revisar solicitud y activar tu cuenta !!</string>
+    <string name="campo_nombre">Nombre</string>
+    <string name="placeholder_nombre">Primer nombre... </string>
+    <string name="campo_apellido">Apellido</string>
+    <string name="placeholder_apellido">Primer apellido...</string>
+    <string name="campo_pais">País</string> <!-- Estos quiero q sean como uno de esos donde uno puede seleccionar, mas que escribir. para que no haya alguien que dice que vive en 'wiwilandia'(yo)-->
+    <string name="campo_ciudad">Ciudad</string> <!-- Asi como una lista para abajo. vv -->
+    <string name="placeholder_seleccion">No seleccionado</string>
+    <string name="campo_repetir_contrasena">Repite tu contraseña</string>
+    <string name="campo_justificacion">Justificación</string>
+    <string name="placeholder_justificacion">Escribe aquí por qué deseas ingresar a la app de Induztek...</string>
+    <string name="btn_registrarse">Registrarse</string>
+    <string name="texto_con_cuenta">¿Ya tienes una cuenta?</string>
+    <string name="enlace_inicia_sesion">¡Inicia sesión aquí!</string>
+
+    <!-- Pantallas 1 y 2 -->
+    <string name="campo_correo">Correo</string>
+    <string name="placeholder_correo">nombre@induztek.cl</string>
+    <string name="campo_contrasena">Contraseña</string>
+    <string name="placeholder_contrasena">************</string>
+    <string name="cd_mostrar_contrasena">Mostrar contraseña</string>
+    <string name="cd_ocultar_contrasena">Ocultar contraseña</string>
+
+
+    <!--
+    <string name=""></string>
+    -->
+
+</resources>
