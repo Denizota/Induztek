@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import cl.duoc.induztek.viewmodel.LoginViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import cl.duoc.induztek.model.LoginUiState
 import cl.duoc.induztek.ui.components.FondoInicio
 import cl.duoc.induztek.ui.theme.TextoOlvido
@@ -72,7 +74,8 @@ fun LoginContent(
     onAlternarVisibilidad: () -> Unit,
     onIngresar: ()-> Unit,
     onSolicitarAcceso: () -> Unit,
-    onOlvideContrasena: () -> Unit = {}
+    onOlvideContrasena: () -> Unit = {},
+    onEntrarComo: (Long) -> Unit = {}
 ){
     FondoInicio{
         Column(
@@ -88,9 +91,35 @@ fun LoginContent(
             )
             Spacer(Modifier.height(Dimens.espacioEncabezadoACuerpo))
 
-            //espacio para el entrar como.
-            //todavia no existe...
-            Spacer(Modifier.height(Dimens.alturaEntrarcomo))
+            Text(
+                text = stringResource(R.string.texto_entrar_como),
+                style = MaterialTheme.typography.labelSmall,
+                color = TextoGris
+            )
+            uiState.perfiles.forEach { perfil ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(role = Role.Button) { onEntrarComo(perfil.id) }
+                        .padding(vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = perfil.rolNombre,
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = perfil.nombre,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextoGris,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(text = ">", color = TextoGris)
+                }
+                //es como hr de ache te me ele uf
+                HorizontalDivider()
+            }
 
             Spacer(Modifier.height(Dimens.espacioAntescorreo))
             Text(
@@ -151,7 +180,7 @@ fun LoginContent(
 
             Spacer(Modifier.height(Dimens.espacioTextoRedes))
 
-            // Los 3 cuadros todavía no hacen nada (onClick vacío).
+            // Los 3 cuadros q todavía no hacen nada...
             Row (
                 modifier = Modifier
                     .fillMaxWidth(EstilosBotonRedSocial.anchoRelativoDelGrupo)

@@ -1,6 +1,11 @@
 package cl.duoc.induztek.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import cl.duoc.induztek.data.InduztekDbHelper
+import cl.duoc.induztek.data.Seguridad
+import cl.duoc.induztek.data.SesionPreferencias
 
 import cl.duoc.induztek.model.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,9 +13,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _uiState = MutableStateFlow(LoginUiState())
+
+    private val bd = InduztekDbHelper.obtener(application)
+    private val sesion = SesionPreferencias(application)
+    private val _uiState = MutableStateFlow(LoginUiState(perfiles = bd.listarPerfilesRapidos()))
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     fun onCorreoCambia(valor: String) {
@@ -29,12 +37,41 @@ class LoginViewModel : ViewModel() {
 
     fun onIngresar(): Boolean {
         val estado = _uiState.value
-        val errorCorreo = if (!estado.correo.contains("@") || !estado.correo.contains("."))
-            "Ingresa un correo válido" else null
-        val errorContrasena = if (estado.contrasena.isBlank())
-            "Ingresa tu contraseña" else null
 
-        _uiState.update { it.copy(errorCorreo = errorCorreo, errorContrasena = errorContrasena) }
-        return errorCorreo == null && errorContrasena == null
+
+
+        val errorCorreo = if (!estado.correo.contains("@") || !estado.correo.contains("."))
+            "Ingresa un correo válido !" else null
+        val errorContrasena = if (estado.contrasena.isBlank())
+            "Ingresa tu contraseña !" else null
+
+        if (errorCorreo != null || errorContrasena != null) {
+            _uiState.update { it.copy(errorCorreo = errorCorreo, errorContrasena = errorContrasena) }
+            return false
+        }
+
+
+        val usuario = bd.buscarUsuarioPorCorreo(estado.correo)
+        if (usuario == null || !Seguridad.verificar(estado.contrasena, usuario.passwordHash)) {
+
+            _uiState.update { it.copy(errorContrasena = "Correo o contraseña incorrectos !") }
+            return false
+        }
+
+
+        if (!usuario.activo) {
+            _uiState.update { it.copy(errorCorreo = "Tu cuenta aún no está activa") }
+            return false
+        }
+
+        sesion.guardar(usuario.id)
+        return true
+    }
+
+    fun onEntrarComo(idUsuario: Long): Boolean {
+        val usuario = bd.buscarUsuarioPorId(idUsuario)
+        if (usuario == null || !usuario.activo) return false
+        sesion.guardar(usuario.id)
+        return true
     }
 }

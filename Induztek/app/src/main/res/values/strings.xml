@@ -21,6 +21,7 @@
     <string name="cd_facebook">Iniciar sesión con Facebook</string>
     <string name="texto_sin_cuenta">¿No tienes una cuenta?</string> <!--No pueden crear cuentas. Es solo una solicitud. ok??!?!?! -->
     <string name="enlace_registrate">¡Regístrate aquí!</string>
+    <string name="texto_entrar_como">Entrar como</string>
 
     <!-- Pantalla 2: Solicitar acceso para creacion de cuenta -->
     <string name="titulo_solicitar_acceso">Solicitar acceso</string>

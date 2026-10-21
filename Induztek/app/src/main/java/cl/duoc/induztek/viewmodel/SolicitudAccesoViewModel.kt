@@ -1,13 +1,19 @@
 package cl.duoc.induztek.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import cl.duoc.induztek.data.InduztekDbHelper
+import cl.duoc.induztek.data.Seguridad
 import cl.duoc.induztek.model.SolicitudAccesoUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class SolicitudAccesoViewModel : ViewModel() {
+class SolicitudAccesoViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val bd = InduztekDbHelper.obtener(application)
     private val _uiState = MutableStateFlow(SolicitudAccesoUiState())
     val uiState: StateFlow<SolicitudAccesoUiState> = _uiState.asStateFlow()
 
@@ -52,16 +58,20 @@ class SolicitudAccesoViewModel : ViewModel() {
     }
 
 
-    //Para cuando haga la b a s e d e d a t o s, aqui se guardan
-    //las solicitudes para que el jefe tecnico las revise y active la cuenta
-
-    fun onRegistrarse(): Boolean{
+    fun onRegistrarse(): Boolean {
         val estado = _uiState.value
-        val errorNombre = if(estado.nombre.isBlank()) "El nombre es obligatorio !" else null
+        val correo = estado.correo.trim().lowercase()
+
+        val errorNombre = if (estado.nombre.isBlank()) "El nombre es obligatorio !" else null
         val errorApellido = if (estado.apellido.isBlank()) "El apellido es obligatorio !" else null
-        val errorCorreo = if (!estado.correo.contains("@") || !estado.correo.contains(".")) "Ingresa un correo valido !" else null
-        val errorContrasena = if (estado.contrasena.length < 6)"Minimo 6 caracteres !" else null
-        val errorRepetirContrasena = if(estado.repetirContrasena != estado.contrasena) "Las contrasenas no coinciden" else null
+        val errorCorreo = when {
+            !correo.contains("@") || !correo.contains(".") -> "Ingresa un correo valido !"
+            bd.correoYaUsado(correo) -> "Este correo ya tiene cuenta o una solicitud pendiente !"
+            else -> null
+        }
+        val errorContrasena = if (estado.contrasena.length < 6) "Minimo 6 caracteres !" else null
+        val errorRepetirContrasena =
+            if (estado.repetirContrasena != estado.contrasena) "Las contrasenas no coinciden" else null
 
         _uiState.update {
             it.copy(
@@ -73,8 +83,23 @@ class SolicitudAccesoViewModel : ViewModel() {
             )
         }
 
-        return listOf(errorNombre, errorApellido, errorCorreo, errorContrasena, errorRepetirContrasena)
-            .all{ it == null}
+        val todoOk = listOf(errorNombre, errorApellido, errorCorreo, errorContrasena, errorRepetirContrasena)
+            .all { it == null }
+        if (!todoOk) return false
 
+        val id = bd.insertarSolicitud(
+            nombre = estado.nombre.trim(),
+            apellido = estado.apellido.trim(),
+            pais = estado.pais,
+            ciudad = estado.ciudad,
+            correo = correo,
+            passwordHash = Seguridad.hashear(estado.contrasena),
+            justificacion = estado.justificacion.trim()
+        )
+        if (id == -1L) return false
+
+        // limpiacion d campos
+        _uiState.value = SolicitudAccesoUiState()
+        return true
     }
 }

@@ -1,5 +1,6 @@
 package cl.duoc.induztek.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,6 +43,8 @@ fun SolicitarAccesoScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     SolicitarAccesoContent(
         uiState = uiState,
         onNombreCambia = viewModel::onNombreCambia,
@@ -53,7 +57,12 @@ fun SolicitarAccesoScreen(
         onJustificacionCambia = viewModel::onJustificacionCambia,
         onAlternarVisibilidadContrasena = viewModel::onAlternarVisibilidadContrasena,
         onAlternarVisibilidadRepetirContrasena = viewModel::onAlternarVisibilidadRepetirContrasena,
-        onRegistrarse = { if (viewModel.onRegistrarse()) onSolicitudEnviada() },
+        onRegistrarse = {
+            if (viewModel.onRegistrarse()) {
+                Toast.makeText(context, "¡Tu solicitud ha sido enviada ! ", Toast.LENGTH_LONG).show()
+                onSolicitudEnviada()
+            }
+        },
         onVolverAIngreso = onVolverAIngreso
 
     )
@@ -150,7 +159,7 @@ fun SolicitarAccesoContent(
                 onValorCambia = onContrasenaCambia,
                 etiqueta = stringResource(R.string.campo_contrasena),
                 textoSugerido = stringResource(R.string.placeholder_contrasena),
-                visible = uiState.repetirContrasenaVisible,
+                visible = uiState.contrasenaVisible,
                 onAlternarVisible = onAlternarVisibilidadContrasena,
                 error = uiState.errorContrasena
             )

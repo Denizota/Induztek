@@ -5,7 +5,9 @@ data class LoginUiState (
     val contrasena: String = "",
     val contrasenaVisible: Boolean = false,
     val errorCorreo: String? = null,
-    val errorContrasena: String? = null
+    val errorContrasena: String? = null,
+
+    val perfiles: List<Usuario> = emptyList()
 ){
     val ingresarHabilitado: Boolean
         get() = correo.isNotBlank() && contrasena.isNotBlank()
