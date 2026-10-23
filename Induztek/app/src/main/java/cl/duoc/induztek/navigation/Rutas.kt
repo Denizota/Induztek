@@ -1,4 +1,5 @@
 package cl.duoc.induztek.navigation
+data object Inicio : Ruta("inicio")
 
 sealed class Ruta(
     val ruta: String
