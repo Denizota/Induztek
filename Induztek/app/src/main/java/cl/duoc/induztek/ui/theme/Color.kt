@@ -20,3 +20,7 @@ val FondoPantalla = Color(0xFFFFFFFF)
 val Primario = Color(0xFF5B3FD9)
 val Blanco = Color(0xFFFFFFFF)
 val TextoOscuro = Color(0xFF1C1B22)
+
+
+val MoraditoClaro = Color(0xFFE3DEFF)
+val fonditoMorado = Color(0xFFF5F1FF)

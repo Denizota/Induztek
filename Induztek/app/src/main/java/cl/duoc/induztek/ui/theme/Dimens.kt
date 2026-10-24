@@ -60,4 +60,8 @@ object Dimens{
     val proporcionAlturaBanner = 0.33f
     val opacidadVelo = 0.35f
     val inicioDifuminado = 0.5f
+
+
+    //para el bello fondo
+    val paradaDifuminado = 0.5f
 }
