@@ -102,6 +102,9 @@
     <string name="Titulo_graficon">Historial graficado</string>
     <string name="Historial_pruebas_cliente">Historial de pruebas</string>
 
+
+    <string name="placeholder_numero">0</string>
+
     <!--
     <string name=""></string>
     -->

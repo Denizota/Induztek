@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cl.duoc.induztek.ui.styles.estiloCajaCampo
+import cl.duoc.induztek.ui.theme.Blanco
 import cl.duoc.induztek.ui.theme.Dimens
 import cl.duoc.induztek.ui.theme.TextoOscuro
 import cl.duoc.induztek.ui.theme.TextoPlaceholder
@@ -39,6 +41,8 @@ internal fun CampoBase(
     textoSugerido: String,
     modifier: Modifier = Modifier,
     error: String? = null,
+    //rayos
+    habilitado: Boolean = true,
     tipoTeclado: KeyboardType = KeyboardType.Text,
     accionTeclado: ImeAction = ImeAction.Next,
     alto: Dp = Dimens.alturaCampo,
@@ -96,3 +100,8 @@ internal fun CampoBase(
         MensajeErrorCampo(error)
     }
 }
+
+//para las cajitas. es que no son como 100% blancas pq se ven feas
+
+@Composable
+fun colorCaja(): Color = Blanco.copy(alpha = Dimens.alfaCajaBlanca)
