@@ -238,7 +238,7 @@ private fun LoginConDatosPreview() {
     InduztekTheme {
         LoginContent(
             uiState = LoginUiState(
-                correo = "ana@",
+                correo = "skibidi@",
                 contrasena = "123456",
                 errorCorreo = "Ingresa un correo válido !!",
                 errorContrasena = "Ingresa una contrasenia valida !!"

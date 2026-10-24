@@ -46,7 +46,7 @@ class InduztekDbHelper private constructor(context: Context) :
         private const val SOL_JUSTIFICACION = "sol_justificacion"
         private const val SOL_ESTADO = "sol_estado"
         const val CLAVE_DEMO = "Induztek2026"
-
+        
         private const val SQL_CREAR_ROLES =
             "CREATE TABLE $TABLA_ROLES (" +
                     "$ROL_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -206,7 +206,10 @@ class InduztekDbHelper private constructor(context: Context) :
         return writableDatabase.insert(TABLA_SOLICITUDES, null, valores)
     }
 
-    // ---------------- AYUDANTES --------------------
+
+
+
+
 
     private fun leerUsuario(cursor: Cursor) = Usuario(
         id = cursor.getLong(cursor.getColumnIndexOrThrow(USU_ID)),
@@ -219,4 +222,5 @@ class InduztekDbHelper private constructor(context: Context) :
         passwordHash = cursor.getString(cursor.getColumnIndexOrThrow(USU_HASH)),
         activo = cursor.getInt(cursor.getColumnIndexOrThrow(USU_ACTIVO)) == 1
     )
+
 }

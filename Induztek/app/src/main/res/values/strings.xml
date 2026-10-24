@@ -49,6 +49,59 @@
     <string name="cd_ocultar_contrasena">Ocultar contraseña</string>
 
 
+    <!-- Pantalla 4: Equipo -->
+    <string name="Equipos">Equipos</string>
+    <string name="Potencia">Potencia</string>
+    <string name="Tensiones">Tensiones</string>
+    <string name="Anio_equipo">Año</string>
+    <string name="Temperatura_ambiente">Temperatura Ambiente</string>
+    <string name="Humedad">Humedad</string>
+    <string name="Pruebas_realizadas">Pruebas realizadas</string>
+    <string name="Contra_pruebas_anteriores">Contra pruebas anteriores</string>
+    <string name="Marcar_registrado">Marcar como registrado en terreno</string>
+    <string name="Anio_tabla_contrapruebasanteriores">Año</string>
+    <string name="Unmin">1 min(MΩ)</string>
+    <string name="Variacion">Variación</string>
+
+
+    <!-- Pantalla 5: Equipo -->
+    <string name="Nueva_prueba">Nueva prueba</string>
+    <string name="Devanado">Devanado</string>
+    <string name="Tension_de_prueba">Tensión de prueba</string>
+    <string name="Unidad_medida">Unidad de menida</string>
+    <string name="Lectura_unmin">Lectura a 1 min</string>
+    <string name="Indice_polarizacion">Indice de polarización(calculado)</string>
+    <string name="Comentarios_inge">Comentarios</string>
+    <string name="Motivos_flojera">Motivos no realizacion de prueba</string>
+    <string name="Motivos_switch">Prueba no realizada (Indicar motivo)</string>
+    <string name="Guardar_prueba">Guardar prueba</string>
+    <string name="Cancelar_prueba">Cancelar</string>
+
+    <!-- Pantalla 6: Equipo -->
+    <string name="cerrar_visitra">Cerrar visita</string>
+    <string name="visita_subtitulo">Acta que recibe el cliente</string>
+    <string name="acta_titulo">Acta de prueba en terreno</string>
+    <string name="acta_supertitulo">INDUZTEK INGENIERIA SpA</string>
+    <string name="que_recibe">Quien recibe por parte del cliente</string>
+    <string name="Nombre_acta">Nombre</string>
+    <string name="Rut_acta">RUT</string>
+    <string name="fecha_acta_blokiada">Fecha y hora</string>
+    <string name="Cargo_acta">Cargo</string>
+    <string name="boton_acta">Cerrar visita y entregar acta</string>
+    <string name="Compatir_acta_nofuncional">Compartir acta en PDF</string>
+
+    <!-- Pantalla: 13: Home Cliente-->
+    <string name="ultima_visita">Ultima visita</string>
+    <string name="ver_acta_nofuncional">Ver acta (PDF)</string>
+    <string name="peqienio_subtitulo">Solo puedes ver el progreso actual del ingeniero! Si algo no te cuadra escribenos desde la pestaña chat !!</string>
+
+
+    <!-- Pantalla 14: ver equipo client -->
+    <string name="volver_homeclient">Mis equipos</string>
+    <string name="Pendiente_if">Pendiente de formalización</string>
+    <string name="Titulo_graficon">Historial graficado</string>
+    <string name="Historial_pruebas_cliente">Historial de pruebas</string>
+
     <!--
     <string name=""></string>
     -->
