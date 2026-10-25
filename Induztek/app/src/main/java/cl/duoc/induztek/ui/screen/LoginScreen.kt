@@ -61,7 +61,11 @@ fun LoginScreen(
         onCorreoCambia = viewModel::onCorreoCambia,
         onContrasenaCambia = viewModel::onContrasenaCambia,
         onAlternarVisibilidad = viewModel::onAlternarVisibilidad,
-        onIngresar = { if (viewModel.onIngresar()) onIngresoExitoso},
+        onIngresar = {
+            if (viewModel.onIngresar()) {
+                onIngresoExitoso()
+            }
+        },
         onSolicitarAcceso = onSolicitarAcceso
     )
 }
