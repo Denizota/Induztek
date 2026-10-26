@@ -17,13 +17,19 @@ fun fechaHoy(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date()
 fun fechaHoraAhora(): String =
     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date())
 
+internal fun String.fechaCorta(): String {
+    val partes = split("-")
+    return if (partes.size == 3) partes[2] + "-" + partes[1] + "-" + partes[0] else this
+}
+
+
 
 class InduztekDbHelper private constructor(context: Context) :
     SQLiteOpenHelper(context, NOMBRE_BD, null, VERSION_BD) {
 
     companion object {
         private const val NOMBRE_BD = "induztek.db"
-        private const val VERSION_BD = 3
+        private const val VERSION_BD = 4
         const val CLAVE_DEMO = "Induztek2026"
 
 
@@ -648,6 +654,38 @@ class InduztekDbHelper private constructor(context: Context) :
     )
 
 
+    fun asegurarProtocoloEditable(idEquipo: Int, idUsuario: Int): Protocolo {
+        val db = writableDatabase
+        val equipo = equipoPorId(idEquipo) ?: error("El equipo no existe en los registros.")
+        val rol = rolDe(idUsuario)
+        val idVisita = visitaAbierta(db, equipo.idInstalacion) ?: nuevaVisita(db, equipo, idUsuario, rol)
+
+        val existente = db.rawQuery(
+            "SELECT id_protocolo, estado, id_usuario_registra FROM protocolo WHERE id_visita=? AND id_equipo=?",
+            arrayOf(idVisita.toString(), idEquipo.toString())
+        ).use { if (it.moveToFirst()) Triple(it.getInt(0), it.getString(1), it.getInt(2)) else null }
+            ?: return nuevoProtocolo(db, idVisita, idEquipo, idUsuario)
+
+        val (idProtocolo, estado, creador) = existente
+        if (estado != "BORRADOR" && estado != "OBSERVADO") error(
+            when (estado) {
+                "REGISTRADO" ->
+                    "El equipo ya tiene el protocolo ${numeroDe(idProtocolo)} registrado en esta visita. " +
+                            "Para corregirlo, el ingeniero debe devolverlo con observación."
+                "FORMALIZADO" ->
+                    "El protocolo ${numeroDe(idProtocolo)} está formalizado y no se modifica."
+                else ->
+                    "El protocolo ${numeroDe(idProtocolo)} está anulado en esta visita."
+            }
+        )
+
+        if (rol == Rol.TECNICO && creador != idUsuario) error(
+            "Este protocolo lo abrió otra persona. Un técnico solo puede editar los protocolos que creó (RN-17)."
+        )
+        return protocoloPorId(idProtocolo)!!
+    }
+
+
     fun visitaAbierta(idInstalacion: Int): Int? = visitaAbierta(writableDatabase, idInstalacion)
 
     private fun visitaAbierta(db: SQLiteDatabase, idInstalacion: Int): Int? = db.rawQuery(
@@ -657,8 +695,65 @@ class InduztekDbHelper private constructor(context: Context) :
     ).use { if (it.moveToFirst()) it.getInt(0) else null }
 
 
+
+
+    private fun nuevaVisita(db: SQLiteDatabase, equipo: Equipo, idUsuario: Int, rol: Rol?): Int {
+        val anio = fechaHoy().substring(0, 4)
+        val sec = db.rawQuery("SELECT COUNT(*) FROM visita", null)
+            .use { if (it.moveToFirst()) it.getInt(0) else 0 } + 1
+        return db.insert(
+            "visita", null, ContentValues().apply {
+                put("numero_ot", "OT-anio-{1300 + sec}")
+                put("id_instalacion", equipo.idInstalacion)
+                put("fecha", fechaHoy())
+                put("tipo_visita", "SOLO_PRUEBAS")
+                if (rol == Rol.INGENIERO) put("id_ingeniero_cargo", idUsuario)
+            }
+        ).toInt()
+    }
+
+
+
+    private fun nuevoProtocolo(db: SQLiteDatabase, idVisita: Int, idEquipo: Int, idUsuario: Int): Protocolo {
+        val numero = nuevoNumeroProtocolo(db)
+        val id = db.insert(
+            "protocolo", null, ContentValues().apply {
+                put("numero", numero)
+                put("id_visita", idVisita)
+                put("id_equipo", idEquipo)
+                put("id_usuario_registra", idUsuario)
+                put("fecha_hora_prueba", fechaHoraAhora())
+                put("estado", "BORRADOR")
+            }
+        ).toInt()
+        db.execSQL(
+            "INSERT INTO historial_estado(id_protocolo,estado_anterior,estado_nuevo,id_usuario,fecha_hora) VALUES(?,NULL,'BORRADOR',?,?)",
+            arrayOf(id, idUsuario, fechaHoraAhora())
+        )
+        return protocoloPorId(id)!!
+    }
+
+
+
+    private fun numeroDe(idProtocolo: Int): String = writableDatabase.rawQuery(
+        "SELECT numero FROM protocolo WHERE id_protocolo=?", arrayOf(idProtocolo.toString())
+    ).use { if (it.moveToFirst()) it.getString(0) else "" }
+
+
+
     private fun rolDe(idUsuario: Int): Rol? =
         buscarUsuarioPorId(idUsuario)?.rol
+
+
+    private fun nuevoNumeroProtocolo(db: SQLiteDatabase): String {
+        val anio = fechaHoy().substring(0, 4)
+        val max = db.rawQuery(
+            "SELECT MAX(numero) FROM protocolo WHERE numero LIKE 'PT-$anio-%'", null
+        ).use { if (it.moveToFirst()) it.getString(0) else null }
+        val seq = max?.substringAfterLast("-")?.toIntOrNull() ?: 400
+        return "PT-anio-{seq + 1}"
+    }
+
 
     // ------------------------------------------------------------------ pruebas
 
@@ -694,6 +789,65 @@ class InduztekDbHelper private constructor(context: Context) :
 
 
 
+    fun guardarPrueba(idProtocolo: Int, tipo: TipoPrueba, elemento: String, realizada: Boolean,
+                      motivo: String, idInstrumento: Int?, resultado: Resultado?, comentario: String,
+                      mediciones: Map<String, Double>) {
+        val db = writableDatabase
+        val existente = db.rawQuery(
+            "SELECT id_prueba FROM prueba WHERE id_protocolo=? AND codigo_tipo_prueba=? AND elemento=?",
+            arrayOf(idProtocolo.toString(), tipo.name, elemento)
+        ).use { if (it.moveToFirst()) it.getInt(0) else null }
+        if (existente != null) {
+            db.delete("medicion", "id_prueba=?", arrayOf(existente.toString()))
+            db.delete("prueba", "id_prueba=?", arrayOf(existente.toString()))
+        }
+        val idPrueba = db.insert(
+            "prueba", null, ContentValues().apply {
+                put("id_protocolo", idProtocolo)
+                put("codigo_tipo_prueba", tipo.name)
+                put("elemento", elemento)
+                put("realizada", if (realizada) 1 else 0)
+                put("motivo_no_realizada", motivo)
+                put("id_instrumento", idInstrumento)
+                put("resultado", resultado?.codigo)
+                put("comentario", comentario)
+            }
+        ).toInt()
+        if (realizada) mediciones.forEach { (cod, valor) ->
+            db.insert(
+                "medicion", null, ContentValues().apply {
+                    put("id_prueba", idPrueba)
+                    put("codigo_parametro", cod)
+                    put("valor", valor.toString())
+                }
+            )
+        }
+    }
+
+    fun valorAnterior(idEquipo: Int, tipo: TipoPrueba, codigoParametro: String, excluirProtocolo: Int): Double? =
+        writableDatabase.rawQuery(
+            "SELECT m.valor FROM medicion m " +
+                    "JOIN prueba p ON p.id_prueba=m.id_prueba " +
+                    "JOIN protocolo pr ON pr.id_protocolo=p.id_protocolo " +
+                    "WHERE pr.id_equipo=? AND p.codigo_tipo_prueba=? AND m.codigo_parametro=? " +
+                    "AND p.realizada=1 AND pr.id_protocolo!=? AND pr.estado!='ANULADO' " +
+                    "ORDER BY pr.fecha_hora_prueba DESC LIMIT 1",
+            arrayOf(idEquipo.toString(), tipo.name, codigoParametro, excluirProtocolo.toString())
+        ).use { if (it.moveToFirst()) it.getString(0).toDoubleOrNull() else null }
+
+
+    fun valoresHistoricos(idEquipo: Int, tipo: TipoPrueba, codigoParametro: String, excluirProtocolo: Int): List<String> =
+        writableDatabase.rawQuery(
+            "SELECT DISTINCT m.valor FROM medicion m " +
+                    "JOIN prueba p ON p.id_prueba=m.id_prueba " +
+                    "JOIN protocolo pr ON pr.id_protocolo=p.id_protocolo " +
+                    "WHERE pr.id_equipo=? AND p.codigo_tipo_prueba=? AND m.codigo_parametro=? " +
+                    "AND p.realizada=1 AND pr.id_protocolo!=? AND pr.estado!='ANULADO' " +
+                    "ORDER BY m.valor DESC LIMIT 6",
+            arrayOf(idEquipo.toString(), tipo.name, codigoParametro, excluirProtocolo.toString())
+        ).use { c -> buildList { while (c.moveToNext()) add(c.getString(0).removeSuffix(".0")) } }
+
+
     fun historialAislacion(idEquipo: Int): List<Triple<String, String, Double>> =
         writableDatabase.rawQuery(
             "SELECT pr.numero, substr(pr.fecha_hora_prueba,1,10), m.valor FROM medicion m " +
@@ -704,6 +858,8 @@ class InduztekDbHelper private constructor(context: Context) :
         ).use { c ->
             buildList { while (c.moveToNext()) add(Triple(c.getString(0), c.getString(1), c.getString(2).toDouble())) }
         }
+
+
 
     // ------------------------------------------------------------------ estados
 

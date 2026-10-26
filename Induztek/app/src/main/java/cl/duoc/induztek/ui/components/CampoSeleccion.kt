@@ -40,8 +40,8 @@ fun CampoSeleccion (
     onSeleccionar: (String)-> Unit,
     etiqueta: String,
     textoSugerido: String,
-    modifier: Modifier = Modifier
-
+    modifier: Modifier = Modifier,
+    habilitado: Boolean = true
 ){
     var expandido by remember {
         mutableStateOf(false)
@@ -53,10 +53,13 @@ fun CampoSeleccion (
 
         ExposedDropdownMenuBox(
             expanded = expandido,
-            onExpandedChange = { expandido = it }
+            onExpandedChange = { if (habilitado) expandido = it }
         ) {
             Row(
-                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                modifier = Modifier.menuAnchor(
+                    enabled = habilitado,
+                    type = ExposedDropdownMenuAnchorType.PrimaryNotEditable
+                )
                     .estiloCajaCampo(enfocado = expandido, hayError = false, alto = Dimens.alturaCampo)
                     .padding(start = Dimens.espacioCampoHorizontal),
                 verticalAlignment = Alignment.CenterVertically
