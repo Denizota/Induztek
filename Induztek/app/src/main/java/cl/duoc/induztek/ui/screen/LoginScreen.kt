@@ -66,6 +66,11 @@ fun LoginScreen(
                 onIngresoExitoso()
             }
         },
+        onEntrarComo = {
+            if (viewModel.onEntrarComo(it)) {
+                onIngresoExitoso()
+            }
+        },
         onSolicitarAcceso = onSolicitarAcceso
     )
 }
@@ -79,7 +84,7 @@ fun LoginContent(
     onIngresar: ()-> Unit,
     onSolicitarAcceso: () -> Unit,
     onOlvideContrasena: () -> Unit = {},
-    onEntrarComo: (Long) -> Unit = {}
+    onEntrarComo: (Int) -> Unit = {}
 ){
     FondoInicio{
         Column(
@@ -104,12 +109,12 @@ fun LoginContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(role = Role.Button) { onEntrarComo(perfil.id) }
+                        .clickable(role = Role.Button) { onEntrarComo(perfil.idUsuario) }
                         .padding(vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = perfil.rolNombre,
+                        text = perfil.rol.nombre,
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.padding(end = 8.dp)
                     )

@@ -8,6 +8,7 @@ import cl.duoc.induztek.data.Seguridad
 import cl.duoc.induztek.data.SesionPreferencias
 
 import cl.duoc.induztek.model.LoginUiState
+import cl.duoc.induztek.model.Usuario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,7 +53,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
 
         val usuario = bd.buscarUsuarioPorCorreo(estado.correo)
-        if (usuario == null || !Seguridad.verificar(estado.contrasena, usuario.passwordHash)) {
+        if (usuario == null || !bd.verificarClave(estado.correo, estado.contrasena)) {
 
             _uiState.update { it.copy(errorContrasena = "Correo o contraseña incorrectos !") }
             return false
@@ -64,14 +65,17 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             return false
         }
 
-        sesion.guardar(usuario.id)
+        sesion.guardar(usuario.idUsuario)
         return true
     }
 
-    fun onEntrarComo(idUsuario: Long): Boolean {
+    fun onEntrarComo(idUsuario: Int): Boolean {
         val usuario = bd.buscarUsuarioPorId(idUsuario)
         if (usuario == null || !usuario.activo) return false
-        sesion.guardar(usuario.id)
+        sesion.guardar(usuario.idUsuario)
         return true
     }
+
+    /** El usuario que quedó guardado en la sesión; la navegación lo pide al saltar de pantalla. */
+    fun usuarioEnSesion(): Usuario? = bd.buscarUsuarioPorId(sesion.leer())?.takeIf { it.activo }
 }

@@ -8,7 +8,7 @@ data class Equipo (
     val tipoEquipo: String,
     val clasificacion: String,
     val marca: String,
-    val model: String,
+    val modelo: String, //ups
     val numeroSerie: String,
     val anioFabricacion: Int,
     val potenciaKva: Double?,
@@ -19,6 +19,6 @@ data class Equipo (
     val observaciones: String,
     val instalacionNombre: String = ""
 ){
-    val exigeLEctura10min: Boolean
+    val exigeLectura10Min: Boolean
         get() = tipoEquipo == "Transformador" || tipoEquipo == "Cable de poder"
 }

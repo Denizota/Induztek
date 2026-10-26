@@ -10,14 +10,14 @@ class SesionPreferencias(context: Context) {
 
     companion object {
         private const val CLAVE_ID_USUARIO = "id_usuario"
-        private const val SIN_SESION = -1L
+        private const val SIN_SESION = -1
     }
 
-    fun guardar(idUsuario: Long) {
-        prefs.edit { putLong(CLAVE_ID_USUARIO, idUsuario) }
+    fun guardar(idUsuario: Int) {
+        prefs.edit { putInt(CLAVE_ID_USUARIO, idUsuario) }
     }
 
-    fun leer(): Long = prefs.getLong(CLAVE_ID_USUARIO, SIN_SESION)
+    fun leer(): Int = prefs.getInt(CLAVE_ID_USUARIO, SIN_SESION)
 
     fun borrar() {
         prefs.edit { remove(CLAVE_ID_USUARIO) }

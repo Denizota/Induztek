@@ -25,7 +25,7 @@ fun BotonPrincipal (
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     habilitado: Boolean = true
-    ){
+){
     Button(
         onClick = onClick,
         modifier = modifier.estiloAltoBoton(),

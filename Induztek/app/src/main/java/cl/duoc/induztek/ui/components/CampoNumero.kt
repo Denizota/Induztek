@@ -24,8 +24,8 @@ fun CampoNumero(
     CampoBase(
         valor = valor,
         onValorCambia = {
-            nuevo -> if (nuevo.esNumero()) onCambio(nuevo)
-                        },
+                nuevo -> if (nuevo.esNumero()) onCambio(nuevo)
+        },
         etiqueta = etiqueta,
         textoSugerido = stringResource(R.string.placeholder_numero),
         modifier = modifier,

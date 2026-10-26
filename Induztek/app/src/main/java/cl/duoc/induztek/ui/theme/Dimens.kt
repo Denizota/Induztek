@@ -130,5 +130,9 @@ object Dimens{
     val rellenoBotonChicoH = 12.dp
     val rellenoBotonChicoV = 6.dp
 
+    //vista de cliente
+    val altoCabeceraCliente = 96.dp
+    val margenPantalla = 20.dp
+
 
 }

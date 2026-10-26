@@ -72,7 +72,7 @@ fun CampoNumeroSugerido(
             expandido = false
         }) {
             sugerencias.forEach {
-                sugerencia ->
+                    sugerencia ->
                 DropdownMenuItem(
                     text = { Text(sugerencia) },
                     onClick = { onCambio(sugerencia);expandido = false }

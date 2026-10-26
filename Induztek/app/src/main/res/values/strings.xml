@@ -105,6 +105,15 @@
 
     <string name="placeholder_numero">0</string>
 
+
+
+    <!-- Pantalla.... :C -->
+    <string name="puente_reiniciar">Reiniciar</string>
+
+    <string name="puente_salir">Salir</string>
+
+
+
     <!--
     <string name=""></string>
     -->

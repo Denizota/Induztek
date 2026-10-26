@@ -12,6 +12,6 @@ data class Instrumento(
     fun vigenteEn(fecha: String): Boolean = fechaVence
         .replace("-", "")
         .toInt() >= fecha
-            .replace("-", "")
-            .toInt()
+        .replace("-", "")
+        .toInt()
 }

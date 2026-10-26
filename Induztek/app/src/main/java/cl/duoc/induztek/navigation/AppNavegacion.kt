@@ -1,20 +1,16 @@
 package cl.duoc.induztek.navigation
 
 import androidx.compose.runtime.Composable
-import cl.duoc.induztek.ui.screen.LoginScreen
-import cl.duoc.induztek.ui.screen.SolicitarAccesoScreen
-
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import cl.duoc.induztek.ui.screen.InicioScreen
+import cl.duoc.induztek.ui.screen.LoginScreen
+
 
 @Composable
 fun AppNavegacion(){
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Ruta.Login.ruta){
+    NavHost( navController = navController, startDestination = Ruta.Login.ruta){
         composable(Ruta.Login.ruta){
             LoginScreen(
                 onIngresoExitoso = { },

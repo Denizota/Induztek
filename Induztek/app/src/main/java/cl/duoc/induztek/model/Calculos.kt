@@ -18,11 +18,11 @@ class Calculos {
     fun resultadoAislacion(ip: Double?, lectura1Min: Double?): Resultado? {
         if (lectura1Min == null) return null
         if (lectura1Min < 100.0) return Resultado.RECHAZADO
-        if (ip == null) return Resultado.APROVADO
+        if (ip == null) return Resultado.APROBADO
         return when {
             ip < 1.0 -> Resultado.RECHAZADO
             ip < 2.0 -> Resultado.OBSERVADO
-            else -> Resultado.APROVADO
+            else -> Resultado.APROBADO
         }
     }
 
@@ -37,7 +37,7 @@ class Calculos {
     // Aprobado si <= 0,5 %, sobservado si <= 1,0 %, Rechazado si > 1,0 %%%
     fun resultadoTtr(errorPct: Double?): Resultado? = errorPct?.let {
         when {
-            it <= 0.5 -> Resultado.APROVADO
+            it <= 0.5 -> Resultado.APROBADO
             it <= 1.0 -> Resultado.OBSERVADO
             else -> Resultado.RECHAZADO
         }
@@ -54,7 +54,7 @@ class Calculos {
     // <= 100 % del máximo de placa = Aprobado|| <= 120 % = Observado, sobre eso rechazaod
     fun resultadoContactos(pct: Double?): Resultado? = pct?.let {
         when {
-            it <= 100.0 -> Resultado.APROVADO
+            it <= 100.0 -> Resultado.APROBADO
             it <= 120.0 -> Resultado.OBSERVADO
             else -> Resultado.RECHAZADO
         }
@@ -73,7 +73,7 @@ class Calculos {
         if (!opera) return Resultado.RECHAZADO
         return pctDiferencia?.let {
             when {
-                it <= 5.0 -> Resultado.APROVADO
+                it <= 5.0 -> Resultado.APROBADO
                 it <= 10.0 -> Resultado.OBSERVADO
                 else -> Resultado.RECHAZADO
             }
@@ -99,7 +99,10 @@ class Calculos {
     // RUT con dígito verificador válido
     // gracias base de datos por tanto perdon por tan poco
     fun rutValido(rut: String): Boolean {
-        val limpio = rut.replace(".", "").replace("-", "").replace(" ", "").uppercase()
+        val limpio = rut.replace(".", "").
+        replace("-", "")
+            .replace(" ", "")
+            .uppercase()
         if (limpio.length < 7 || limpio.length > 10) return false
         val cuerpo = limpio.dropLast(1)
         val dv = limpio.last()
@@ -119,4 +122,12 @@ class Calculos {
         }
         return dv == dvEsperado
     }
+
+    // f o r m a t o  c h i l e n o
+    //maldision
+    fun fmt(v: Double?, decimales: Int = 2): String = v?.let {
+        String.format(java.util.Locale.US, "%,.${decimales}f", it)
+            .replace(',', '¤').replace('.', ',').replace('¤', '.')
+    } ?: "—"
+
 }
