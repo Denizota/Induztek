@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+//?!?!?!?!?! DESDE CUANDO HAY VERDE EN INDUZTEK.
 private val VerdeInduztek = Color(0xFF83C94A)
 private val FondoInduztek = Color(0xFFF6F8FC)
 

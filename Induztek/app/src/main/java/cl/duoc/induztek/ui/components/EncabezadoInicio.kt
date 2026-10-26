@@ -16,24 +16,29 @@ import cl.duoc.induztek.ui.theme.TextoGris
 fun EncabezadoInicio(
     titulo: String,
     subtitulo: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mostrarEmpresa: Boolean = true
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(R.string.nombre_empresa),
-            style = MaterialTheme.typography.labelLarge,
-            color = TextoGris
-        )
+        if (mostrarEmpresa) {
+            Text(
+                text = stringResource(R.string.nombre_empresa),
+                style = MaterialTheme.typography.labelLarge,
+                color = TextoGris
+            )
+        }
         Text(
             text = titulo,
             style = MaterialTheme.typography.titleLarge,
             color = TextoGris
         )
-        Text(
-            text = subtitulo,
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextoGris
-        )
+        if (subtitulo.isNotEmpty()) {
+            Text(
+                text = subtitulo,
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextoGris
+            )
+        }
     }
 }
 

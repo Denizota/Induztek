@@ -8,7 +8,7 @@ data class Prueba (
     val realizada: Boolean,
     val motivoNoRealizada: String,
     val idInstrumento: Int?,
-    val resultado: Resultado,
+    val resultado: Resultado?,
     val comentario: String,
     val mediciones: Map<String, Double>
 )

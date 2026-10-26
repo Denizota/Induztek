@@ -1,7 +1,7 @@
 package cl.duoc.induztek.model
 
 data class Instrumento(
-    val idInstrmento: Int,
+    val idInstrumento: Int,
     val nombre: String,
     val marca: String,
     val modelo: String,

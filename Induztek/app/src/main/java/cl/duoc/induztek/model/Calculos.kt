@@ -3,7 +3,7 @@ package cl.duoc.induztek.model
 import kotlin.math.abs
 
 
-class Calculos {
+object Calculos {
 
     //Índice de polarización
     // lectura 10 min y lectura 1 min

@@ -130,9 +130,30 @@ object Dimens{
     val rellenoBotonChicoH = 12.dp
     val rellenoBotonChicoV = 6.dp
 
+
+
+    //cabecera de las pantallas del cliente
+    val tamanoAvatar = 46.dp
+    val rellenoChipVertical = 3.dp
+    val altoGrafico = 160.dp
+
     //vista de cliente
     val altoCabeceraCliente = 96.dp
+    val desplomeCabeceraCliente = 10.dp
+    val grosorBordeAvatar = 3.dp
+    val altoBarraNavegacion = 68.dp
+    val tamanoIconoNav = 22.dp
+    val alturaBuscador = 56.dp
+    val anchoCajaActa = 104.dp
+    val altoCajaActa = 62.dp
+    val anchoEstadoHistorial = 92.dp
+    val altoDivisorFila = 32.dp
+    val grosorDivisor = 1.dp
+    val altoDivisorColumna = 44.dp
     val margenPantalla = 20.dp
-
+    val tamanoCirculoFlecha = 30.dp
 
 }
+
+
+

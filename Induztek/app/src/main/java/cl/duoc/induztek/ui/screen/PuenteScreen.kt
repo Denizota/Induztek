@@ -21,6 +21,7 @@ import cl.duoc.induztek.ui.theme.Dimens
 import cl.duoc.induztek.viewmodel.PuenteViewModel
 
 //pq NI IDEA QUE HIZO EL JOAQUIN.
+//VERDE INDUZTEK MIS PATAS GRRRR
 @Composable
 fun PuenteScreen(
     onIrEquipo: (Int) -> Unit,

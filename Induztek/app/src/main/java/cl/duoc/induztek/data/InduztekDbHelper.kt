@@ -6,7 +6,16 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import cl.duoc.induztek.model.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+
+
+// y chile.... :c
+fun fechaHoy(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+fun fechaHoraAhora(): String =
+    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date())
 
 
 class InduztekDbHelper private constructor(context: Context) :
@@ -14,9 +23,8 @@ class InduztekDbHelper private constructor(context: Context) :
 
     companion object {
         private const val NOMBRE_BD = "induztek.db"
-        private const val VERSION_BD = 2
+        private const val VERSION_BD = 3
         const val CLAVE_DEMO = "Induztek2026"
-
 
 
         private val HASH_SEMILLA = Seguridad.hashear(CLAVE_DEMO)
@@ -30,11 +38,13 @@ class InduztekDbHelper private constructor(context: Context) :
             }
 
 
+
         var generacion = 0L
             private set
     }
 
-    //porsiaca
+
+
     fun reiniciarTodo() {
         val db = writableDatabase
         db.beginTransaction()
@@ -95,6 +105,29 @@ class InduztekDbHelper private constructor(context: Context) :
                     "fecha_ultima_cal TEXT, fecha_vence TEXT)"
         )
         db.execSQL(
+            "CREATE TABLE visita (" +
+                    "id_visita INTEGER PRIMARY KEY AUTOINCREMENT, numero_ot TEXT UNIQUE NOT NULL, " +
+                    "id_instalacion INTEGER NOT NULL, fecha TEXT NOT NULL, tipo_visita TEXT DEFAULT 'SOLO_PRUEBAS', " +
+                    "id_ingeniero_cargo INTEGER, fecha_hora_cierre TEXT, descripcion_mantenimiento TEXT DEFAULT '')"
+        )
+        db.execSQL(
+            "CREATE TABLE visita_participante (id_visita INTEGER NOT NULL, id_usuario INTEGER NOT NULL, " +
+                    "PRIMARY KEY(id_visita, id_usuario))"
+        )
+        db.execSQL(
+            "CREATE TABLE recepcion_acta (" +
+                    "id_visita INTEGER PRIMARY KEY, receptor_nombre TEXT NOT NULL, receptor_rut TEXT NOT NULL, " +
+                    "receptor_cargo TEXT DEFAULT '', fecha_hora_recepcion TEXT NOT NULL)"
+        )
+        db.execSQL(
+            "CREATE TABLE protocolo (" +
+                    "id_protocolo INTEGER PRIMARY KEY AUTOINCREMENT, numero TEXT UNIQUE NOT NULL, " +
+                    "id_visita INTEGER NOT NULL, id_equipo INTEGER NOT NULL, id_usuario_registra INTEGER NOT NULL, " +
+                    "fecha_hora_prueba TEXT NOT NULL, temperatura_c REAL, humedad_pct REAL, " +
+                    "estado TEXT NOT NULL DEFAULT 'BORRADOR', observaciones TEXT DEFAULT '', " +
+                    "UNIQUE(id_visita, id_equipo))"
+        )
+        db.execSQL(
             "CREATE TABLE tipo_prueba (" +
                     "id_tipo_prueba INTEGER PRIMARY KEY, codigo TEXT UNIQUE NOT NULL, nombre TEXT NOT NULL)"
         )
@@ -103,8 +136,27 @@ class InduztekDbHelper private constructor(context: Context) :
                     "id_tipo_equipo INTEGER NOT NULL, id_tipo_prueba INTEGER NOT NULL, " +
                     "PRIMARY KEY(id_tipo_equipo, id_tipo_prueba))"
         )
+        db.execSQL(
+            "CREATE TABLE prueba (" +
+                    "id_prueba INTEGER PRIMARY KEY AUTOINCREMENT, id_protocolo INTEGER NOT NULL, " +
+                    "codigo_tipo_prueba TEXT NOT NULL, elemento TEXT DEFAULT '', momento TEXT DEFAULT 'UNICA', " +
+                    "realizada INTEGER DEFAULT 1, motivo_no_realizada TEXT DEFAULT '', " +
+                    "id_instrumento INTEGER, resultado TEXT, comentario TEXT DEFAULT '')"
+        )
+        db.execSQL(
+            "CREATE TABLE medicion (" +
+                    "id_medicion INTEGER PRIMARY KEY AUTOINCREMENT, id_prueba INTEGER NOT NULL, " +
+                    "codigo_parametro TEXT NOT NULL, valor TEXT NOT NULL, UNIQUE(id_prueba, codigo_parametro))"
+        )
+        db.execSQL(
+            "CREATE TABLE historial_estado (" +
+                    "id_historial INTEGER PRIMARY KEY AUTOINCREMENT, id_protocolo INTEGER NOT NULL, " +
+                    "estado_anterior TEXT, estado_nuevo TEXT NOT NULL, id_usuario INTEGER NOT NULL, " +
+                    "fecha_hora TEXT NOT NULL, motivo TEXT DEFAULT '')"
+        )
         precargar(db)
     }
+
 
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -112,11 +164,11 @@ class InduztekDbHelper private constructor(context: Context) :
         onCreate(db)
     }
 
-
     private fun borrarTablas(db: SQLiteDatabase) {
         listOf(
-            "tipo_equipo_prueba", "tipo_prueba", "instrumento", "equipo",
-            "tipo_equipo", "instalacion", "solicitud_acceso", "usuario", "rol"
+            "solicitud_acceso", "medicion", "prueba", "protocolo", "visita_participante",
+            "recepcion_acta", "visita", "instrumento", "equipo", "tipo_equipo_prueba",
+            "tipo_equipo", "instalacion", "usuario", "rol", "tipo_prueba", "historial_estado"
         ).forEach { db.execSQL("DROP TABLE IF EXISTS $it") }
     }
 
@@ -138,7 +190,8 @@ class InduztekDbHelper private constructor(context: Context) :
         Rol.entries.forEachIndexed { i, r ->
             db.execSQL("INSERT INTO rol VALUES(?,?,?)", arrayOf(i + 1, r.codigo, r.nombre))
         }
-        // Empresas cliente
+
+
         val empresas = listOf(
             Triple("76.482.915-8", "Envasadora del Pacífico S.A.", "Agroindustria"),
             Triple("96.731.540-0", "Sanitaria Valle Central S.A.", "Servicios sanitarios"),
@@ -164,7 +217,9 @@ class InduztekDbHelper private constructor(context: Context) :
         u(db, 2, "15.906.334-8", "Andrea Contreras Silva", "acontreras@induztek.ejemplo")
         u(db, 2, "16.553.270-8", "Sebastián Morales Gutiérrez", "smorales@induztek.ejemplo")
         u(db, 3, "13.871.905-7", "Ricardo Espinoza Lagos", "respinoza@induztek.ejemplo")
-        // client
+
+
+
         u(db, 4, "14.226.791-8", "Marcela Fuentes Rojas", "mfuentes@envpacifico.ejemplo", 1, "Jefa de Mantenimiento")
         u(db, 4, "18.390.452-3", "Tomás Leiva Araya", "tleiva@losaromos.ejemplo", 4, "Supervisor Eléctrico")
         u(db, 4, "12.645.308-6", "Patricio Navarro Soto", "pnavarro@cerroalto.ejemplo", 3, "Jefe de Mantenimiento Eléctrico")
@@ -230,8 +285,6 @@ class InduztekDbHelper private constructor(context: Context) :
             )
         }
 
-
-
         val instrumentos = listOf(
             listOf("Megóhmetro 5 kV", "Megger", "MIT525", "MIT-0045821", "2026-03-15", "2027-03-15"),
             listOf("Megóhmetro 10 kV", "Megger", "MIT1025", "MIT-0071233", "2025-10-10", "2026-10-10"),
@@ -244,6 +297,182 @@ class InduztekDbHelper private constructor(context: Context) :
                 "INSERT INTO instrumento(nombre,marca,modelo,numero_serie,fecha_ultima_cal,fecha_vence) VALUES(?,?,?,?,?,?)",
                 arrayOf(f[0], f[1], f[2], f[3], f[4], f[5])
             )
+        }
+
+        precargarHistorial(db)
+    }
+
+
+    private fun precargarHistorial(db: SQLiteDatabase) {
+        fun visita(ot: String, inst: Int, fecha: String, ing: Int?, cierre: String?): Long {
+            val valores = ContentValues().apply {
+                put("numero_ot", ot)
+                put("id_instalacion", inst)
+                put("fecha", fecha)
+                put("tipo_visita", "SOLO_PRUEBAS")
+                ing?.let { put("id_ingeniero_cargo", it) }
+                cierre?.let { put("fecha_hora_cierre", it) }
+            }
+            return db.insert("visita", null, valores)
+        }
+
+        fun protocolo(id: Long, num: String, idVisita: Int, idEquipo: Int, tec: Int, fh: String,
+                      temp: Double, hum: Double, estado: String) {
+            db.execSQL(
+                "INSERT INTO protocolo(id_protocolo,numero,id_visita,id_equipo,id_usuario_registra,fecha_hora_prueba,temperatura_c,humedad_pct,estado) " +
+                        "VALUES(?,?,?,?,?,?,?,?,?)",
+                arrayOf(id, num, idVisita, idEquipo, tec, fh, temp, hum, estado)
+            )
+        }
+
+        fun prueba(idProtocolo: Int, tipo: String, elemento: String, instrumento: Int?,
+                   resultado: String, med: Map<String, String>) {
+            val valores = ContentValues().apply {
+                put("id_protocolo", idProtocolo)
+                put("codigo_tipo_prueba", tipo)
+                put("elemento", elemento)
+                put("realizada", 1)
+                instrumento?.let { put("id_instrumento", it) }
+                put("resultado", resultado)
+            }
+            val idPrueba = db.insert("prueba", null, valores).toInt()
+            med.forEach { (cod, valor) ->
+                db.execSQL(
+                    "INSERT INTO medicion(id_prueba,codigo_parametro,valor) VALUES(?,?,?)",
+                    arrayOf(idPrueba, cod, valor)
+                )
+            }
+        }
+
+
+        val v24 = visita("OT-2024-1042", 1, "2024-09-14", 7, "2024-09-14 15:20").toInt()
+        db.execSQL(
+            "INSERT INTO recepcion_acta VALUES(?,?,?,?,'2024-09-14 15:20')",
+            arrayOf(v24, "Marcela Fuentes Rojas", "14.226.791-8", "Jefa de Mantenimiento")
+        )
+        db.execSQL("INSERT INTO visita_participante VALUES(?,?)", arrayOf(v24, 10))
+        protocolo(301, "PT-2024-0312", v24, 1, 10, "2024-09-14 10:30", 18.0, 55.0, "FORMALIZADO")
+        prueba(301, "AISLACION", "AT-T", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "12500", "LECTURA_10MIN" to "31250"))
+        prueba(301, "TTR", "3 fases / tap 3", 3, "APROBADO",
+            mapOf("POSICION_TAP" to "3", "RELACION_TEORICA" to "30", "RELACION_MEDIDA" to "30.08"))
+        prueba(301, "DEVANADOS", "AT", 4, "APROBADO", mapOf("RESISTENCIA" to "45.2"))
+        prueba(301, "DEVANADOS", "BT", 4, "APROBADO", mapOf("RESISTENCIA" to "2.15"))
+
+
+
+        val v25 = visita("OT-2025-1101", 1, "2025-09-13", 7, "2025-09-13 16:05").toInt()
+        db.execSQL(
+            "INSERT INTO recepcion_acta VALUES(?,?,?,?,'2025-09-13 16:05')",
+            arrayOf(v25, "Marcela Fuentes Rojas", "14.226.791-8", "Jefa de Mantenimiento")
+        )
+        db.execSQL("INSERT INTO visita_participante VALUES(?,?)", arrayOf(v25, 11))
+        protocolo(302, "PT-2025-0288", v25, 1, 11, "2025-09-13 11:10", 21.0, 48.0, "FORMALIZADO")
+        prueba(302, "AISLACION", "AT-T", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "9800", "LECTURA_10MIN" to "21560"))
+        prueba(302, "TTR", "3 fases / tap 3", 3, "APROBADO",
+            mapOf("POSICION_TAP" to "3", "RELACION_TEORICA" to "30", "RELACION_MEDIDA" to "30.05"))
+        prueba(302, "DEVANADOS", "AT", 4, "APROBADO", mapOf("RESISTENCIA" to "46.8"))
+        prueba(302, "DEVANADOS", "BT", 4, "APROBADO", mapOf("RESISTENCIA" to "2.2"))
+
+
+
+
+        val v26 = visita("OT-2026-1187", 1, "2026-09-26", 8, null).toInt()
+        db.execSQL("INSERT INTO visita_participante VALUES(?,?)", arrayOf(v26, 7))
+
+
+
+
+
+        fun cerrada(ot: String, num: String, idProtocolo: Long, inst: Int, idEquipo: Int,
+                    tec: Int, dia: String, temp: Double, hum: Double): Int {
+            val v = visita(ot, inst, dia, 7, "$dia 16:05").toInt()
+            protocolo(idProtocolo, num, v, idEquipo, tec, "$dia 10:30", temp, hum, "FORMALIZADO")
+            return v
+        }
+
+
+
+
+        cerrada("OT-2025-1112", "PT-2025-0290", 401, 2, 3, 11, "2025-08-05", 22.0, 44.0)
+        prueba(401, "AISLACION", "AT-T", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "8200", "LECTURA_10MIN" to "24600"))
+        prueba(401, "TTR", "3 fases / cambiador de derivaciones", 3, "APROBADO",
+            mapOf("POSICION_TAP" to "2", "RELACION_TEORICA" to "57.5", "RELACION_MEDIDA" to "57.56"))
+        prueba(401, "DEVANADOS", "AT-R", 4, "APROBADO", mapOf("RESISTENCIA" to "12.4"))
+        prueba(401, "DEVANADOS", "BT-r", 4, "APROBADO", mapOf("RESISTENCIA" to "0.85"))
+
+
+
+
+        val v402 = cerrada("OT-2025-1118", "PT-2025-0291", 402, 3, 5, 12, "2025-08-19", 17.0, 52.0)
+        prueba(402, "AISLACION", "MT-BT", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "5200"))
+        prueba(402, "CONTACTOS", "Polo 1", 4, "APROBADO", mapOf("RESISTENCIA_CONTACTO" to "38.5"))
+        prueba(402, "CONTACTOS", "Polo 2", 4, "APROBADO", mapOf("RESISTENCIA_CONTACTO" to "41.0"))
+        prueba(402, "CONTACTOS", "Polo 3", 4, "OBSERVADO", mapOf("RESISTENCIA_CONTACTO" to "52.0"))
+        db.execSQL(
+            "INSERT INTO recepcion_acta VALUES(?,?,?,?,'2025-08-19 16:05')",
+            arrayOf(v402, "Patricio Navarro Soto", "12.645.308-6", "Jefe de Mantenimiento Eléctrico")
+        )
+
+
+
+        val v403 = cerrada("OT-2025-1124", "PT-2025-0292", 403, 4, 4, 13, "2025-09-02", 20.0, 47.0)
+        prueba(403, "AISLACION", "MT-Tierra", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "3100"))
+        prueba(403, "CONTACTOS", "Polo 1", 4, "APROBADO", mapOf("RESISTENCIA_CONTACTO" to "44.0"))
+        prueba(403, "CONTACTOS", "Polo 2", 4, "APROBADO", mapOf("RESISTENCIA_CONTACTO" to "48.5"))
+        prueba(403, "CONTACTOS", "Polo 3", 4, "OBSERVADO", mapOf("RESISTENCIA_CONTACTO" to "67.0"))
+        db.execSQL(
+            "INSERT INTO recepcion_acta VALUES(?,?,?,?,'2025-09-02 16:05')",
+            arrayOf(v403, "Tomás Leiva Araya", "18.390.452-3", "Supervisor Eléctrico")
+        )
+
+
+
+
+        cerrada("OT-2025-1131", "PT-2025-0293", 404, 5, 6, 10, "2025-09-09", 15.0, 61.0)
+        prueba(404, "OPERACION_RELE", "Disparo de fase", 5, "APROBADO",
+            mapOf(
+                "CORRIENTE_AJUSTE" to "5", "CORRIENTE_OPERACION" to "5.1",
+                "TIEMPO_ESPERADO" to "80", "TIEMPO_MEDIDO" to "82.4"
+            ))
+        prueba(404, "OPERACION_RELE", "Disparo de neutro", 5, "OBSERVADO",
+            mapOf(
+                "CORRIENTE_AJUSTE" to "5", "CORRIENTE_OPERACION" to "5.3",
+                "TIEMPO_ESPERADO" to "80", "TIEMPO_MEDIDO" to "86.4"
+            ))
+
+
+
+
+
+        cerrada("OT-2025-1137", "PT-2025-0294", 405, 6, 7, 11, "2025-09-16", 23.0, 39.0)
+        prueba(405, "AISLACION", "Fase R", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "15200", "LECTURA_10MIN" to "45600"))
+        prueba(405, "AISLACION", "Fase S", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "12800", "LECTURA_10MIN" to "39680"))
+        prueba(405, "AISLACION", "Fase T", 1, "OBSERVADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "4200", "LECTURA_10MIN" to "6300"))
+
+
+
+
+        cerrada("OT-2025-1144", "PT-2025-0295", 406, 3, 8, 12, "2025-09-23", 12.0, 66.0)
+        prueba(406, "AISLACION", "AT-T", 1, "APROBADO",
+            mapOf("TENSION_PRUEBA" to "5", "LECTURA_1MIN" to "21000", "LECTURA_10MIN" to "54600"))
+        prueba(406, "TTR", "3 fases / cambiador de derivaciones", 3, "APROBADO",
+            mapOf("POSICION_TAP" to "4", "RELACION_TEORICA" to "3.4848", "RELACION_MEDIDA" to "3.49"))
+        prueba(406, "DEVANADOS", "AT-R", 4, "APROBADO", mapOf("RESISTENCIA" to "286.0"))
+        prueba(406, "DEVANADOS", "BT-r", 4, "APROBADO", mapOf("RESISTENCIA" to "3.9"))
+
+
+
+
+        listOf(2, 3, 4, 5, 6).forEachIndexed { i, inst ->
+            visita("OT-2026-${1188 + i}", inst, "2026-09-26", 8, null)
         }
     }
 
@@ -302,6 +531,7 @@ class InduztekDbHelper private constructor(context: Context) :
         ).use { it.moveToFirst() }
 
 
+
     fun insertarSolicitud(
         nombre: String, apellido: String, pais: String, ciudad: String,
         correo: String, passwordHash: String, justificacion: String
@@ -340,6 +570,7 @@ class InduztekDbHelper private constructor(context: Context) :
         ).use { c -> buildList { while (c.moveToNext()) add(leerEquipo(c)) } }
 
 
+
     fun equipoPorId(id: Int): Equipo? =
         writableDatabase.rawQuery(
             "SELECT e.id_equipo,e.id_instalacion,e.tag,e.id_tipo_equipo,t.nombre,t.clasificacion,e.marca,e.modelo," +
@@ -349,7 +580,6 @@ class InduztekDbHelper private constructor(context: Context) :
                     "JOIN instalacion i ON i.id_instalacion=e.id_instalacion WHERE e.id_equipo=?",
             arrayOf(id.toString())
         ).use { if (it.moveToFirst()) leerEquipo(it) else null }
-
 
 
 
@@ -366,6 +596,7 @@ class InduztekDbHelper private constructor(context: Context) :
         observaciones = c.getString(15) ?: "", instalacionNombre = c.getString(16) ?: ""
     )
 
+
     fun tiposPruebaDeEquipo(idEquipo: Int): List<TipoPrueba> =
         writableDatabase.rawQuery(
             "SELECT tp.codigo FROM tipo_prueba tp " +
@@ -375,6 +606,7 @@ class InduztekDbHelper private constructor(context: Context) :
         ).use { c -> buildList { while (c.moveToNext()) add(TipoPrueba.valueOf(c.getString(0))) } }
 
     // ------------------------------------------------------------------ instrumentos
+
     fun listarInstrumentos(): List<Instrumento> =
         writableDatabase.rawQuery(
             "SELECT id_instrumento,nombre,marca,modelo,numero_serie,fecha_ultima_cal,fecha_vence FROM instrumento ORDER BY nombre",
@@ -387,6 +619,190 @@ class InduztekDbHelper private constructor(context: Context) :
                 )
             }
         }
+
+    // ------------------------------------------------------------------ protocolos
+
+    fun listarProtocolos(): List<Protocolo> =
+        writableDatabase.rawQuery(
+            "SELECT p.id_protocolo,p.numero,p.id_visita,p.id_equipo,p.id_usuario_registra,p.fecha_hora_prueba," +
+                    "p.temperatura_c,p.humedad_pct,p.estado,p.observaciones,e.tag,t.nombre,i.nombre,u.nombre " +
+                    "FROM protocolo p JOIN equipo e ON e.id_equipo=p.id_equipo " +
+                    "JOIN tipo_equipo t ON t.id_tipo_equipo=e.id_tipo_equipo " +
+                    "JOIN visita v ON v.id_visita=p.id_visita JOIN instalacion i ON i.id_instalacion=v.id_instalacion " +
+                    "JOIN usuario u ON u.id_usuario=p.id_usuario_registra ORDER BY p.fecha_hora_prueba DESC", null
+        ).use { c -> buildList { while (c.moveToNext()) add(leerProtocolo(c)) } }
+
+
+    fun protocoloPorId(id: Int): Protocolo? =
+        listarProtocolos().firstOrNull { it.idProtocolo == id }
+
+
+    private fun leerProtocolo(c: Cursor) = Protocolo(
+        idProtocolo = c.getInt(0), numero = c.getString(1), idVisita = c.getInt(2), idEquipo = c.getInt(3),
+        idUsuarioRegistra = c.getInt(4), fechaHoraPrueba = c.getString(5),
+        temperaturaC = c.getDouble(6).takeIf { !c.isNull(6) },
+        humedadPct = c.getDouble(7).takeIf { !c.isNull(7) },
+        estado = EstadoProtocolo.entries.first { it.codigo == c.getString(8) },
+        observaciones = c.getString(9) ?: "", equipoTag = c.getString(10),
+        tipoEquipo = c.getString(11), instalacionNombre = c.getString(12), tecnicoNombre = c.getString(13) ?: ""
+    )
+
+
+    fun visitaAbierta(idInstalacion: Int): Int? = visitaAbierta(writableDatabase, idInstalacion)
+
+    private fun visitaAbierta(db: SQLiteDatabase, idInstalacion: Int): Int? = db.rawQuery(
+        "SELECT id_visita FROM visita WHERE id_instalacion=? AND fecha_hora_cierre IS NULL " +
+                "ORDER BY id_visita DESC LIMIT 1",
+        arrayOf(idInstalacion.toString())
+    ).use { if (it.moveToFirst()) it.getInt(0) else null }
+
+
+    private fun rolDe(idUsuario: Int): Rol? =
+        buscarUsuarioPorId(idUsuario)?.rol
+
+    // ------------------------------------------------------------------ pruebas
+
+    fun listarPruebas(idProtocolo: Int): List<Prueba> =
+        writableDatabase.rawQuery(
+            "SELECT id_prueba,id_protocolo,codigo_tipo_prueba,elemento,realizada,motivo_no_realizada," +
+                    "id_instrumento,resultado,comentario FROM prueba WHERE id_protocolo=? ORDER BY id_prueba",
+            arrayOf(idProtocolo.toString())
+        ).use { c ->
+            buildList {
+                while (c.moveToNext()) {
+                    val idPrueba = c.getInt(0)
+                    val meds = mutableMapOf<String, Double>()
+                    writableDatabase.rawQuery(
+                        "SELECT codigo_parametro,valor FROM medicion WHERE id_prueba=?",
+                        arrayOf(idPrueba.toString())
+                    ).use { m ->
+                        while (m.moveToNext()) meds[m.getString(0)] = m.getString(1).toDoubleOrNull() ?: 0.0
+                    }
+                    add(
+                        Prueba(
+                            idPrueba = idPrueba, idProtocolo = idProtocolo,
+                            tipoPrueba = TipoPrueba.valueOf(c.getString(2)), elemento = c.getString(3) ?: "",
+                            realizada = c.getInt(4) == 1, motivoNoRealizada = c.getString(5) ?: "",
+                            idInstrumento = c.getInt(6).takeIf { it > 0 },
+                            resultado = c.getString(7)?.let { r -> Resultado.entries.first { it.codigo == r } },
+                            comentario = c.getString(8) ?: "", mediciones = meds
+                        )
+                    )
+                }
+            }
+        }
+
+
+
+    fun historialAislacion(idEquipo: Int): List<Triple<String, String, Double>> =
+        writableDatabase.rawQuery(
+            "SELECT pr.numero, substr(pr.fecha_hora_prueba,1,10), m.valor FROM medicion m " +
+                    "JOIN prueba p ON p.id_prueba=m.id_prueba JOIN protocolo pr ON pr.id_protocolo=p.id_protocolo " +
+                    "WHERE pr.id_equipo=? AND p.codigo_tipo_prueba='AISLACION' AND m.codigo_parametro='LECTURA_1MIN' " +
+                    "AND pr.estado NOT IN ('BORRADOR','ANULADO') ORDER BY pr.fecha_hora_prueba",
+            arrayOf(idEquipo.toString())
+        ).use { c ->
+            buildList { while (c.moveToNext()) add(Triple(c.getString(0), c.getString(1), c.getString(2).toDouble())) }
+        }
+
+    // ------------------------------------------------------------------ estados
+
+
+
+    fun cambiarEstado(idProtocolo: Int, nuevo: EstadoProtocolo, idUsuario: Int, motivo: String = "") {
+        val db = writableDatabase
+        val actual = db.rawQuery(
+            "SELECT estado FROM protocolo WHERE id_protocolo=?", arrayOf(idProtocolo.toString())
+        ).use { if (it.moveToFirst()) it.getString(0) else null } ?: return
+        val desde = EstadoProtocolo.entries.first { it.codigo == actual }
+        val permiso = transicionPermitida(desde, nuevo, rolDe(idUsuario))
+        if (!permiso.first) error(permiso.second)
+        // RN-04: devolver con observación y anular exigen motivo escrito
+        if (motivo.isBlank() && (nuevo == EstadoProtocolo.OBSERVADO || nuevo == EstadoProtocolo.ANULADO))
+            error("El ${nuevo.nombre.lowercase()} requiere escribir un motivo (RN-04).")
+        db.execSQL(
+            "UPDATE protocolo SET estado=? WHERE id_protocolo=?", arrayOf(nuevo.codigo, idProtocolo.toString())
+        )
+        db.execSQL(
+            "INSERT INTO historial_estado(id_protocolo,estado_anterior,estado_nuevo,id_usuario,fecha_hora,motivo) VALUES(?,?,?,?,?,?)",
+            arrayOf(idProtocolo, actual, nuevo.codigo, idUsuario, fechaHoraAhora(), motivo)
+        )
+    }
+
+
+
+
+    private fun transicionPermitida(desde: EstadoProtocolo, hacia: EstadoProtocolo, rol: Rol?): Pair<Boolean, String> {
+        val terreno = rol == Rol.TECNICO || rol == Rol.INGENIERO
+        val oficina = rol == Rol.INGENIERO || rol == Rol.JEFE_TECNICO
+        return when {
+            desde == EstadoProtocolo.FORMALIZADO ->
+                false to "Un protocolo formalizado no se modifica ni se anula (RN-04)."
+            hacia == EstadoProtocolo.REGISTRADO &&
+                    (desde == EstadoProtocolo.BORRADOR || desde == EstadoProtocolo.OBSERVADO) ->
+                if (terreno) true to "" else false to "Solo un técnico o un ingeniero pueden registrar en terreno (RN-04)."
+            hacia == EstadoProtocolo.FORMALIZADO && desde == EstadoProtocolo.REGISTRADO ->
+                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico pueden formalizar (RN-04)."
+            hacia == EstadoProtocolo.OBSERVADO && desde == EstadoProtocolo.REGISTRADO ->
+                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico devuelven con observación (RN-04)."
+            hacia == EstadoProtocolo.ANULADO ->
+                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico pueden anular (RN-04)."
+            else -> false to "La transición ${desde.nombre} → ${hacia.nombre} no existe (RN-04)."
+        }
+    }
+
+
+    fun ultimoMotivo(idProtocolo: Int): String =
+        writableDatabase.rawQuery(
+            "SELECT motivo FROM historial_estado WHERE id_protocolo=? AND estado_nuevo='OBSERVADO' " +
+                    "ORDER BY id_historial DESC LIMIT 1",
+            arrayOf(idProtocolo.toString())
+        ).use { if (it.moveToFirst()) it.getString(0) ?: "" else "" }
+
+
+
+    fun guardarAmbientes(idProtocolo: Int, temp: Double, hum: Double, observaciones: String = "") {
+        writableDatabase.execSQL(
+            "UPDATE protocolo SET temperatura_c=?, humedad_pct=?, observaciones=? WHERE id_protocolo=?",
+            arrayOf(temp, hum, observaciones, idProtocolo.toString())
+        )
+    }
+
+
+    fun guardarObservacionesProtocolo(idProtocolo: Int, texto: String) {
+        writableDatabase.execSQL(
+            "UPDATE protocolo SET observaciones=? WHERE id_protocolo=?", arrayOf(texto, idProtocolo.toString())
+        )
+    }
+
+    // ------------------------------------------------------------------ visita / acta
+
+    fun visitaPorId(id: Int): Visita? =
+        writableDatabase.rawQuery(
+            "SELECT id_visita,numero_ot,id_instalacion,fecha,tipo_visita,id_ingeniero_cargo,fecha_hora_cierre FROM visita WHERE id_visita=?",
+            arrayOf(id.toString())
+        ).use { c ->
+            if (!c.moveToFirst()) null else Visita(
+                c.getInt(0), c.getString(1), c.getInt(2), c.getString(3), c.getString(4),
+                c.getInt(5).takeIf { it > 0 }, c.getString(6)
+            )
+        }
+
+
+    fun instalacionPorId(id: Int): Instalacion? =
+        writableDatabase.rawQuery(
+            "SELECT i.id_instalacion,i.id_usuario_cliente,i.nombre,i.ubicacion,i.comuna,i.observaciones_acceso,u.nombre " +
+                    "FROM instalacion i JOIN usuario u ON u.id_usuario=i.id_usuario_cliente WHERE i.id_instalacion=?",
+            arrayOf(id.toString())
+        ).use { c ->
+            if (!c.moveToFirst()) null else Instalacion(
+                c.getInt(0), c.getInt(1), c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6)
+            )
+        }
+
+
+    fun protocolosDeVisita(idVisita: Int): List<Protocolo> =
+        listarProtocolos().filter { it.idVisita == idVisita }
 }
 
 
