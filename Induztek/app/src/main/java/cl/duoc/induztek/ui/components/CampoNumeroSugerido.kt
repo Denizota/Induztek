@@ -57,13 +57,13 @@ fun CampoNumeroSugerido(
                 ) {
                     if (sufijo.isNotEmpty()) {
                         Text(sufijo,
-                            color = GrisTexto,
+                            color = GrisTexto(),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                     Text(
                         "▾",
-                        color = GrisTexto,
+                        color = GrisTexto(),
                         fontWeight = FontWeight.Bold)
                 }
             }

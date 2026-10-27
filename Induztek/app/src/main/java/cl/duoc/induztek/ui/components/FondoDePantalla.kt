@@ -9,14 +9,13 @@ import cl.duoc.induztek.ui.theme.Dimens
 import cl.duoc.induztek.ui.theme.MoraditoClaro
 import cl.duoc.induztek.ui.theme.fonditoMorado
 
-//bueno como mas lo ponia bro. deje el buling
 @Composable
 fun Modifier.fondoPantallaInterna(): Modifier = background(
     Brush.verticalGradient(
         colorStops = arrayOf(
             0f to Blanco,
-            Dimens.paradaDifuminado to fonditoMorado,
-            1f to MoraditoClaro
+            Dimens.paradaDifuminado to fonditoMorado(),
+            1f to MoraditoClaro()
         )
     )
 )

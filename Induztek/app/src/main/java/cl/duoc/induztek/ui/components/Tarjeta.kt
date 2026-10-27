@@ -21,7 +21,7 @@ fun Tarjeta(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.radioTarjeta),
         colors = CardDefaults.cardColors(containerColor = colorCaja()),
-        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde),
+        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde()),
         content = { Column(Modifier.padding(Dimens.rellenoTarjeta)) { content() } }
     )
 }

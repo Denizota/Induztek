@@ -24,10 +24,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import cl.duoc.induztek.R
 import cl.duoc.induztek.ui.theme.Dimens
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import cl.duoc.induztek.ui.theme.GrisTexto
 
 @Composable
 fun EncabezadoPantalla(titulo: String, subtitulo: String = "", onAtras: (() -> Unit)? = null) {
+    val atras = stringResource(R.string.cd_atras_equipos)
     Column(Modifier.fillMaxWidth().padding(bottom = Dimens.espacioEncabezadoCuerpo)) {
         if (onAtras != null) {
 
@@ -37,16 +40,19 @@ fun EncabezadoPantalla(titulo: String, subtitulo: String = "", onAtras: (() -> U
                     Modifier
                         .size(Dimens.tamanoBotonAtras)
                         .clip(CircleShape)
-                        .clickable(role = Role.Button, onClick = onAtras),
+                        .clickable(role = Role.Button, onClick = onAtras)
+                        .semantics(mergeDescendants = true) {
+                            contentDescription = atras
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "‹", color = GrisTexto, fontWeight = FontWeight.Bold, maxLines = 1,
+                        "‹", color = GrisTexto(), fontWeight = FontWeight.Bold, maxLines = 1,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
                 Spacer(Modifier.width(Dimens.salto1))
-                Text(stringResource(R.string.atras_equipos), color = GrisTexto, style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.atras_equipos), color = GrisTexto(), style = MaterialTheme.typography.labelMedium)
             }
             Spacer(Modifier.height(Dimens.espacioTituloAtras))
         }

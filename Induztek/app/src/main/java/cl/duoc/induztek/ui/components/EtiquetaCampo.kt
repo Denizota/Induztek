@@ -16,7 +16,7 @@ fun EtiquetaCampo (
     Text(
         text = texto,
         style = MaterialTheme.typography.labelMedium,
-        color = TextoGris,
+        color = TextoGris(),
         modifier = modifier
     )
 }

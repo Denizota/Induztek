@@ -101,7 +101,8 @@ fun SolicitarAccesoContent(
 
             Spacer(Modifier.height(Dimens.espacioEncabezadoACuerpo))
 
-            // Nombre y Apellido, uno al lado del otro
+
+
             Row(horizontalArrangement = Arrangement.spacedBy(Dimens.espacioNombreApellido)) {
                 CampoTexto(
                     valor = uiState.nombre,
@@ -178,7 +179,6 @@ fun SolicitarAccesoContent(
 
             Spacer(Modifier.height(Dimens.espacioEntreCampos))
 
-            // Cuadro grande de varias líneas
             CampoTexto(
                 valor = uiState.justificacion,
                 onValorCambia = onJustificacionCambia,
@@ -234,14 +234,9 @@ private fun SolicitarAccesoConErroresPreview() {
             uiState = SolicitudAccesoUiState(
                 nombre = "Ana",
                 correo = "ana@",
-                //no se si hacer pais y ciudad obligatorios... :c
-                //pq queria dejar asi como el 'no seleccionado' yera
-                //errorNombre = "El nombre es obligatorio",
                 errorApellido = "El apellido es obligatorio",
                 errorCorreo = "Ingresa un correo válido",
                 errorContrasena = "Mínimo 6 caracteres"
-                //errorRepetirContrasena = "Las contrasenias no son iguales !!",
-                //errorJustificacion = "Debes ingresar una justificacion!! "
             ),
             onNombreCambia = {}, onApellidoCambia = {}, onPaisSeleccionado = {},
             onCiudadSeleccionada = {}, onCorreoCambia = {}, onContrasenaCambia = {},

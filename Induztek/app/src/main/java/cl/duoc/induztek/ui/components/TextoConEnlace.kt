@@ -30,12 +30,12 @@ fun TextoConEnlace(
         Text(
             text = "$textoNormal ",
             style = MaterialTheme.typography.bodySmall,
-            color = TextoGris
+            color = TextoGris()
         )
         Text(
             text = textoEnlace,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-            color = TextoGris,
+            color = TextoGris(),
             modifier = Modifier.clickable(role = Role.Button, onClick = onClickEnlace)
         )
     }

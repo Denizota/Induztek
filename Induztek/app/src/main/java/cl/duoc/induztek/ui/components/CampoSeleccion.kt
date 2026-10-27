@@ -67,12 +67,12 @@ fun CampoSeleccion (
                 Text(
                     text = valor.ifEmpty { textoSugerido },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (valor.isEmpty()) TextoPlaceholder else TextoOscuro,
+                    color = if (valor.isEmpty()) TextoPlaceholder() else TextoOscuro(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )
-                CompositionLocalProvider(LocalContentColor provides IconoCampo) {
+                CompositionLocalProvider(LocalContentColor provides IconoCampo()) {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandido)
                 }
             }

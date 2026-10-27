@@ -6,7 +6,6 @@ data class SolicitudAccesoUiState(
     val pais: String = "",
     val ciudad: String = "",
 
-    //Listas ejemplares para el desplegable
     val paises: List<String> = listOf("Chile", "Argentina", "Peru"),
     val ciudades: List<String> = listOf("Santiago", "Valparaiso", "Concepcion", "Temuco"),
 
@@ -21,7 +20,6 @@ data class SolicitudAccesoUiState(
     val errorCorreo: String? = null,
     val errorContrasena: String? = null,
     val errorRepetirContrasena: String? = null
-    //val errorJustificacion: String? = null
 ) {
     val registrarseHabilitado: Boolean
         get()= nombre.isNotBlank() && apellido.isNotBlank() && correo.isNotBlank()

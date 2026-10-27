@@ -17,7 +17,6 @@ import cl.duoc.induztek.ui.styles.EstilosBoton
 import cl.duoc.induztek.ui.styles.estiloAltoBoton
 import cl.duoc.induztek.ui.theme.InduztekTheme
 
-//ingresar y registrarse. falsity = gris verity = el azul ese ajshfajs como el primary de bootstrap (horrible)
 
 @Composable
 fun BotonPrincipal (

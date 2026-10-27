@@ -16,6 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import cl.duoc.induztek.ui.theme.Dimens
 import cl.duoc.induztek.ui.theme.GrisTexto
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
 import cl.duoc.induztek.ui.theme.LavandaBorde
 
 @Composable
@@ -25,7 +28,9 @@ fun Pestanas(opciones: List<String>, seleccionado: String, onSeleccion: (String)
             opciones.forEach { op ->
                 val activo = op == seleccionado
                 Column(
-                    Modifier.weight(1f).clickable { onSeleccion(op) },
+                    Modifier.weight(1f)
+                        .clickable(role = Role.Tab) { onSeleccion(op) }
+                        .semantics { selected = activo },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
@@ -33,7 +38,7 @@ fun Pestanas(opciones: List<String>, seleccionado: String, onSeleccion: (String)
                             op,
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = if (activo) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (activo) MaterialTheme.colorScheme.primary else GrisTexto
+                            color = if (activo) MaterialTheme.colorScheme.primary else GrisTexto()
                         )
                     }
                     Box(
@@ -45,6 +50,6 @@ fun Pestanas(opciones: List<String>, seleccionado: String, onSeleccion: (String)
                 }
             }
         }
-        Box(Modifier.fillMaxWidth().height(Dimens.bordeCampo).background(LavandaBorde))
+        Box(Modifier.fillMaxWidth().height(Dimens.bordeCampo).background(LavandaBorde()))
     }
 }

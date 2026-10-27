@@ -7,6 +7,5 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import cl.duoc.induztek.ui.theme.Dimens
 
-//segun mis calculos de lo q hice en canva SI ES necesario. ok. gracias !!
 @Composable
 fun FilaVacia(salto: Dp = Dimens.salto5) = Spacer(Modifier.height(salto))

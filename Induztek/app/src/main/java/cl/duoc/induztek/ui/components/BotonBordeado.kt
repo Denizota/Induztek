@@ -19,7 +19,7 @@ fun BotonBordeado(texto: String, onClick: () -> Unit, modifier: Modifier = Modif
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.radioTarjeta),
-        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde),
+        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde()),
         modifier = modifier.fillMaxWidth().height(Dimens.alturaBotonGrande)
     ) { Text(
         texto,

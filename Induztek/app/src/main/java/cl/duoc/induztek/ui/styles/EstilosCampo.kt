@@ -1,6 +1,5 @@
 package cl.duoc.induztek.ui.styles
 
-//import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,8 +12,6 @@ import androidx.compose.ui.unit.Dp
 import cl.duoc.induztek.ui.theme.BordeCampo
 import cl.duoc.induztek.ui.theme.Dimens
 import cl.duoc.induztek.ui.theme.FondoCampo
-
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.ui.graphics.Shape
 
@@ -25,7 +22,7 @@ object EstilosCampo {
     fun colorBorde(enfocado: Boolean, hayError: Boolean): Color = when{
         hayError -> MaterialTheme.colorScheme.error
         enfocado -> MaterialTheme.colorScheme.primary
-        else -> BordeCampo
+        else -> BordeCampo()
     }
 }
 
@@ -33,5 +30,5 @@ object EstilosCampo {
 fun Modifier.estiloCajaCampo(enfocado: Boolean, hayError: Boolean, alto: Dp) : Modifier =
     this.fillMaxWidth()
         .height(alto)
-        .background(FondoCampo, EstilosCampo.forma)
+        .background(FondoCampo(), EstilosCampo.forma)
         .border(Dimens.bordeCampo, EstilosCampo.colorBorde(enfocado, hayError), EstilosCampo.forma)

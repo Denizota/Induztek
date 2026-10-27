@@ -47,6 +47,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -149,7 +151,7 @@ fun ClienteHomeScreen(
                 FilaVacia(Dimens.salto6)
                 Text(
                     stringResource(R.string.cliente_solo_visualizar),
-                    style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                    style = MaterialTheme.typography.labelSmall, color = GrisTexto()
                 )
                 FilaVacia(Dimens.salto9)
             }
@@ -191,7 +193,7 @@ private fun CabeceraCliente(nombre: String, subtitulo: String, onSalir: () -> Un
             Column(Modifier.weight(1f)) {
                 Text(nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(
-                    subtitulo, style = MaterialTheme.typography.bodySmall, color = GrisTexto
+                    subtitulo, style = MaterialTheme.typography.bodySmall, color = GrisTexto()
                 )
             }
             Box(
@@ -206,7 +208,7 @@ private fun CabeceraCliente(nombre: String, subtitulo: String, onSalir: () -> Un
             ) {
                 Text(
                     stringResource(R.string.cliente_cerrar_sesion),
-                    style = MaterialTheme.typography.labelMedium, color = GrisTexto
+                    style = MaterialTheme.typography.labelMedium, color = GrisTexto()
                 )
             }
         }
@@ -231,7 +233,7 @@ private fun CajaUltimaVisita(
         Tarjeta(Modifier.weight(1f)) {
             Text(
                 stringResource(R.string.cliente_ultima_visita),
-                style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                style = MaterialTheme.typography.labelSmall, color = GrisTexto()
             )
             FilaVacia(Dimens.salto2)
             BarraAcento(
@@ -254,10 +256,11 @@ private fun CajaUltimaVisita(
                 .height(Dimens.altoCajaActa)
                 .background(colorCaja(), RoundedCornerShape(Dimens.radioTarjeta))
                 .border(
-                    Dimens.bordeTarjeta, LavandaBorde,
+                    Dimens.bordeTarjeta, LavandaBorde(),
                     RoundedCornerShape(Dimens.radioTarjeta)
                 )
-                .clickable { onVerActa() }
+                .clickable(role = Role.Button) { onVerActa() }
+                .semantics(mergeDescendants = true) { }
                 .padding(horizontal = Dimens.salto2),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -266,7 +269,7 @@ private fun CajaUltimaVisita(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_acta),
                     contentDescription = null,
-                    tint = LavandaPrimario,
+                    tint = LavandaPrimario(),
                     modifier = Modifier.size(Dimens.tamanoIconoNav)
                 )
                 Spacer(Modifier.width(Dimens.salto1))
@@ -277,7 +280,7 @@ private fun CajaUltimaVisita(
                     )
                     Text(
                         stringResource(R.string.cliente_pdf),
-                        style = MaterialTheme.typography.labelMedium, color = GrisTexto
+                        style = MaterialTheme.typography.labelMedium, color = GrisTexto()
                     )
                 }
             }
@@ -292,18 +295,18 @@ private fun BarraAcento(titulo: String, etiqueta: String, detalle: String, entre
             Modifier
                 .width(Dimens.anchoBarraAcento)
                 .height(Dimens.altoBarraAcento)
-                .background(LavandaPrimario)
+                .background(LavandaPrimario())
         )
         Spacer(Modifier.width(Dimens.salto3))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(titulo, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.width(Dimens.salto2))
-                Text(etiqueta, style = MaterialTheme.typography.labelSmall, color = GrisTexto)
+                Text(etiqueta, style = MaterialTheme.typography.labelSmall, color = GrisTexto())
             }
             Text(detalle, style = MaterialTheme.typography.bodySmall)
             Text(
-                entrega, style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                entrega, style = MaterialTheme.typography.labelSmall, color = GrisTexto()
             )
         }
     }
@@ -315,21 +318,21 @@ private fun BuscadorCliente(valor: String, onCambio: (String) -> Unit) {
         value = valor,
         onValueChange = onCambio,
         placeholder = {
-            Text(stringResource(R.string.cliente_buscar), color = GrisTexto)
+            Text(stringResource(R.string.cliente_buscar), color = GrisTexto())
         },
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_buscar),
                 contentDescription = null,
-                tint = GrisTexto,
+                tint = GrisTexto(),
                 modifier = Modifier.size(Dimens.tamanoIconoCampo)
             )
         },
         singleLine = true,
         shape = RoundedCornerShape(percent = 50),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = LavandaBorde,
-            unfocusedBorderColor = LavandaBorde,
+            focusedBorderColor = LavandaBorde(),
+            unfocusedBorderColor = LavandaBorde(),
             focusedContainerColor = colorCaja(),
             unfocusedContainerColor = colorCaja()
         ),
@@ -349,17 +352,21 @@ private fun TarjetaEquipoCliente(
     pendiente: Boolean,
     onClick: () -> Unit
 ) {
-    Tarjeta(Modifier.clickable { onClick() }) {
+    Tarjeta(
+        Modifier
+            .clickable(role = Role.Button, onClickLabel = stringResource(R.string.cd_abrir_equipo)) { onClick() }
+            .semantics(mergeDescendants = true) { }
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(tag, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.width(Dimens.salto2))
-                    Text(tipoEquipo, style = MaterialTheme.typography.bodyMedium, color = GrisTexto)
+                    Text(tipoEquipo, style = MaterialTheme.typography.bodyMedium, color = GrisTexto())
                 }
                 FilaVacia(Dimens.salto2)
                 FilaBarra(
-                    stringResource(R.string.cliente_fila_ultima_prueba, instalacion, ultimaPrueba), GrisTexto
+                    stringResource(R.string.cliente_fila_ultima_prueba, instalacion, ultimaPrueba), GrisTexto()
                 )
                 FilaBarra(
                     stringResource(
@@ -381,7 +388,7 @@ private fun FilaBarra(texto: String, color: androidx.compose.ui.graphics.Color) 
             Modifier
                 .width(Dimens.anchoBarraAcento)
                 .height(Dimens.altoBarraAcento)
-                .background(LavandaPrimario)
+                .background(LavandaPrimario())
         )
         Spacer(Modifier.width(Dimens.salto3))
         Text(texto, style = MaterialTheme.typography.bodySmall, color = color)
@@ -393,10 +400,10 @@ private fun CirculoFlecha() {
     Box(
         Modifier
             .size(Dimens.tamanoCirculoFlecha)
-            .border(Dimens.bordeTarjeta, LavandaBorde, CircleShape),
+            .border(Dimens.bordeTarjeta, LavandaBorde(), CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        Text("›", style = MaterialTheme.typography.titleMedium, color = GrisTexto, fontWeight = FontWeight.Bold)
+        Text("›", style = MaterialTheme.typography.titleMedium, color = GrisTexto(), fontWeight = FontWeight.Bold)
     }
 }
 
@@ -404,7 +411,7 @@ private fun CirculoFlecha() {
 @Composable
 private fun BarraNavegacionCliente() {
     Column(Modifier.fillMaxWidth()) {
-        Box(Modifier.fillMaxWidth().height(Dimens.grosorDivisor).background(LavandaBorde))
+        Box(Modifier.fillMaxWidth().height(Dimens.grosorDivisor).background(LavandaBorde()))
         Row(Modifier.fillMaxWidth().height(Dimens.altoBarraNavegacion)) {
             ItemNavegacion(
                 stringResource(R.string.cliente_nav_equipos), R.drawable.ic_equipos,
@@ -425,7 +432,7 @@ private fun BarraNavegacionCliente() {
 @Composable
 
 private fun ItemNavegacion(texto: String, icono: Int, activo: Boolean, modifier: Modifier = Modifier) {
-    val color = if (activo) LavandaPrimario else GrisTexto
+    val color = if (activo) LavandaPrimario() else GrisTexto()
     Column(
         modifier.clickable { },
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -501,14 +508,15 @@ fun ClienteEquipoScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    Modifier.clickable { onAtras() },
+                    Modifier.clickable(role = Role.Button) { onAtras() }
+                        .semantics(mergeDescendants = true) { },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("‹", style = MaterialTheme.typography.headlineSmall, color = GrisTexto)
+                    Text("‹", style = MaterialTheme.typography.headlineSmall, color = GrisTexto())
                     Spacer(Modifier.width(Dimens.salto1))
                     Text(
                         stringResource(R.string.cliente_mis_equipos),
-                        style = MaterialTheme.typography.bodyMedium, color = GrisTexto
+                        style = MaterialTheme.typography.bodyMedium, color = GrisTexto()
                     )
                 }
                 Spacer(Modifier.weight(1f))
@@ -526,7 +534,7 @@ fun ClienteEquipoScreen(
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         "${equipo.tipoEquipo} ",
-                        style = MaterialTheme.typography.bodyMedium, color = GrisTexto
+                        style = MaterialTheme.typography.bodyMedium, color = GrisTexto()
                     )
                     Text(
                         "${equipo.instalacionNombre} ${equipo.potenciaKva?.let { "${Calculos.fmt(it, 0)} kVA" } ?: ""}",
@@ -536,7 +544,7 @@ fun ClienteEquipoScreen(
                 FilaVacia(Dimens.salto2)
                 Text(
                     stringResource(R.string.cliente_preliminares),
-                    style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                    style = MaterialTheme.typography.labelSmall, color = GrisTexto()
                 )
                 FilaVacia(Dimens.salto5)
 
@@ -547,13 +555,13 @@ fun ClienteEquipoScreen(
                     )
                     Text(
                         stringResource(R.string.cliente_lectura_at_t),
-                        style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                        style = MaterialTheme.typography.labelSmall, color = GrisTexto()
                     )
                     FilaVacia(Dimens.salto4)
                     if (historial.isEmpty()) {
                         Text(
                             stringResource(R.string.cliente_sin_datos),
-                            style = MaterialTheme.typography.bodySmall, color = GrisTexto
+                            style = MaterialTheme.typography.bodySmall, color = GrisTexto()
                         )
                     } else {
                         GraficoAislacion(historial.map { it.second.take(4) to it.third })
@@ -575,7 +583,7 @@ fun ClienteEquipoScreen(
                                 if (ingeniero.isNotEmpty())
                                     " " + stringResource(R.string.cliente_ingeniero_revisa, ingeniero)
                                 else "",
-                        style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                        style = MaterialTheme.typography.labelSmall, color = GrisTexto()
                     )
                 }
 
@@ -588,7 +596,7 @@ fun ClienteEquipoScreen(
                         )
                         protocolos.forEachIndexed { i, pr ->
                             if (i > 0) {
-                                HorizontalDivider(thickness = Dimens.grosorDivisor, color = LavandaBorde)
+                                HorizontalDivider(thickness = Dimens.grosorDivisor, color = LavandaBorde())
                             }
                             FilaHistorialCliente(
                                 fecha = pr.fechaHoraPrueba.take(10).fechaCorta(),
@@ -618,20 +626,20 @@ private fun FilaHistorialCliente(fecha: String, numero: String, detalle: String,
     ) {
         Column(Modifier.weight(1f)) {
             Text("$fecha / $numero", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-            Text(detalle, style = MaterialTheme.typography.labelSmall, color = GrisTexto)
+            Text(detalle, style = MaterialTheme.typography.labelSmall, color = GrisTexto())
         }
         Box(
             Modifier
                 .width(Dimens.grosorDivisor)
                 .height(Dimens.altoDivisorFila)
-                .background(LavandaBorde)
+                .background(LavandaBorde())
         )
         Text(
             estado,
             Modifier
                 .width(Dimens.anchoEstadoHistorial)
                 .padding(start = Dimens.salto3),
-            style = MaterialTheme.typography.labelSmall, color = GrisTexto, textAlign = TextAlign.End
+            style = MaterialTheme.typography.labelSmall, color = GrisTexto(), textAlign = TextAlign.End
         )
     }
 }
@@ -666,7 +674,7 @@ private fun GraficoAislacion(series: List<Pair<String, Double>>) {
                 }
             }
         }
-        Box(Modifier.fillMaxWidth().height(Dimens.grosorDivisor).background(LavandaBorde))
+        Box(Modifier.fillMaxWidth().height(Dimens.grosorDivisor).background(LavandaBorde()))
         FilaVacia(Dimens.salto2)
         Row(Modifier.fillMaxWidth()) {
             series.forEach { par ->
@@ -682,7 +690,12 @@ private fun GraficoAislacion(series: List<Pair<String, Double>>) {
 
 @Composable
 private fun BarraAislacion(alto: Dp, solida: Boolean) {
-    Canvas(Modifier.fillMaxWidth(Dimens.anchoRelativoBarra).height(alto)) {
+    val colorBarra = LavandaPrimario()
+    Canvas(
+        Modifier.clearAndSetSemantics { }
+            .fillMaxWidth(Dimens.anchoRelativoBarra)
+            .height(alto)
+    ) {
         val forma = Path().apply {
             addRoundRect(
                 RoundRect(
@@ -695,7 +708,7 @@ private fun BarraAislacion(alto: Dp, solida: Boolean) {
         }
         clipPath(forma) {
             drawRect(
-                color = LavandaPrimario.copy(
+                color = colorBarra.copy(
                     alpha = if (solida) Dimens.alfaBarraSolida else Dimens.alfaBarraFondo
                 )
             )
@@ -703,7 +716,7 @@ private fun BarraAislacion(alto: Dp, solida: Boolean) {
                 var x = -size.height
                 while (x < size.width) {
                     drawLine(
-                        color = LavandaPrimario.copy(alpha = Dimens.alfaTrazoHatch),
+                        color = colorBarra.copy(alpha = Dimens.alfaTrazoHatch),
                         start = Offset(x, size.height),
                         end = Offset(x + size.height, 0f),
                         strokeWidth = Dimens.grosorTrazoHatch
@@ -727,7 +740,7 @@ private fun BotonConsultarChat(onClick: () -> Unit) {
             )
             .height(Dimens.alturaBotonGrande)
             .background(
-                LavandaPrimario.copy(alpha = Dimens.alfaBarraSolida),
+                LavandaPrimario().copy(alpha = Dimens.alfaBarraSolida),
                 RoundedCornerShape(Dimens.radioTarjeta)
             )
             .clickable { onClick() },

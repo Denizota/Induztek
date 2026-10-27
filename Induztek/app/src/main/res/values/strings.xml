@@ -4,34 +4,30 @@
 
 
 
-    <!-- Pantalla 1: Para iniciar sesion !-->
 
     <string name="titulo_login"> Protocolos de prueba en terreno</string>
 
-    <!-- No se que eslogan poner xd -->
     <string name="eslogan"> Eslogan tierno lindo y adorable, hola que tal. </string>
 
     <string name="texto_o_correo">O inicia sesión con tu correo</string>
     <string name="enlace_olvido">¿Olvidaste tu contraseña?</string>
     <string name="btn_ingresar">Ingresar</string>
     <string name="texto_o_redes">O inicia sesion con</string>
-    <!-- No es es texto, son placeholders. Pq... Eso no tiene texto... Ok...? -->
     <string name="cd_google">Iniciar sesión con Google</string>
     <string name="cd_linkedin">Iniciar sesión con LinkedIn</string>
     <string name="cd_facebook">Iniciar sesión con Facebook</string>
-    <string name="texto_sin_cuenta">¿No tienes una cuenta?</string> <!--No pueden crear cuentas. Es solo una solicitud. ok??!?!?! -->
+    <string name="texto_sin_cuenta">¿No tienes una cuenta?</string>
     <string name="enlace_registrate">¡Regístrate aquí!</string>
     <string name="texto_entrar_como">Entrar como</string>
 
-    <!-- Pantalla 2: Solicitar acceso para creacion de cuenta -->
     <string name="titulo_solicitar_acceso">Solicitar acceso</string>
     <string name="subtitulo_solicitar_acceso">Solo para personal de Induztek o personas relacionadas. ¡¡ El jefe técnico podrá revisar solicitud y activar tu cuenta !!</string>
     <string name="campo_nombre">Nombre</string>
     <string name="placeholder_nombre">Primer nombre... </string>
     <string name="campo_apellido">Apellido</string>
     <string name="placeholder_apellido">Primer apellido...</string>
-    <string name="campo_pais">País</string> <!-- Estos quiero q sean como uno de esos donde uno puede seleccionar, mas que escribir. para que no haya alguien que dice que vive en 'wiwilandia'(yo)-->
-    <string name="campo_ciudad">Ciudad</string> <!-- Asi como una lista para abajo. vv -->
+    <string name="campo_pais">País</string>
+    <string name="campo_ciudad">Ciudad</string>
     <string name="placeholder_seleccion">No seleccionado</string>
     <string name="campo_repetir_contrasena">Repite tu contraseña</string>
     <string name="campo_justificacion">Justificación</string>
@@ -40,7 +36,6 @@
     <string name="texto_con_cuenta">¿Ya tienes una cuenta?</string>
     <string name="enlace_inicia_sesion">¡Inicia sesión aquí!</string>
 
-    <!-- Pantallas 1 y 2 -->
     <string name="campo_correo">Correo</string>
     <string name="placeholder_correo">nombre@induztek.cl</string>
     <string name="campo_contrasena">Contraseña</string>
@@ -49,7 +44,6 @@
     <string name="cd_ocultar_contrasena">Ocultar contraseña</string>
 
 
-    <!-- Pantalla 4: Equipo -->
     <string name="Equipos">Equipos</string>
     <string name="Potencia">Potencia</string>
     <string name="Tensiones">Tensiones</string>
@@ -64,7 +58,6 @@
     <string name="Variacion">Variación</string>
 
 
-    <!-- Pantalla 5: Equipo -->
     <string name="Nueva_prueba">Nueva prueba</string>
     <string name="Devanado">Devanado</string>
     <string name="Tension_de_prueba">Tensión de prueba</string>
@@ -77,7 +70,6 @@
     <string name="Guardar_prueba">Guardar prueba</string>
     <string name="Cancelar_prueba">Cancelar</string>
 
-    <!-- Pantalla 6: Equipo -->
     <string name="cerrar_visitra">Cerrar visita</string>
     <string name="visita_subtitulo">Acta que recibe el cliente</string>
     <string name="acta_titulo">Acta de prueba en terreno</string>
@@ -92,13 +84,11 @@
     <string name="atras_equipos"> Equipos ></string>
 
 
-    <!-- Pantalla: 13: Home Cliente-->
     <string name="ultima_visita">Ultima visita</string>
     <string name="ver_acta_nofuncional">Ver acta (PDF)</string>
     <string name="peqienio_subtitulo">Solo puedes ver el progreso actual del ingeniero! Si algo no te cuadra escribenos desde la pestaña chat !!</string>
 
 
-    <!-- Pantalla 14: ver equipo client -->
     <string name="volver_homeclient">Mis equipos</string>
     <string name="Pendiente_if">Pendiente de formalización</string>
     <string name="Titulo_graficon">Historial graficado</string>
@@ -109,13 +99,19 @@
 
 
 
-    <!-- Pantalla.... :C -->
-
-
-    <!-- Pantallas de los formuarios -->
     <string name="solicitar_toast_enviada">"¡Tu solicitud ha sido enviada ! "</string>
     <string name="puente_reiniciar">Reiniciar</string>
     <string name="puente_salir">Salir</string>
+
+    <string name="puente_ajustes_titulo">Accesibilidad</string>
+    <string name="puente_apariencia">Apariencia</string>
+    <string name="apariencia_sistema">Sistema</string>
+    <string name="apariencia_claro">Claro</string>
+    <string name="apariencia_oscuro">Oscuro</string>
+    <string name="puente_locutor">Locutor de pantalla</string>
+    <string name="puente_locutor_activado">TalkBack está activado</string>
+    <string name="puente_locutor_desactivado">TalkBack está desactivado</string>
+    <string name="puente_locutor_nota">Android sólo deja encenderlo desde los Ajustes del teléfono: al tocar el interruptor te lleva ahí.</string>
     <string name="resultado_pendiente">Pendiente</string>
     <string name="estado_formalizado">Formalizado</string>
     <string name="estado_pendiente_formalizacion">Pendiente de formalización</string>
@@ -320,12 +316,5 @@
     <string name="vm_hu03">Los valores deben ser positivos: revisa %1$s.</string>
     <string name="vm_faltan_valores">Faltan valores: %1$s.</string>
 
-    <!-- Para que tantos formularios y datos... solo para sufrir... :c -->
-
-
-
-    <!--
-    <string name=""></string>
-    -->
 
 </resources>

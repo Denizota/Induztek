@@ -23,9 +23,9 @@ object EstilosBoton {
 
     @Composable
     fun coloresPrincipal(): ButtonColors = ButtonDefaults.buttonColors(
-        containerColor = Primario,
+        containerColor = Primario(),
         contentColor = Blanco,
-        disabledContainerColor = BotonDeshabilitado,
+        disabledContainerColor = BotonDeshabilitado(),
         disabledContentColor = Blanco
     )
 

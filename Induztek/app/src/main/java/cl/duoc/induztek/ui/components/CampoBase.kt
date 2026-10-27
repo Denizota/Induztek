@@ -22,16 +22,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import cl.duoc.induztek.R
 import cl.duoc.induztek.ui.styles.estiloCajaCampo
 import cl.duoc.induztek.ui.theme.Blanco
 import cl.duoc.induztek.ui.theme.Dimens
+import cl.duoc.induztek.ui.theme.Negro
 import cl.duoc.induztek.ui.theme.TextoOscuro
 import cl.duoc.induztek.ui.theme.TextoPlaceholder
+import cl.duoc.induztek.ui.theme.esModoOscuro
 
 @Composable
 internal fun CampoBase(
@@ -41,7 +50,6 @@ internal fun CampoBase(
     textoSugerido: String,
     modifier: Modifier = Modifier,
     error: String? = null,
-    //rayos
     habilitado: Boolean = true,
     tipoTeclado: KeyboardType = KeyboardType.Text,
     accionTeclado: ImeAction = ImeAction.Next,
@@ -52,18 +60,33 @@ internal fun CampoBase(
 ){
     var enfocado by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.fillMaxWidth()) {
+    val bloqueado = stringResource(R.string.cd_campo_bloqueado)
+    val estadoCampo = error ?: if (!habilitado) bloqueado else null
+    val modificadorColumna = modifier
+        .fillMaxWidth()
+        .then(
+            if (estadoCampo == null) Modifier
+            else Modifier.semantics { stateDescription = estadoCampo }
+        )
+
+    val modificadorCampo = Modifier
+        .estiloCajaCampo(enfocado = enfocado, hayError = error != null, alto = alto)
+        .onFocusChanged { enfocado = it.isFocused }
+        .semantics {
+            contentDescription = if (error != null) "$etiqueta, $error"
+            else if (!habilitado) "$etiqueta, $bloqueado" else etiqueta
+        }
+
+    Column(modifier = modificadorColumna) {
         EtiquetaCampo(texto = etiqueta)
         Spacer(Modifier.height(Dimens.espacioEtiquetaACampo))
 
         BasicTextField(
             value = valor,
             onValueChange = onValorCambia,
-            modifier = Modifier
-                .estiloCajaCampo(enfocado = enfocado, hayError = error != null, alto = alto)
-                .onFocusChanged { enfocado = it.isFocused },
+            modifier = modificadorCampo,
             singleLine = unaSolaLinea,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TextoOscuro),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TextoOscuro()),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             keyboardOptions = KeyboardOptions(keyboardType = tipoTeclado, imeAction = accionTeclado),
             visualTransformation = transformacionVisual,
@@ -82,12 +105,11 @@ internal fun CampoBase(
                         contentAlignment = if (unaSolaLinea) Alignment.CenterStart else Alignment.TopStart
                     ) {
 
-                        // Bello ejemplar if texto = calvicie
                         if (valor.isEmpty()) {
                             Text(
                                 text = textoSugerido,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = TextoPlaceholder
+                                color = TextoPlaceholder()
                             )
                         }
                         campoInterno()
@@ -97,11 +119,15 @@ internal fun CampoBase(
             }
         )
 
-        MensajeErrorCampo(error)
+        MensajeErrorCampo(
+            error,
+            modifier = if (error == null) Modifier
+            else Modifier.semantics { liveRegion = LiveRegionMode.Polite }
+        )
     }
 }
 
-//para las cajitas. es que no son como 100% blancas pq se ven feas
 
 @Composable
-fun colorCaja(): Color = Blanco.copy(alpha = Dimens.alfaCajaBlanca)
+fun colorCaja(): Color =
+    (if (esModoOscuro()) Negro else Blanco).copy(alpha = Dimens.alfaCajaBlanca)

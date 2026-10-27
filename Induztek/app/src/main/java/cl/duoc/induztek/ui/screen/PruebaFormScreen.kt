@@ -69,6 +69,8 @@ import cl.duoc.induztek.ui.components.fondoPantallaInterna
 import cl.duoc.induztek.viewmodel.PruebaFormsViewModel
 import cl.duoc.induztek.viewmodel.aMega
 import cl.duoc.induztek.viewmodel.formatear
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import cl.duoc.induztek.viewmodel.parametrosDe
 
 
@@ -208,7 +210,7 @@ private fun PruebaFormContent(
                 )
             }
 
-            HorizontalDivider(thickness = Dimens.grosorDivisor, color = LavandaBorde)
+            HorizontalDivider(thickness = Dimens.grosorDivisor, color = LavandaBorde())
 
             CampoSeleccion(
                 valor = instrumentoNombre,
@@ -221,7 +223,7 @@ private fun PruebaFormContent(
             instrumentos.find { "${it.nombre} - ${it.numeroSerie}" == instrumentoNombre }?.let { ins ->
                 Text(
                     stringResource(R.string.form_calibracion, ins.fechaVence.fechaCorta()),
-                    style = MaterialTheme.typography.bodySmall, color = GrisTexto
+                    style = MaterialTheme.typography.bodySmall, color = GrisTexto()
                 )
             }
 
@@ -249,7 +251,10 @@ private fun PruebaFormContent(
         }
 
         FilaVacia(Dimens.salto5)
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.semantics(mergeDescendants = true) { },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(stringResource(R.string.form_no_realizada), Modifier.weight(1f))
             Switch(checked = noRealizada, onCheckedChange = { poner(tipoSel, "noRealizada", if (it) "1" else "0") })
         }
@@ -258,7 +263,7 @@ private fun PruebaFormContent(
         errorGuardado?.let {
             Text(
                 it, Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.bodySmall, color = RojoRechazado, textAlign = TextAlign.Center
+                style = MaterialTheme.typography.bodySmall, color = RojoRechazado(), textAlign = TextAlign.Center
             )
             FilaVacia(Dimens.salto3)
         }
@@ -288,7 +293,8 @@ private fun PruebaFormContent(
     }
 }
 
-// ------------------------------------------------------------------ bloques por tipo
+
+
 
 
 @Composable
@@ -335,7 +341,7 @@ private fun BloqueAislacion(
         stringResource(
             if (con10) R.string.form_rango_esperado else R.string.form_rechazo_minimo
         ),
-        style = MaterialTheme.typography.bodySmall, color = GrisTexto
+        style = MaterialTheme.typography.bodySmall, color = GrisTexto()
     )
 
 
@@ -384,9 +390,10 @@ private fun FilaCalculo(etiqueta: String, valor: String, detalle: String, result
         CajaBordeada(Modifier.weight(3f)) {
             EtiquetaCampo(texto = etiqueta)
             Text(valor, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text(detalle, style = MaterialTheme.typography.bodySmall, color = GrisTexto)
+            Text(detalle, style = MaterialTheme.typography.bodySmall, color = GrisTexto())
         }
-        Text("›", color = GrisTexto, fontWeight = FontWeight.Bold, maxLines = 1)
+        Text("›", color = GrisTexto(), fontWeight = FontWeight.Bold, maxLines = 1,
+            modifier = Modifier.clearAndSetSemantics { })
         CajaBordeada(Modifier.weight(2f).fillMaxHeight(), centrado = true) { CajaResultado(resultado) }
     }
 }
@@ -395,10 +402,10 @@ private fun FilaCalculo(etiqueta: String, valor: String, detalle: String, result
 @Composable
 private fun CajaResultado(resultado: Resultado?) {
     val color = when (resultado) {
-        Resultado.APROBADO -> VerdeAprobado
-        Resultado.OBSERVADO -> NaranjaObservado
-        Resultado.RECHAZADO -> RojoRechazado
-        null -> GrisTexto
+        Resultado.APROBADO -> VerdeAprobado()
+        Resultado.OBSERVADO -> NaranjaObservado()
+        Resultado.RECHAZADO -> RojoRechazado()
+        null -> GrisTexto()
     }
     Text(
         resultado?.nombre ?: stringResource(R.string.resultado_pendiente),
@@ -422,7 +429,7 @@ private fun ComparacionAnterior(
                 Calculos.fmt(Calculos.variacionPct(actual, it), 1)
             )
         } ?: stringResource(R.string.form_sin_anterior),
-        style = MaterialTheme.typography.bodySmall, color = GrisTexto
+        style = MaterialTheme.typography.bodySmall, color = GrisTexto()
     )
 }
 
@@ -490,7 +497,7 @@ private fun BloqueDevanados(
     )
     Text(
         stringResource(R.string.form_sin_criterio),
-        style = MaterialTheme.typography.bodySmall, color = GrisTexto
+        style = MaterialTheme.typography.bodySmall, color = GrisTexto()
     )
     ComparacionAnterior(resistencia, anterior, stringResource(R.string.unidad_mmohm), decimales = 2)
     if (Calculos.esVariacionSignificativa(Calculos.variacionPct(resistencia, anterior))) NotaVariacion()
@@ -557,7 +564,10 @@ private fun BloqueRele(
             Modifier.weight(1f)
         )
     }
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        Modifier.semantics(mergeDescendants = true) { },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Switch(checked = opera, onCheckedChange = onOpera)
         Spacer(Modifier.width(Dimens.salto3))
         Text(stringResource(R.string.form_rele_opera))
@@ -579,11 +589,10 @@ private fun NotaVariacion() {
     Text(
         stringResource(R.string.alerta_variacion),
         Modifier.fillMaxWidth(),
-        style = MaterialTheme.typography.bodySmall, color = RojoRechazado, textAlign = TextAlign.Center
+        style = MaterialTheme.typography.bodySmall, color = RojoRechazado(), textAlign = TextAlign.Center
     )
 }
 
-// ------------------------------------------------------------------ helpers
 
 
 
@@ -651,7 +660,6 @@ private fun relacionTeoricaPlaca(equipo: Equipo): String =
 
 
 
-// previewssssssssssssssssssssssssssssssssssssss
 
 private val TransformadorForm = Equipo(
     idEquipo = 1, idInstalacion = 1, tag = "TR-01", idTipoEquipo = 1, tipoEquipo = "Transformador",

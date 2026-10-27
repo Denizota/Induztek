@@ -27,7 +27,7 @@ fun BotonRedSocial(
         onClick = onClick,
         modifier = modifier.height(Dimens.alturaBotonRedsocial),
         shape = EstilosBotonRedSocial.forma,
-        color = FondoRedSocial,
+        color = FondoRedSocial(),
         shadowElevation = Dimens.elevacionBotonRedsocial
     ) {
         Box(contentAlignment = Alignment.Center){

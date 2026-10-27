@@ -17,7 +17,7 @@ fun BotonChico(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.radioBotonChico),
-        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde),
+        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde()),
         contentPadding = PaddingValues(
             horizontal = Dimens.rellenoBotonChicoH, vertical = Dimens.rellenoBotonChicoV
         ),
@@ -28,3 +28,4 @@ fun BotonChico(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier
         modifier = modifier
     ) { Text(texto, style = MaterialTheme.typography.labelMedium) }
 }
+

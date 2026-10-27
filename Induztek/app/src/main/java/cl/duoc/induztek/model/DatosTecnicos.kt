@@ -1,6 +1,6 @@
 package cl.duoc.induztek.model
 
-//decidi hacer uno para muchos... porque se me iba a llenar el model xd
+
 
 
 data class Instalacion(

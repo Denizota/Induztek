@@ -196,8 +196,8 @@ private fun EquipoContent(
                     )
                     Column(Modifier.weight(1f).padding(horizontal = Dimens.salto3)) {
                         Text(tipo.nombre, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-                        Text(pistaPrueba(tipo, hechas, equipo), style = MaterialTheme.typography.bodySmall, color = GrisTexto)
-                        Text(estadoPrueba(hechas, resultado), style = MaterialTheme.typography.bodySmall, color = GrisTexto)
+                        Text(pistaPrueba(tipo, hechas, equipo), style = MaterialTheme.typography.bodySmall, color = GrisTexto())
+                        Text(estadoPrueba(hechas, resultado), style = MaterialTheme.typography.bodySmall, color = GrisTexto())
                     }
                     if (editable) {
                         if (hechas.isEmpty()) {
@@ -206,7 +206,7 @@ private fun EquipoContent(
                             TextButton(onClick = { onRegistrarPrueba(tipo) }) {
                                 Text(
                                     stringResource(R.string.ficha_editar),
-                                    style = MaterialTheme.typography.labelMedium, color = GrisTexto
+                                    style = MaterialTheme.typography.labelMedium, color = GrisTexto()
                                 )
                             }
                         }
@@ -249,7 +249,7 @@ private fun EquipoContent(
                                 R.string.ficha_resumen_calibrado,
                                 fechaCalibracion(p) ?: stringResource(R.string.ficha_fecha_sin_dato)
                             ),
-                            style = MaterialTheme.typography.bodySmall, color = GrisTexto
+                            style = MaterialTheme.typography.bodySmall, color = GrisTexto()
                         )
                         FilaVacia(Dimens.salto7)
                     }
@@ -286,7 +286,7 @@ private fun EquipoContent(
                             }
                         ),
                         style = MaterialTheme.typography.bodySmall,
-                        color = GrisTexto,
+                        color = GrisTexto(),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -333,7 +333,7 @@ private fun EquipoContent(
                         FilaVacia(Dimens.salto3)
                         Text(
                             stringResource(R.string.ficha_devuelto, motivoGuardado),
-                            style = MaterialTheme.typography.bodySmall, color = RojoRechazado
+                            style = MaterialTheme.typography.bodySmall, color = RojoRechazado()
                         )
                     }
                 }
@@ -346,7 +346,7 @@ private fun EquipoContent(
                             R.string.ficha_no_editable,
                             protocolo.estado.nombre.lowercase()
                         ),
-                        style = MaterialTheme.typography.bodySmall, color = GrisTexto,
+                        style = MaterialTheme.typography.bodySmall, color = GrisTexto(),
                         textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
                     )
                     FilaVacia(Dimens.salto4)
@@ -372,7 +372,7 @@ private fun Divisor() {
         Modifier
             .fillMaxWidth()
             .height(Dimens.grosorDivisor)
-            .background(LavandaBorde)
+            .background(LavandaBorde())
     )
 }
 
@@ -385,7 +385,7 @@ private fun DivisorVertical() {
         Modifier
             .width(Dimens.grosorDivisor)
             .height(Dimens.altoDivisorColumna)
-            .background(LavandaBorde)
+            .background(LavandaBorde())
     )
 }
 
@@ -394,12 +394,12 @@ private fun DivisorVertical() {
 @Composable
 private fun ColumnaValor(clave: String, valor: String, sufijo: String, modifier: Modifier = Modifier) {
     Column(modifier.padding(horizontal = Dimens.salto4)) {
-        Text(clave, style = MaterialTheme.typography.labelSmall, color = GrisTexto)
+        Text(clave, style = MaterialTheme.typography.labelSmall, color = GrisTexto())
         FilaVacia(Dimens.salto1)
         Row(verticalAlignment = Alignment.Bottom) {
             Text(valor, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Spacer(Modifier.width(Dimens.salto2))
-            Text(sufijo, style = MaterialTheme.typography.labelSmall, color = GrisTexto)
+            Text(sufijo, style = MaterialTheme.typography.labelSmall, color = GrisTexto())
         }
     }
 }
@@ -535,7 +535,7 @@ private fun FilaSpec(vararg columnas: Pair<String, String>) {
     Row(Modifier.fillMaxWidth()) {
         columnas.forEach { (clave, valor) ->
             Column(Modifier.weight(1f)) {
-                Text(clave, style = MaterialTheme.typography.labelSmall, color = GrisTexto)
+                Text(clave, style = MaterialTheme.typography.labelSmall, color = GrisTexto())
                 Text(valor, style = MaterialTheme.typography.bodyMedium)
             }
         }
@@ -595,7 +595,7 @@ fun ContraPruebasAnteriores(historial: List<Triple<String, String, Double>>) {
         TextButton(onClick = { }) {
             Text(
                 stringResource(R.string.ficha_contra_ver),
-                style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                style = MaterialTheme.typography.labelSmall, color = GrisTexto()
             )
         }
     }
@@ -603,22 +603,22 @@ fun ContraPruebasAnteriores(historial: List<Triple<String, String, Double>>) {
     if (historial.isEmpty()) {
         Text(
             stringResource(R.string.ficha_contra_sin_historial),
-            style = MaterialTheme.typography.bodySmall, color = GrisTexto
+            style = MaterialTheme.typography.bodySmall, color = GrisTexto()
         )
         return
     }
     Row(Modifier.fillMaxWidth().padding(vertical = Dimens.salto3)) {
         Text(
             stringResource(R.string.ficha_anio), Modifier.weight(1f),
-            style = MaterialTheme.typography.labelSmall, color = GrisTexto
+            style = MaterialTheme.typography.labelSmall, color = GrisTexto()
         )
         Text(
             stringResource(R.string.ficha_contra_col_1min), Modifier.weight(1f),
-            style = MaterialTheme.typography.labelSmall, color = GrisTexto
+            style = MaterialTheme.typography.labelSmall, color = GrisTexto()
         )
         Text(
             stringResource(R.string.ficha_contra_col_variacion), Modifier.weight(1f),
-            style = MaterialTheme.typography.labelSmall, color = GrisTexto, textAlign = TextAlign.End
+            style = MaterialTheme.typography.labelSmall, color = GrisTexto(), textAlign = TextAlign.End
         )
     }
     Divisor()
@@ -635,7 +635,7 @@ fun ContraPruebasAnteriores(historial: List<Triple<String, String, Double>>) {
                 varPct?.let { stringResource(R.string.valor_porcentaje, Calculos.fmt(it, 1)) } ?: "-",
                 Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (significativa) RojoRechazado else Color.Unspecified,
+                color = if (significativa) RojoRechazado() else Color.Unspecified,
                 fontWeight = if (significativa) FontWeight.SemiBold else FontWeight.Normal,
                 textAlign = TextAlign.End
             )
@@ -647,14 +647,12 @@ fun ContraPruebasAnteriores(historial: List<Triple<String, String, Double>>) {
         FilaVacia(Dimens.salto4)
         Text(
             stringResource(R.string.alerta_variacion),
-            style = MaterialTheme.typography.bodySmall, color = RojoRechazado,
+            style = MaterialTheme.typography.bodySmall, color = RojoRechazado(),
             textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
-// ------------------------------------------------------------------ previews
-//es necesaria la base de datos ok... !! no quieren saber como se ve sin base de datos.. :,v
 
 
 

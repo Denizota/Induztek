@@ -20,7 +20,7 @@ fun CajaBordeada(
     Column(
         modifier
             .background(colorCaja(), RoundedCornerShape(Dimens.radioCaja))
-            .border(Dimens.bordeCampo, LavandaBorde, RoundedCornerShape(Dimens.radioCaja))
+            .border(Dimens.bordeCampo, LavandaBorde(), RoundedCornerShape(Dimens.radioCaja))
             .padding(Dimens.rellenoCaja),
         verticalArrangement = if (centrado) Arrangement.Center else Arrangement.Top
     ) { content() }

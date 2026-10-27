@@ -23,7 +23,7 @@ fun FondoInicio(
     modifier: Modifier = Modifier,
     contenido: @Composable BoxScope.() -> Unit
 ) {
-    Box(modifier = modifier.fillMaxSize().background(FondoPantalla)) {
+    Box(modifier = modifier.fillMaxSize().background(FondoPantalla())) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -42,7 +42,6 @@ fun FondoInicio(
                     .background(Blanco.copy(alpha = Dimens.opacidadVelo))
             )
 
-            //Ultra mega gugleado
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -50,7 +49,7 @@ fun FondoInicio(
                         Brush.verticalGradient(
                             0f to Color.Transparent,
                             Dimens.inicioDifuminado to Color.Transparent,
-                            1f to FondoPantalla
+                            1f to FondoPantalla()
                         )
                     )
             )

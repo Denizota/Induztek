@@ -24,19 +24,19 @@ fun EncabezadoInicio(
             Text(
                 text = stringResource(R.string.nombre_empresa),
                 style = MaterialTheme.typography.labelLarge,
-                color = TextoGris
+                color = TextoGris()
             )
         }
         Text(
             text = titulo,
             style = MaterialTheme.typography.titleLarge,
-            color = TextoGris
+            color = TextoGris()
         )
         if (subtitulo.isNotEmpty()) {
             Text(
                 text = subtitulo,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextoGris
+                color = TextoGris()
             )
         }
     }

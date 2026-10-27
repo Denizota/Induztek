@@ -35,13 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.induztek.R
 import cl.duoc.induztek.data.fechaCorta
@@ -59,6 +59,7 @@ import cl.duoc.induztek.ui.components.CampoTexto
 import cl.duoc.induztek.ui.components.CirculoPrueba
 import cl.duoc.induztek.ui.components.EncabezadoPantalla
 import cl.duoc.induztek.ui.components.FilaVacia
+import cl.duoc.induztek.ui.theme.Blanco
 import cl.duoc.induztek.ui.theme.Dimens
 import cl.duoc.induztek.ui.theme.FondoFilaTabla
 import cl.duoc.induztek.ui.theme.GrisTexto
@@ -67,9 +68,9 @@ import cl.duoc.induztek.ui.theme.LavandaBorde
 import cl.duoc.induztek.ui.theme.NaranjaObservado
 import cl.duoc.induztek.ui.theme.RojoRechazado
 import cl.duoc.induztek.ui.theme.VerdeAprobado
+import cl.duoc.induztek.ui.theme.esModoOscuro
 import cl.duoc.induztek.ui.components.colorCaja
 import cl.duoc.induztek.ui.components.fondoPantallaInterna
-import cl.duoc.induztek.ui.theme.InduztekTheme
 import cl.duoc.induztek.viewmodel.ActaViewModel
 import kotlinx.coroutines.launch
 
@@ -125,17 +126,18 @@ fun ActaScreen(
             Modifier
                 .fillMaxWidth()
                 .background(colorCaja(), RoundedCornerShape(Dimens.radioActa))
-                .border(Dimens.bordeCampo, LavandaBorde, RoundedCornerShape(Dimens.radioActa))
+                .border(Dimens.bordeCampo, LavandaBorde(), RoundedCornerShape(Dimens.radioActa))
         ) {
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .background(LavandaActa, RoundedCornerShape(topStart = Dimens.radioActa, topEnd = Dimens.radioActa))
+                    .background(LavandaActa(), RoundedCornerShape(topStart = Dimens.radioActa, topEnd = Dimens.radioActa))
                     .padding(Dimens.rellenoCaja)
             ) {
                 Text(
                     stringResource(R.string.acta_empresa),
-                    style = MaterialTheme.typography.labelSmall, color = GrisTexto
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (esModoOscuro()) Blanco.copy(alpha = 0.72f) else GrisTexto()
                 )
                 Text(
                     stringResource(R.string.acta_titulo_acta),
@@ -145,7 +147,7 @@ fun ActaScreen(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .background(FondoFilaTabla)
+                    .background(FondoFilaTabla())
                     .padding(vertical = Dimens.salto2),
                 contentAlignment = Alignment.Center
             ) {
@@ -204,7 +206,7 @@ fun ActaScreen(
                             )
                             Text(
                                 stringResource(R.string.acta_protocolo, pr.numero),
-                                style = MaterialTheme.typography.bodySmall, color = GrisTexto
+                                style = MaterialTheme.typography.bodySmall, color = GrisTexto()
                             )
                         }
                         Text(
@@ -263,7 +265,7 @@ fun ActaScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_candado),
                                 contentDescription = stringResource(R.string.cd_fecha_bloqueada),
-                                tint = GrisTexto,
+                                tint = GrisTexto(),
                                 modifier = Modifier.size(Dimens.tamanoIconoCampo)
                             )
                         }
@@ -324,7 +326,7 @@ fun ActaScreen(
 @Composable
 private fun ColumnaDato(clave: String, valor: String, modifier: Modifier = Modifier) {
     Column(modifier) {
-        Text(clave, style = MaterialTheme.typography.labelSmall, color = GrisTexto)
+        Text(clave, style = MaterialTheme.typography.labelSmall, color = GrisTexto())
         Text(valor, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
     }
 }
@@ -339,15 +341,17 @@ private fun FilaActa(
     Row(
         Modifier
             .fillMaxWidth()
-            .background(FondoFilaTabla, RoundedCornerShape(Dimens.radioSegmento))
-            .padding(horizontal = Dimens.salto3, vertical = Dimens.salto2),
+            .background(FondoFilaTabla(), RoundedCornerShape(Dimens.radioSegmento))
+            .padding(horizontal = Dimens.salto3, vertical = Dimens.salto2)
+            // la fila se lee de una sola vez: número, prueba, detalle y estado juntos
+            .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically
     ) {
         CirculoPrueba(numero, resultado, noRealizada)
         Spacer(Modifier.width(Dimens.salto3))
         Column(Modifier.weight(1f)) {
             Text(titulo, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
-            Text(detalle, style = MaterialTheme.typography.labelSmall, color = GrisTexto)
+            Text(detalle, style = MaterialTheme.typography.labelSmall, color = GrisTexto())
         }
         Text(
             estado,
@@ -360,11 +364,12 @@ private fun FilaActa(
 
 
 
+@Composable
 private fun colorResultado(resultado: Resultado?): Color = when (resultado) {
-    Resultado.APROBADO -> VerdeAprobado
-    Resultado.OBSERVADO -> NaranjaObservado
-    Resultado.RECHAZADO -> RojoRechazado
-    null -> GrisTexto
+    Resultado.APROBADO -> VerdeAprobado()
+    Resultado.OBSERVADO -> NaranjaObservado()
+    Resultado.RECHAZADO -> RojoRechazado()
+    null -> GrisTexto()
 }
 
 

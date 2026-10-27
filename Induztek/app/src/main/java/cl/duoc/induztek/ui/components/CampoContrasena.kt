@@ -57,7 +57,7 @@ fun CampoContrasena(
                     contentDescription = stringResource(
                         if (visible) R.string.cd_ocultar_contrasena else R.string.cd_mostrar_contrasena
                     ),
-                    tint = IconoCampo,
+                    tint = IconoCampo(),
                     modifier = Modifier.size(Dimens.tamanoIconoCampo)
                 )
             }

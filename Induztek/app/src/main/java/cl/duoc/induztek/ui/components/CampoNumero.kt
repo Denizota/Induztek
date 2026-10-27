@@ -35,7 +35,7 @@ fun CampoNumero(
         contenidoFinal = if (sufijo.isNotEmpty()) {
             {
                 Text(
-                    sufijo, color = GrisTexto, style = MaterialTheme.typography.bodySmall,
+                    sufijo, color = GrisTexto(), style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(start = Dimens.salto2)
                 )
             }

@@ -26,7 +26,6 @@ import cl.duoc.induztek.ui.screen.PuenteScreen
 import cl.duoc.induztek.ui.screen.EquipoScreen
 import cl.duoc.induztek.ui.screen.PruebaFormScreen
 
-// Pantallas nuevas
 import cl.duoc.induztek.ui.screen.ListaMensajesScreen
 import cl.duoc.induztek.ui.screen.ChatIndividualScreen
 import cl.duoc.induztek.ui.screen.DetallesChatScreen
@@ -74,7 +73,8 @@ fun AppNavegacion() {
         )
     }
 
-    // INICIAR SESION
+
+
     fun entrar(nuevoUsuario: Usuario) {
         usuario = nuevoUsuario
         sesion.guardar(nuevoUsuario.idUsuario)
@@ -87,7 +87,8 @@ fun AppNavegacion() {
         }
     }
 
-    // CERRAR SESION
+
+
     fun salir() {
         sesion.borrar()
         usuario = null
@@ -110,7 +111,9 @@ fun AppNavegacion() {
             }
     ) {
 
-        // 1. LOGIN
+
+
+
         composable(Ruta.Login.ruta) {
 
             val vm: LoginViewModel = viewModel()
@@ -130,7 +133,8 @@ fun AppNavegacion() {
             )
         }
 
-        // 2. SOLICITAR ACCESO
+
+
         composable(Ruta.SolicitarAcceso.ruta) {
 
             SolicitarAccesoScreen(
@@ -143,7 +147,8 @@ fun AppNavegacion() {
             )
         }
 
-        // 3. INICIO
+
+
         composable(Ruta.Inicio.ruta) {
 
             InicioScreen(
@@ -168,7 +173,9 @@ fun AppNavegacion() {
             )
         }
 
-        // 4. LISTADO DE EQUIPOS
+
+
+
         composable(Ruta.Puente.ruta) {
 
             PuenteScreen(
@@ -183,7 +190,9 @@ fun AppNavegacion() {
             )
         }
 
-        // 5. LISTA DE MENSAJES
+
+
+
         composable(Ruta.Mensajes.ruta) {
 
             val actual = usuario ?: return@composable
@@ -201,7 +210,9 @@ fun AppNavegacion() {
             )
         }
 
-        // 6. CHAT INDIVIDUAL
+
+
+
         composable(
             route = "${Ruta.Chat.ruta}/{idContacto}",
             arguments = listOf(
@@ -231,7 +242,8 @@ fun AppNavegacion() {
             )
         }
 
-        // 7. DETALLES DEL CHAT
+
+
         composable(
             route = "${Ruta.DetallesChat.ruta}/{idContacto}",
             arguments = listOf(
@@ -256,7 +268,9 @@ fun AppNavegacion() {
             )
         }
 
-        // 8. PERFIL
+
+
+
         composable(Ruta.Perfil.ruta) {
 
             val actual = usuario ?: return@composable
@@ -287,7 +301,8 @@ fun AppNavegacion() {
             )
         }
 
-        // 9. EDITAR PERFIL
+
+
         composable(Ruta.EditarPerfil.ruta) {
 
             val actual = usuario ?: return@composable
@@ -306,7 +321,8 @@ fun AppNavegacion() {
             )
         }
 
-        // 10. PERSONAL E HISTORIAL
+
+
         composable(Ruta.Personal.ruta) {
 
             val actual = usuario ?: return@composable
@@ -324,7 +340,9 @@ fun AppNavegacion() {
             )
         }
 
-        // 11. VALIDACION Y REGISTRO
+
+
+
         composable(Ruta.Validacion.ruta) {
 
             val actual = usuario ?: return@composable
@@ -337,7 +355,8 @@ fun AppNavegacion() {
             )
         }
 
-        // 12. DETALLE DE EQUIPO
+
+
         composable(
             route = "${Ruta.Equipo.ruta}/{idEquipo}",
             arguments = listOf(
@@ -365,13 +384,15 @@ fun AppNavegacion() {
                     )
                 },
                 onIrActa = {
-                    // Pendiente: conectar ActaScreen
-                    // cuando esté implementada.
+
+
                 }
             )
         }
 
-        // 13. FORMULARIO DE PRUEBAS
+
+
+
         composable(
             route = "${Ruta.Prueba.ruta}/{idEquipo}/{tipo}",
             arguments = listOf(

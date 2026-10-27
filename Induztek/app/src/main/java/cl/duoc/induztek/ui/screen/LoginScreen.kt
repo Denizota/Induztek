@@ -3,7 +3,6 @@ package cl.duoc.induztek.ui.screen
 
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -103,7 +102,7 @@ fun LoginContent(
             Text(
                 text = stringResource(R.string.texto_entrar_como),
                 style = MaterialTheme.typography.labelSmall,
-                color = TextoGris
+                color = TextoGris()
             )
             uiState.perfiles.forEach { perfil ->
                 Row(
@@ -121,12 +120,11 @@ fun LoginContent(
                     Text(
                         text = perfil.nombre,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextoGris,
+                        color = TextoGris(),
                         modifier = Modifier.weight(1f)
                     )
-                    Text(text = ">", color = TextoGris)
+                    Text(text = ">", color = TextoGris())
                 }
-                //es como hr de ache te me ele uf
                 HorizontalDivider()
             }
 
@@ -134,7 +132,7 @@ fun LoginContent(
             Text(
                 text = stringResource(R.string.texto_o_correo),
                 style = MaterialTheme.typography.labelSmall,
-                color = TextoGris
+                color = TextoGris()
             )
 
             Spacer(Modifier.height(Dimens.espacioDespuesTextoCorreo))
@@ -162,7 +160,7 @@ fun LoginContent(
             Text(
                 text = stringResource(R.string.enlace_olvido),
                 style = MaterialTheme.typography.bodySmall,
-                color = TextoOlvido,
+                color = TextoOlvido(),
                 modifier = Modifier
                     .padding(top = Dimens.espacioMini)
                     .clickable(role = Role.Button, onClick = onOlvideContrasena)
@@ -182,14 +180,15 @@ fun LoginContent(
             Text(
                 text = stringResource(R.string.texto_o_redes),
                 style = MaterialTheme.typography.bodySmall,
-                color = TextoGris,
+                color = TextoGris(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(Dimens.espacioTextoRedes))
 
-            // Los 3 cuadros q todavía no hacen nada...
+
+
             Row (
                 modifier = Modifier
                     .fillMaxWidth(EstilosBotonRedSocial.anchoRelativoDelGrupo)

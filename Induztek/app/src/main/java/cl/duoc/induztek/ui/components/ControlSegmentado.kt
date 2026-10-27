@@ -1,6 +1,5 @@
 package cl.duoc.induztek.ui.components
 
-// Control segmentado kΩ / MΩ / GΩ del formulario de aislación.
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import cl.duoc.induztek.ui.theme.Dimens
+import cl.duoc.induztek.ui.theme.FondoPantalla
 import cl.duoc.induztek.ui.theme.GrisTexto
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
 import cl.duoc.induztek.ui.theme.LavandaSuave
 
 @Composable
@@ -27,7 +30,7 @@ fun ControlSegmentado(opciones: List<String>, seleccionado: String, onSeleccion:
     Row(
         Modifier
             .fillMaxWidth()
-            .background(LavandaSuave, RoundedCornerShape(Dimens.radioSegmento))
+            .background(LavandaSuave(), RoundedCornerShape(Dimens.radioSegmento))
             .padding(Dimens.salto1),
         horizontalArrangement = Arrangement.spacedBy(Dimens.salto1)
     ) {
@@ -38,17 +41,18 @@ fun ControlSegmentado(opciones: List<String>, seleccionado: String, onSeleccion:
                     .weight(1f)
                     .height(Dimens.alturaSegmento)
                     .background(
-                        if (activo) Color.White else Color.Transparent,
+                        if (activo) FondoPantalla() else Color.Transparent,
                         RoundedCornerShape(Dimens.radioSegmento)
                     )
-                    .clickable { onSeleccion(op) },
+                    .clickable(role = Role.RadioButton) { onSeleccion(op) }
+                    .semantics { selected = activo },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     op,
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = if (activo) FontWeight.SemiBold else FontWeight.Normal,
-                    color = if (activo) MaterialTheme.colorScheme.primary else GrisTexto
+                    color = if (activo) MaterialTheme.colorScheme.primary else GrisTexto()
                 )
             }
         }
