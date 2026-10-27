@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cl.duoc.induztek.model.TipoPrueba
 import cl.duoc.induztek.model.Usuario
+import cl.duoc.induztek.ui.screen.ActaScreen
 import cl.duoc.induztek.ui.screen.EquipoScreen
 import cl.duoc.induztek.ui.screen.LoginScreen
 import cl.duoc.induztek.ui.screen.PruebaFormScreen
@@ -23,6 +24,7 @@ import cl.duoc.induztek.viewmodel.LoginViewModel
 
 private fun rutaEquipo(id: Int) = "${Ruta.Equipo.ruta}/$id"
 private fun rutaPrueba(id: Int, tipo: TipoPrueba) = "${Ruta.Prueba.ruta}/$id/${tipo.name}"
+private fun rutaActa(idVisita: Int) = "${Ruta.Acta.ruta}/$idVisita"
 
 @Composable
 fun AppNavegacion() {
@@ -31,7 +33,6 @@ fun AppNavegacion() {
 
     fun entrar(u: Usuario) {
         usuario = u
-        // el login se borra del historial: atrás no debe devolverlo
         navController.navigate(Ruta.Puente.ruta) { popUpTo(Ruta.Login.ruta) { inclusive = true } }
     }
 
@@ -72,7 +73,7 @@ fun AppNavegacion() {
                 usuario = usuario ?: return@composable,
                 onAtras = { navController.popBackStack() },
                 onRegistrarPrueba = { tipo -> navController.navigate(rutaPrueba(id, tipo)) },
-                onIrActa = { }
+                onIrActa = { idVisita -> navController.navigate(rutaActa(idVisita)) }
             )
         }
 
@@ -92,6 +93,19 @@ fun AppNavegacion() {
                 usuario = usuario ?: return@composable,
                 onAtras = { navController.popBackStack() },
                 onGuardado = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            "${Ruta.Acta.ruta}/{idVisita}",
+            arguments = listOf(navArgument("idVisita") { type = NavType.IntType })
+        ) { backStack ->
+            val idVisita = backStack.arguments?.getInt("idVisita") ?: return@composable
+            ActaScreen(
+                idVisita = idVisita,
+                usuario = usuario ?: return@composable,
+                esCliente = false,
+                onAtras = { navController.popBackStack() }
             )
         }
     }

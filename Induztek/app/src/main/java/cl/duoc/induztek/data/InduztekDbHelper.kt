@@ -680,7 +680,7 @@ class InduztekDbHelper private constructor(context: Context) :
         )
 
         if (rol == Rol.TECNICO && creador != idUsuario) error(
-            "Este protocolo lo abrió otra persona. Un técnico solo puede editar los protocolos que creó (RN-17)."
+            "Este protocolo lo abrió otra persona. Un técnico solo puede editar los protocolos que creó."
         )
         return protocoloPorId(idProtocolo)!!
     }
@@ -703,7 +703,7 @@ class InduztekDbHelper private constructor(context: Context) :
             .use { if (it.moveToFirst()) it.getInt(0) else 0 } + 1
         return db.insert(
             "visita", null, ContentValues().apply {
-                put("numero_ot", "OT-anio-{1300 + sec}")
+                put("numero_ot", "OT-$anio-${1300 + sec}")
                 put("id_instalacion", equipo.idInstalacion)
                 put("fecha", fechaHoy())
                 put("tipo_visita", "SOLO_PRUEBAS")
@@ -751,7 +751,7 @@ class InduztekDbHelper private constructor(context: Context) :
             "SELECT MAX(numero) FROM protocolo WHERE numero LIKE 'PT-$anio-%'", null
         ).use { if (it.moveToFirst()) it.getString(0) else null }
         val seq = max?.substringAfterLast("-")?.toIntOrNull() ?: 400
-        return "PT-anio-{seq + 1}"
+        return "PT-$anio-${seq + 1}"
     }
 
 
@@ -873,9 +873,9 @@ class InduztekDbHelper private constructor(context: Context) :
         val desde = EstadoProtocolo.entries.first { it.codigo == actual }
         val permiso = transicionPermitida(desde, nuevo, rolDe(idUsuario))
         if (!permiso.first) error(permiso.second)
-        // RN-04: devolver con observación y anular exigen motivo escrito
+
         if (motivo.isBlank() && (nuevo == EstadoProtocolo.OBSERVADO || nuevo == EstadoProtocolo.ANULADO))
-            error("El ${nuevo.nombre.lowercase()} requiere escribir un motivo (RN-04).")
+            error("El ${nuevo.nombre.lowercase()} requiere escribir un motivo.")
         db.execSQL(
             "UPDATE protocolo SET estado=? WHERE id_protocolo=?", arrayOf(nuevo.codigo, idProtocolo.toString())
         )
@@ -893,17 +893,17 @@ class InduztekDbHelper private constructor(context: Context) :
         val oficina = rol == Rol.INGENIERO || rol == Rol.JEFE_TECNICO
         return when {
             desde == EstadoProtocolo.FORMALIZADO ->
-                false to "Un protocolo formalizado no se modifica ni se anula (RN-04)."
+                false to "Un protocolo formalizado no se modifica ni se anula."
             hacia == EstadoProtocolo.REGISTRADO &&
                     (desde == EstadoProtocolo.BORRADOR || desde == EstadoProtocolo.OBSERVADO) ->
-                if (terreno) true to "" else false to "Solo un técnico o un ingeniero pueden registrar en terreno (RN-04)."
+                if (terreno) true to "" else false to "Solo un técnico o un ingeniero pueden registrar en terreno."
             hacia == EstadoProtocolo.FORMALIZADO && desde == EstadoProtocolo.REGISTRADO ->
-                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico pueden formalizar (RN-04)."
+                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico pueden formalizar."
             hacia == EstadoProtocolo.OBSERVADO && desde == EstadoProtocolo.REGISTRADO ->
-                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico devuelven con observación (RN-04)."
+                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico devuelven con observación."
             hacia == EstadoProtocolo.ANULADO ->
-                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico pueden anular (RN-04)."
-            else -> false to "La transición ${desde.nombre} → ${hacia.nombre} no existe (RN-04)."
+                if (oficina) true to "" else false to "Solo el ingeniero o el jefe técnico pueden anular."
+            else -> false to "La transición ${desde.nombre} → ${hacia.nombre} no existe."
         }
     }
 
@@ -945,6 +945,7 @@ class InduztekDbHelper private constructor(context: Context) :
         }
 
 
+
     fun instalacionPorId(id: Int): Instalacion? =
         writableDatabase.rawQuery(
             "SELECT i.id_instalacion,i.id_usuario_cliente,i.nombre,i.ubicacion,i.comuna,i.observaciones_acceso,u.nombre " +
@@ -959,6 +960,48 @@ class InduztekDbHelper private constructor(context: Context) :
 
     fun protocolosDeVisita(idVisita: Int): List<Protocolo> =
         listarProtocolos().filter { it.idVisita == idVisita }
+
+    fun protocolosDeVisitaCliente(idVisita: Int, idEmpresa: Int): List<Protocolo> {
+        val esDeLaEmpresa = writableDatabase.rawQuery(
+            "SELECT 1 FROM visita v JOIN instalacion i ON i.id_instalacion=v.id_instalacion " +
+                    "WHERE v.id_visita=? AND i.id_usuario_cliente=?",
+            arrayOf(idVisita.toString(), idEmpresa.toString())
+        ).use { it.moveToFirst() }
+        return if (esDeLaEmpresa) protocolosDeVisita(idVisita) else emptyList()
+    }
+
+
+    fun recepcionDeVisita(idVisita: Int): RecepcionActa? =
+        writableDatabase.rawQuery(
+            "SELECT receptor_nombre," +
+                    "receptor_rut," +
+                    "receptor_cargo," +
+                    "fecha_hora_recepcion FROM recepcion_acta " +
+                    "WHERE id_visita=?",
+            arrayOf(idVisita.toString())
+        ).use { c ->
+            if (!c.moveToFirst()) null
+            else RecepcionActa(c.getString(0), c.getString(1), c.getString(2), c.getString(3))
+        }
+
+
+    fun cerrarVisita(idVisita: Int, nombre: String, rut: String, cargo: String) {
+        val db = writableDatabase
+        val pendientes = protocolosDeVisita(idVisita)
+            .filter { it.estado != EstadoProtocolo.REGISTRADO && it.estado != EstadoProtocolo.ANULADO }
+        if (pendientes.isNotEmpty()) error(
+            "Faltan protocolos por registrar en terreno: " +
+                    pendientes.joinToString { "${it.equipoTag} (${it.estado.nombre.lowercase()})" } + "."
+        )
+        val ahora = fechaHoraAhora()
+        db.execSQL(
+            "INSERT OR REPLACE INTO recepcion_acta VALUES(?,?,?,?,?)",
+            arrayOf(idVisita, nombre, rut, cargo, ahora)
+        )
+        db.execSQL(
+            "UPDATE visita SET fecha_hora_cierre=? WHERE id_visita=?", arrayOf(ahora, idVisita.toString())
+        )
+    }
 }
 
 

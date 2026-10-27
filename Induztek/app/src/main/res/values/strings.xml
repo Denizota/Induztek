@@ -138,12 +138,12 @@
     <string name="cliente_ultima_visita">Última visita</string>
     <string name="cliente_por_formalizar">Por formalizar</string>
     <string name="cliente_formalizada">Formalizada</string>
-    <string name="cliente_entrega_mismo_dia">Acta entregada el mismo día a las %1s,%2d equipos probados</string>
-    <string name="cliente_entrega_fecha">Acta entregada el %1salas%2s, %3$d equipos probados</string>
+    <string name="cliente_entrega_mismo_dia">Acta entregada el mismo día a las %1$s, %2$d equipos probados</string>
+    <string name="cliente_entrega_fecha">Acta entregada el %1$s a las %2$s, %3$d equipos probados</string>
     <string name="cliente_ver_acta">Ver acta</string>
     <string name="cliente_pdf">(PDF)</string>
     <string name="cliente_buscar">Buscar por usuario o publicación</string>
-    <string name="cliente_fila_ultima_prueba">%1s/Últimaprueba%2s</string>
+    <string name="cliente_fila_ultima_prueba">%1$s / Última prueba %2$s</string>
     <string name="cliente_nav_equipos">Mis equipos</string>
     <string name="cliente_nav_chat">Chat</string>
     <string name="cliente_nav_perfil">Perfil</string>
@@ -153,13 +153,13 @@
     <string name="cliente_como_viene">Cómo viene la aislación?</string>
     <string name="cliente_lectura_at_t">"Lectura a 1 min devanado AT-T  MΩ"</string>
     <string name="cliente_sin_datos">Sin datos de aislación aún</string>
-    <string name="cliente_lectura_bajo">La lectura bajó %1s%%conrespectoalaño%2s.</string>
-    <string name="cliente_lectura_subio">La lectura subió %1s%%conrespectoalaño%2s.</string>
+    <string name="cliente_lectura_bajo">La lectura bajó %1$s%% con respecto al año %2$s.</string>
+    <string name="cliente_lectura_subio">La lectura subió %1$s%% con respecto al año %2$s.</string>
     <string name="cliente_ingeniero_revisa">El ingeniero a cargo, %1$s, está revisando este resultado.</string>
     <string name="cliente_historial">Historial de pruebas</string>
     <string name="cliente_sin_aislacion">Sin aislación</string>
-    <string name="cliente_detalle_vs">%1sMΩ·%2s vs %3$s</string>
-    <string name="cliente_detalle_primero">%1sMΩ·%2s, primer registro</string>
+    <string name="cliente_detalle_vs">%1$s MΩ · %2$s vs %3$s</string>
+    <string name="cliente_detalle_primero">%1$s MΩ · %2$s, primer registro</string>
     <string name="cliente_consultar_chat">Consultar por chat</string>
 
     <string name="acta_titulo_acta">Acta de prueba en terreno</string>
@@ -179,11 +179,11 @@
     <string name="acta_registrada">Registrada</string>
     <string name="acta_no_realizada">No realizada: %1$s</string>
     <string name="acta_sin_motivo">sin motivo indicado</string>
-    <string name="acta_det_aislacion">"%1s%2s / %3sMΩIP%4s"</string>
-    <string name="acta_det_ttr">Tap %1s·teórica%2s / medida %3s·error%4s%%</string>
-    <string name="acta_det_devanados">%1s%2s mΩ (resultado manual, RN-08c)</string>
-    <string name="acta_det_contactos">%1s%2s µΩ</string>
-    <string name="acta_det_rele">%1s%2s ms (esperado %3sms)a%4s A</string>
+    <string name="acta_det_aislacion">"%1$s %2$s / %3$s MΩ IP %4$s"</string>
+    <string name="acta_det_ttr">Tap %1$s · teórica %2$s / medida %3$s · error %4$s%%</string>
+    <string name="acta_det_devanados">%1$s %2$s mΩ (resultado manual)</string>
+    <string name="acta_det_contactos">%1$s %2$s µΩ</string>
+    <string name="acta_det_rele">%1$s %2$s ms (esperado %3$s ms) a %4$s A</string>
     <string name="acta_quien_recibe">Quien recibe por parte del cliente</string>
     <string name="acta_campo_nombre">Nombre</string>
     <string name="acta_campo_rut">RUT</string>
@@ -191,8 +191,10 @@
     <string name="acta_campo_cargo">Cargo</string>
     <string name="acta_btn_cerrar">Cerrar visita y entregar acta</string>
     <string name="acta_err_nombre">Ingresa el nombre de quien recibe</string>
-    <string name="acta_err_rut">RUT inválido (dígito verificador no coincide, RN-03)</string>
+    <string name="acta_err_rut">RUT inválido: el dígito verificador no coincide</string>
     <string name="acta_err_cargo">Ingresa el cargo</string>
+    <string name="cd_fecha_bloqueada">La fecha la pone el sistema, no se escribe</string>
+    <string name="acta_err_pendientes">Faltan protocolos por registrar en terreno: %1$s.</string>
     <string name="acta_ok">Acta entregada y visita cerrada.</string>
     <string name="acta_btn_pdf">Compartir acta en PDF</string>
     <string name="acta_no_pdf">Exportar a PDF no está disponible en esta versión.</string>
@@ -201,7 +203,7 @@
     <string name="ficha_tensiones">Tensiones</string>
     <string name="ficha_anio">Año</string>
     <string name="ficha_valor_kva">%1$s kVA</string>
-    <string name="ficha_valor_tensiones">%1s/%2s kV</string>
+    <string name="ficha_valor_tensiones">%1$s / %2$s kV</string>
     <string name="ficha_temperatura_ambiente">Temperatura ambiente</string>
     <string name="ficha_humedad">Humedad</string>
     <string name="ficha_pruebas_realizadas">Pruebas realizadas:</string>
@@ -212,14 +214,14 @@
     <string name="ficha_estado_sin_resultado">sin resultado</string>
     <string name="ficha_pista_aislacion_dos_lecturas">Lecturas a 1 y 10 min</string>
     <string name="ficha_pista_aislacion_una_lectura">Lectura a 1 min</string>
-    <string name="ficha_pista_aislacion_dev">Devanado %1s%2skV / %3$s</string>
-    <string name="ficha_pista_aislacion">%1s%2skV / %3$s</string>
+    <string name="ficha_pista_aislacion_dev">Devanado %1$s %2$skV / %3$s</string>
+    <string name="ficha_pista_aislacion">%1$s %2$skV / %3$s</string>
     <string name="ficha_pista_ttr">3 fases / cambiador en posición %1$s</string>
     <string name="ficha_pista_devanados">Un valor por fase, en mΩ</string>
     <string name="ficha_pista_contactos">Un valor por polo, en µΩ</string>
     <string name="ficha_pista_rele">Tiempo de operación por disparo, en ms</string>
-    <string name="ficha_titulo_aislacion_dev">Aislación - devanado %1s-%2skV</string>
-    <string name="ficha_titulo_aislacion">Aislación - %1s-%2skV</string>
+    <string name="ficha_titulo_aislacion_dev">Aislación - devanado %1$s - %2$skV</string>
+    <string name="ficha_titulo_aislacion">Aislación - %1$s - %2$skV</string>
     <string name="ficha_titulo_ttr">Relación - tap %1$s</string>
     <string name="ficha_titulo_devanados">Devanados - fase %1$s</string>
     <string name="ficha_titulo_contactos">Contactos - %1$s</string>
@@ -258,7 +260,7 @@
     <string name="ficha_ver_acta">Ver acta</string>
 
     <string name="form_titulo">Nueva prueba</string>
-    <string name="form_subtitulo">%1s%2s %3$s</string>
+    <string name="form_subtitulo">%1$s %2$s %3$s</string>
     <string name="pestana_aislacion">Aislación</string>
     <string name="pestana_relacion">Relación</string>
     <string name="pestana_devanados">Devanados</string>
@@ -283,9 +285,9 @@
     <string name="form_rango_esperado">Rango esperado de 100 MΩ a 100 GΩ</string>
     <string name="form_rechazo_minimo">Rechazado si la lectura es menor a 100 MΩ</string>
     <string name="form_ip_calculado">Índice de polarización (calculado)</string>
-    <string name="form_ip_detalle">%1s/%2s · Observado si 1,0 ≤ IP &lt; 2,0</string>
-    <string name="form_anterior">Prueba anterior: %1s%2s · variación %3$s %%</string>
-    <string name="form_sin_anterior">Este equipo no tiene pruebas anteriores de este tipo (HU-06).</string>
+    <string name="form_ip_detalle">%1$s / %2$s · Observado si 1,0 ≤ IP &lt; 2,0</string>
+    <string name="form_anterior">Prueba anterior: %1$s %2$s · variación %3$s %%</string>
+    <string name="form_sin_anterior">Este equipo no tiene pruebas anteriores de este tipo.</string>
     <string name="form_posicion_tap">Posición del cambiador (tap)</string>
     <string name="form_relacion_teorica">Relación teórica</string>
     <string name="form_relacion_medida">Relación medida</string>
@@ -293,7 +295,7 @@
     <string name="form_criterio_ttr" formatted="false">Aprobado ≤ 0,5 % · Observado ≤ 1,0 % · Rechazado > 1,0 %</string>
     <string name="form_resistencia_fase">Resistencia de la fase</string>
     <string name="form_resultado_manual">Resultado (manual)</string>
-    <string name="form_sin_criterio">Sin criterio automático: el ingeniero indica el resultado (RN-08c).</string>
+    <string name="form_sin_criterio">Sin criterio automático: el ingeniero indica el resultado.</string>
     <string name="form_resistencia_polo">Resistencia por polo</string>
     <string name="form_pct_placa_calculado" formatted="false">% sobre máx. de placa (calculado)</string>
     <string name="form_maximo_placa">Máximo de placa %1$s µΩ · Aprobado ≤ 100 %% · Observado ≤ 120 %% · Rechazado > 120 %%</string>
@@ -305,13 +307,13 @@
     <string name="form_diferencia_calculada">Diferencia de tiempo (calculada)</string>
     <string name="form_criterio_rele" formatted="false">Aprobado ≤ 5 % · Observado ≤ 10 % · Rechazado > 10 % o no opera</string>
     <string name="vm_faltan">Faltan: %1$s</string>
-    <string name="vm_hu02">Temperatura y humedad son obligatorias (HU-02).</string>
+    <string name="vm_hu02">Temperatura y humedad son obligatorias.</string>
     <string name="vm_registrado">Protocolo registrado en terreno.</string>
     <string name="vm_formalizado">Protocolo formalizado.</string>
     <string name="vm_devuelto">Protocolo devuelto con observación.</string>
-    <string name="vm_rf05">Selecciona el instrumento con el que mediste (RF-05).</string>
-    <string name="vm_rn11">La calibración del %1svencióel%2s: no se puede registrar con él (RN-11).</string>
-    <string name="vm_hu03">Los valores deben ser positivos (HU-03): revisa %1$s.</string>
+    <string name="vm_rf05">Selecciona el instrumento con el que mediste.</string>
+    <string name="vm_rn11">La calibración del %1$s venció el %2$s: no se puede registrar con él.</string>
+    <string name="vm_hu03">Los valores deben ser positivos: revisa %1$s.</string>
     <string name="vm_faltan_valores">Faltan valores: %1$s.</string>
 
     <!-- Para que tantos formularios y datos... solo para sufrir... :c -->
