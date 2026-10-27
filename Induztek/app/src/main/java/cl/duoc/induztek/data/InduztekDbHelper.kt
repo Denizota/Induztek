@@ -29,7 +29,7 @@ class InduztekDbHelper private constructor(context: Context) :
 
     companion object {
         private const val NOMBRE_BD = "induztek.db"
-        private const val VERSION_BD = 4
+        private const val VERSION_BD = 5
         const val CLAVE_DEMO = "Induztek2026"
 
 
