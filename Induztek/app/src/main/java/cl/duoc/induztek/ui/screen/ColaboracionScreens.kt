@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -43,10 +44,8 @@ import androidx.compose.ui.unit.dp
 import cl.duoc.induztek.data.ComunicacionLocal
 import cl.duoc.induztek.data.InduztekDbHelper
 import cl.duoc.induztek.model.Usuario
+import cl.duoc.induztek.ui.theme.LocalConfiguracionTema
 
-private val Verde = Color(0xFF75B936)
-private val Fondo = Color(0xFFF7F8FB)
-private val Lavanda = Color(0xFFEDEAF8)
 
 @Composable
 private fun Cabecera(
@@ -57,7 +56,7 @@ private fun Cabecera(
     Column(
         Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -74,7 +73,7 @@ private fun Cabecera(
         if (subtitulo.isNotEmpty()) {
             Text(
                 subtitulo,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 12.dp)
             )
         }
@@ -91,7 +90,7 @@ private fun TarjetaContenido(
             .padding(vertical = 6.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 1.dp
@@ -111,7 +110,7 @@ private fun Dato(
     Column(Modifier.padding(vertical = 5.dp)) {
         Text(
             etiqueta,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium
         )
         Text(
@@ -164,7 +163,7 @@ fun ListaMensajesScreen(
     }
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Cabecera(
                 "Mensajes",
@@ -227,7 +226,7 @@ fun ListaMensajesScreen(
                                 contacto.cargo.ifBlank {
                                     contacto.rol.nombre
                                 },
-                                color = Verde
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                             Text(
                                 ultimo?.texto
@@ -240,7 +239,7 @@ fun ListaMensajesScreen(
                                     ultimo.fecha,
                                     style = MaterialTheme
                                         .typography.labelSmall,
-                                    color = Color.Gray
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -314,7 +313,7 @@ fun ChatIndividualScreen(
     }
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Column {
                 Cabecera(
@@ -332,7 +331,7 @@ fun ChatIndividualScreen(
         bottomBar = {
             Column(
                 Modifier
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(12.dp)
             ) {
                 Row(
@@ -376,7 +375,7 @@ fun ChatIndividualScreen(
                 Text(
                     "Chat local: los mensajes no llegan a otro usuario.",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -415,8 +414,16 @@ fun ChatIndividualScreen(
                 ) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor =
-                                if (mio) Lavanda else Color.White
+                            containerColor = if (mio) {
+                                MaterialTheme.colorScheme.secondaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surface
+                            },
+                            contentColor = if (mio) {
+                                MaterialTheme.colorScheme.onSecondaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
                         ),
                         modifier = Modifier.fillMaxWidth(0.83f)
                     ) {
@@ -426,7 +433,7 @@ fun ChatIndividualScreen(
                                 mensaje.fecha,
                                 style = MaterialTheme
                                     .typography.labelSmall,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -469,7 +476,7 @@ fun DetallesChatScreen(
     }
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Cabecera(
                 "Detalles del chat",
@@ -522,7 +529,7 @@ fun DetallesChatScreen(
                     Text(
                         "Solo datos locales. No se comparten " +
                         "archivos ni mensajes en línea.",
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -550,7 +557,7 @@ fun PerfilScreen(
     val usuario = bd.buscarUsuarioPorId(usuarioId)
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Cabecera(
                 "Mi perfil",
@@ -580,7 +587,7 @@ fun PerfilScreen(
 
                 Text(
                     usuario.rol.nombre,
-                    color = Verde
+                    color = MaterialTheme.colorScheme.tertiary
                 )
 
                 HorizontalDivider(
@@ -603,6 +610,31 @@ fun PerfilScreen(
                     "Cargo",
                     usuario.cargo
                 )
+            }
+
+            val configuracionTema = LocalConfiguracionTema.current
+            TarjetaContenido {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "Modo oscuro",
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            "Cambiar la apariencia de la aplicación",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Switch(
+                        checked = configuracionTema.modoOscuro,
+                        onCheckedChange = configuracionTema.cambiarModoOscuro
+                    )
+                }
             }
 
             Button(
@@ -675,7 +707,7 @@ fun EditarPerfilScreen(
     }
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Cabecera(
                 "Editar perfil",
@@ -721,7 +753,7 @@ fun EditarPerfilScreen(
 
             Text(
                 "El RUT y el rol no pueden modificarse desde aquí.",
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             if (error.isNotBlank()) {
@@ -790,7 +822,7 @@ fun PersonalHistorialScreen(
     }
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Cabecera(
                 "Personal e historial",
@@ -840,7 +872,7 @@ fun PersonalHistorialScreen(
                             Text(persona.rol.nombre)
                             Text(
                                 persona.correo,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -936,7 +968,7 @@ fun ValidacionRegistroScreen(
     }
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Cabecera(
                 "Validación y registro",
@@ -959,7 +991,7 @@ fun ValidacionRegistroScreen(
             Text(
                 "Este registro es local y no equivale " +
                 "a una firma electrónica de acta.",
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             OutlinedTextField(
@@ -1025,7 +1057,7 @@ fun ValidacionRegistroScreen(
             if (mensaje.isNotEmpty()) {
                 Text(
                     mensaje,
-                    color = Verde
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
 

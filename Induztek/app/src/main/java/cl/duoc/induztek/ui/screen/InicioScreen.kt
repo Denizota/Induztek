@@ -30,8 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-private val VerdeInduztek = Color(0xFF83C94A)
-private val FondoInduztek = Color(0xFFF6F8FC)
 
 @Composable
 fun InicioScreen(
@@ -43,10 +41,10 @@ fun InicioScreen(
     var pestanaSeleccionada by remember { mutableIntStateOf(0) }
 
     Scaffold(
-        containerColor = FondoInduztek,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ) {
                 NavigationBarItem(
                     selected = pestanaSeleccionada == 0,
@@ -95,7 +93,7 @@ fun InicioScreen(
                 text = "Induztek",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = VerdeInduztek
+                color = MaterialTheme.colorScheme.tertiary
             )
 
             Spacer(Modifier.height(6.dp))
@@ -103,7 +101,7 @@ fun InicioScreen(
             Text(
                 text = "Protocolos de prueba en terreno",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.DarkGray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(Modifier.height(24.dp))
@@ -112,7 +110,7 @@ fun InicioScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
                 elevation = CardDefaults.cardElevation(2.dp)
             ) {
@@ -172,7 +170,7 @@ fun InicioScreen(
                     .clickable { onCerrarSesion() },
                 shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFEAF3E4)
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 )
             ) {
                 Row(
@@ -183,7 +181,7 @@ fun InicioScreen(
                 ) {
                     Text(
                         text = "Cerrar sesión",
-                        color = Color(0xFF356D26),
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -208,7 +206,7 @@ private fun TarjetaInicio(
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
@@ -220,7 +218,7 @@ private fun TarjetaInicio(
         ) {
             Text(
                 text = simbolo,
-                color = VerdeInduztek,
+                color = MaterialTheme.colorScheme.tertiary,
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -235,7 +233,7 @@ private fun TarjetaInicio(
 
                 Text(
                     text = descripcion,
-                    color = Color.DarkGray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
 
@@ -243,7 +241,7 @@ private fun TarjetaInicio(
 
                 Text(
                     text = "Ver sección →",
-                    color = VerdeInduztek,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.SemiBold
                 )
             }
