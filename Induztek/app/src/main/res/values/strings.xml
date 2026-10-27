@@ -89,6 +89,8 @@
     <string name="Cargo_acta">Cargo</string>
     <string name="boton_acta">Cerrar visita y entregar acta</string>
     <string name="Compatir_acta_nofuncional">Compartir acta en PDF</string>
+    <string name="atras_equipos"> Equipos ></string>
+
 
     <!-- Pantalla: 13: Home Cliente-->
     <string name="ultima_visita">Ultima visita</string>
@@ -105,19 +107,18 @@
 
     <string name="placeholder_numero">0</string>
 
-    <!--
-    <string name=""></string>
-    -->
 
 
-    <!-- puente, ficha, prueba, acta y cliente -->
+    <!-- Pantalla.... :C -->
+
+
+    <!-- Pantallas de los formuarios -->
     <string name="solicitar_toast_enviada">"¡Tu solicitud ha sido enviada ! "</string>
     <string name="puente_reiniciar">Reiniciar</string>
     <string name="puente_salir">Salir</string>
     <string name="resultado_pendiente">Pendiente</string>
     <string name="estado_formalizado">Formalizado</string>
     <string name="estado_pendiente_formalizacion">Pendiente de formalización</string>
-    <string name="atras_equipos">Equipos</string>
     <string name="campo_placeholder_escribe">Escribe aquí…</string>
     <string name="btn_volver">Volver</string>
     <string name="btn_cancelar">Cancelar</string>
@@ -131,6 +132,7 @@
     <string name="unidad_mmohm">mΩ</string>
     <string name="unidad_umohm">µΩ</string>
     <string name="unidad_ms">ms</string>
+
     <string name="cliente_solo_visualizar">Solo puedes visualizar ! Si algo no te cuadra puedes escribirnos desde la pestaña \'chat\'</string>
     <string name="cliente_cerrar_sesion">Cerrar sesión</string>
     <string name="cliente_ultima_visita">Última visita</string>
@@ -159,6 +161,7 @@
     <string name="cliente_detalle_vs">%1$s MΩ · %2$s vs %3$s</string>
     <string name="cliente_detalle_primero">%1$s MΩ · %2$s, primer registro</string>
     <string name="cliente_consultar_chat">Consultar por chat</string>
+
     <string name="acta_titulo_acta">Acta de prueba en terreno</string>
     <string name="acta_titulo_cerrar">Cerrar visita</string>
     <string name="acta_recibe_cliente">Acta que recibe el cliente</string>
@@ -178,7 +181,7 @@
     <string name="acta_sin_motivo">sin motivo indicado</string>
     <string name="acta_det_aislacion">"%1$s %2$s / %3$s MΩ IP %4$s"</string>
     <string name="acta_det_ttr">Tap %1$s · teórica %2$s / medida %3$s · error %4$s%%</string>
-    <string name="acta_det_devanados">%1$s %2$s mΩ (resultado manual, RN-08c)</string>
+    <string name="acta_det_devanados">%1$s %2$s mΩ (resultado manual)</string>
     <string name="acta_det_contactos">%1$s %2$s µΩ</string>
     <string name="acta_det_rele">%1$s %2$s ms (esperado %3$s ms) a %4$s A</string>
     <string name="acta_quien_recibe">Quien recibe por parte del cliente</string>
@@ -188,11 +191,18 @@
     <string name="acta_campo_cargo">Cargo</string>
     <string name="acta_btn_cerrar">Cerrar visita y entregar acta</string>
     <string name="acta_err_nombre">Ingresa el nombre de quien recibe</string>
-    <string name="acta_err_rut">RUT inválido (dígito verificador no coincide, RN-03)</string>
+    <string name="acta_err_rut">RUT inválido: el dígito verificador no coincide</string>
     <string name="acta_err_cargo">Ingresa el cargo</string>
+    <string name="cd_atras_equipos">Volver a los equipos</string>
+    <string name="cd_prueba_numero">Prueba %1$s</string>
+    <string name="cd_abrir_equipo">Abrir la ficha del equipo</string>
+    <string name="cd_campo_bloqueado">el sistema lo completa, no se escribe</string>
+    <string name="cd_fecha_bloqueada">La fecha la pone el sistema, no se escribe</string>
+    <string name="acta_err_pendientes">Faltan protocolos por registrar en terreno: %1$s.</string>
     <string name="acta_ok">Acta entregada y visita cerrada.</string>
     <string name="acta_btn_pdf">Compartir acta en PDF</string>
     <string name="acta_no_pdf">Exportar a PDF no está disponible en esta versión.</string>
+
     <string name="ficha_potencia">Potencia</string>
     <string name="ficha_tensiones">Tensiones</string>
     <string name="ficha_anio">Año</string>
@@ -252,6 +262,7 @@
     <string name="ficha_devuelto">Devuelto por ingeniero: %1$s</string>
     <string name="ficha_no_editable">Protocolo %1$s: las pruebas de este equipo ya no se pueden editar.</string>
     <string name="ficha_ver_acta">Ver acta</string>
+
     <string name="form_titulo">Nueva prueba</string>
     <string name="form_subtitulo">%1$s %2$s %3$s</string>
     <string name="pestana_aislacion">Aislación</string>
@@ -280,7 +291,7 @@
     <string name="form_ip_calculado">Índice de polarización (calculado)</string>
     <string name="form_ip_detalle">%1$s / %2$s · Observado si 1,0 ≤ IP &lt; 2,0</string>
     <string name="form_anterior">Prueba anterior: %1$s %2$s · variación %3$s %%</string>
-    <string name="form_sin_anterior">Este equipo no tiene pruebas anteriores de este tipo (HU-06).</string>
+    <string name="form_sin_anterior">Este equipo no tiene pruebas anteriores de este tipo.</string>
     <string name="form_posicion_tap">Posición del cambiador (tap)</string>
     <string name="form_relacion_teorica">Relación teórica</string>
     <string name="form_relacion_medida">Relación medida</string>
@@ -288,7 +299,7 @@
     <string name="form_criterio_ttr" formatted="false">Aprobado ≤ 0,5 % · Observado ≤ 1,0 % · Rechazado > 1,0 %</string>
     <string name="form_resistencia_fase">Resistencia de la fase</string>
     <string name="form_resultado_manual">Resultado (manual)</string>
-    <string name="form_sin_criterio">Sin criterio automático: el ingeniero indica el resultado (RN-08c).</string>
+    <string name="form_sin_criterio">Sin criterio automático: el ingeniero indica el resultado.</string>
     <string name="form_resistencia_polo">Resistencia por polo</string>
     <string name="form_pct_placa_calculado" formatted="false">% sobre máx. de placa (calculado)</string>
     <string name="form_maximo_placa">Máximo de placa %1$s µΩ · Aprobado ≤ 100 %% · Observado ≤ 120 %% · Rechazado > 120 %%</string>
@@ -300,13 +311,21 @@
     <string name="form_diferencia_calculada">Diferencia de tiempo (calculada)</string>
     <string name="form_criterio_rele" formatted="false">Aprobado ≤ 5 % · Observado ≤ 10 % · Rechazado > 10 % o no opera</string>
     <string name="vm_faltan">Faltan: %1$s</string>
-    <string name="vm_hu02">Temperatura y humedad son obligatorias (HU-02).</string>
+    <string name="vm_hu02">Temperatura y humedad son obligatorias.</string>
     <string name="vm_registrado">Protocolo registrado en terreno.</string>
     <string name="vm_formalizado">Protocolo formalizado.</string>
     <string name="vm_devuelto">Protocolo devuelto con observación.</string>
-    <string name="vm_rf05">Selecciona el instrumento con el que mediste (RF-05).</string>
-    <string name="vm_rn11">La calibración del %1$s venció el %2$s: no se puede registrar con él (RN-11).</string>
-    <string name="vm_hu03">Los valores deben ser positivos (HU-03): revisa %1$s.</string>
+    <string name="vm_rf05">Selecciona el instrumento con el que mediste.</string>
+    <string name="vm_rn11">La calibración del %1$s venció el %2$s: no se puede registrar con él.</string>
+    <string name="vm_hu03">Los valores deben ser positivos: revisa %1$s.</string>
     <string name="vm_faltan_valores">Faltan valores: %1$s.</string>
+
+    <!-- Para que tantos formularios y datos... solo para sufrir... :c -->
+
+
+
+    <!--
+    <string name=""></string>
+    -->
 
 </resources>
