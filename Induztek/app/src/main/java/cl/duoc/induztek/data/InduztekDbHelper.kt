@@ -576,6 +576,21 @@ class InduztekDbHelper private constructor(context: Context) :
         ).use { c -> buildList { while (c.moveToNext()) add(leerEquipo(c)) } }
 
 
+    fun listarEquiposDeCliente(idEmpresa: Int): List<Equipo> =
+        writableDatabase.rawQuery(
+            "SELECT e.id_equipo,e.id_instalacion,e.tag,e.id_tipo_equipo,t.nombre,t.clasificacion,e.marca,e.modelo," +
+                    "e.numero_serie,e.anio_fabricacion,e.potencia_kva,e.tension_primaria_kv,e.tension_secundaria_kv," +
+                    "e.corriente_nominal_a,e.max_contactos_uohm,e.observaciones,i.nombre " +
+                    "FROM equipo e JOIN tipo_equipo t ON t.id_tipo_equipo=e.id_tipo_equipo " +
+                    "JOIN instalacion i ON i.id_instalacion=e.id_instalacion " +
+                    "WHERE i.id_usuario_cliente=? ORDER BY e.tag",
+            arrayOf(idEmpresa.toString())
+        ).use { c -> buildList { while (c.moveToNext()) add(leerEquipo(c)) } }
+
+
+
+
+
 
     fun equipoPorId(id: Int): Equipo? =
         writableDatabase.rawQuery(
@@ -637,6 +652,29 @@ class InduztekDbHelper private constructor(context: Context) :
                     "JOIN visita v ON v.id_visita=p.id_visita JOIN instalacion i ON i.id_instalacion=v.id_instalacion " +
                     "JOIN usuario u ON u.id_usuario=p.id_usuario_registra ORDER BY p.fecha_hora_prueba DESC", null
         ).use { c -> buildList { while (c.moveToNext()) add(leerProtocolo(c)) } }
+
+
+    fun listarProtocolosVisitaCliente(idEmpresa: Int): List<Protocolo> =
+        writableDatabase.rawQuery(
+            "SELECT p.id_protocolo,p.numero,p.id_visita,p.id_equipo,p.id_usuario_registra,p.fecha_hora_prueba," +
+                    "p.temperatura_c,p.humedad_pct,p.estado,p.observaciones,e.tag,t.nombre,i.nombre,u.nombre " +
+                    "FROM protocolo p JOIN equipo e ON e.id_equipo=p.id_equipo " +
+                    "JOIN tipo_equipo t ON t.id_tipo_equipo=e.id_tipo_equipo " +
+                    "JOIN visita v ON v.id_visita=p.id_visita JOIN instalacion i ON i.id_instalacion=v.id_instalacion " +
+                    "JOIN usuario u ON u.id_usuario=p.id_usuario_registra " +
+                    "WHERE i.id_usuario_cliente=? AND p.estado NOT IN ('BORRADOR','ANULADO') " +
+                    "ORDER BY p.fecha_hora_prueba DESC",
+            arrayOf(idEmpresa.toString())
+        ).use { c -> buildList { while (c.moveToNext()) add(leerProtocolo(c)) } }
+
+
+    fun equipoDeCliente(idEquipo: Int, idEmpresa: Int): Equipo? =
+        equipoPorId(idEquipo)?.takeIf { e ->
+            writableDatabase.rawQuery(
+                "SELECT 1 FROM instalacion WHERE id_instalacion=? AND id_usuario_cliente=?",
+                arrayOf(e.idInstalacion.toString(), idEmpresa.toString())
+            ).use { it.moveToFirst() }
+        }
 
 
     fun protocoloPorId(id: Int): Protocolo? =
