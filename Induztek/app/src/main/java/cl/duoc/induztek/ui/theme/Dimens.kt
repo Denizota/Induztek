@@ -153,6 +153,15 @@ object Dimens{
     val margenPantalla = 20.dp
     val tamanoCirculoFlecha = 30.dp
 
+    //barras del gráfico (con rayitas muy lindas)
+    val anchoRelativoBarra = 0.62f
+    val factorAltoBarras = 0.74f
+    val radioBarras = 10f
+    val grosorTrazoHatch = 2.5f
+    val espacioTrazoHatch = 9f
+    val alfaBarraSolida = 0.5f
+    val alfaBarraFondo = 0.08f
+    val alfaTrazoHatch = 0.35f
 }
 
 
