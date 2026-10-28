@@ -181,7 +181,7 @@ private fun CabeceraCliente(nombre: String, subtitulo: String, onSalir: () -> Un
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.banner_inicio),
+                painter = painterResource(id = R.drawable.foto_perfil),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
