@@ -6,6 +6,7 @@ import android.content.ContextWrapper
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -18,12 +19,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.compose.ui.unit.dp
 
-/** El valor se guarda en el teléfono y se comparte con todas las pantallas Compose. */
 data class ConfiguracionTema(
     val modoOscuro: Boolean,
     val cambiarModoOscuro: (Boolean) -> Unit
@@ -79,31 +80,21 @@ private val Formas = Shapes(
 fun InduztekTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current
     val view = LocalView.current
-    val preferencias = remember(context) {
-        context.applicationContext.getSharedPreferences(
-            "preferencias_apariencia", Context.MODE_PRIVATE
-        )
-    }
-    // Si no se ha seleccionado un tema, seguimos la configuración del teléfono.
-    var seleccionManual by remember(preferencias) {
-        mutableStateOf<Boolean?>(
-            if (preferencias.contains("modo_oscuro")) {
-                preferencias.getBoolean("modo_oscuro", false)
-            } else {
-                null
-            }
-        )
-    }
-    val modoOscuro = seleccionManual ?: isSystemInDarkTheme()
+
+    AjustesTema.cargarSiFalta(context)
+    val modoOscuro = AjustesTema.apariencia.esOscuro()
+    val paleta = if (modoOscuro) PaletaOscura else PaletaClara
+
     val configuracion = ConfiguracionTema(
         modoOscuro = modoOscuro,
         cambiarModoOscuro = { nuevoValor ->
-            seleccionManual = nuevoValor
-            preferencias.edit().putBoolean("modo_oscuro", nuevoValor).apply()
+            AjustesTema.guardar(
+                context,
+                if (nuevoValor) Apariencia.OSCURO else Apariencia.CLARO
+            )
         }
     )
 
-    // Actualiza también los iconos de las barras del sistema si se cambia el tema manualmente.
     SideEffect {
         var actual: Context = context
         while (actual is ContextWrapper && actual !is Activity) {
@@ -113,15 +104,22 @@ fun InduztekTheme(content: @Composable () -> Unit) {
             val controller = WindowCompat.getInsetsController(actual.window, view)
             controller.isAppearanceLightStatusBars = !modoOscuro
             controller.isAppearanceLightNavigationBars = !modoOscuro
+            actual.window.decorView.setBackgroundColor(paleta.fondoPantalla.toArgb())
         }
     }
 
-    CompositionLocalProvider(LocalConfiguracionTema provides configuracion) {
+    CompositionLocalProvider(
+        LocalConfiguracionTema provides configuracion,
+        LocalPaleta provides paleta
+    ) {
         MaterialTheme(
             colorScheme = if (modoOscuro) EsquemaOscuro else EsquemaClaro,
             typography = Tipografia,
-            shapes = Formas,
-            content = content
-        )
+            shapes = Formas
+        ) {
+            CompositionLocalProvider(LocalContentColor provides paleta.textoOscuro) {
+                content()
+            }
+        }
     }
 }

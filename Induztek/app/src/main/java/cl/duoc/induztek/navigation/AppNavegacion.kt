@@ -16,8 +16,10 @@ import androidx.navigation.navArgument
 
 import cl.duoc.induztek.data.InduztekDbHelper
 import cl.duoc.induztek.data.SesionPreferencias
+import cl.duoc.induztek.model.Rol
 import cl.duoc.induztek.model.TipoPrueba
 import cl.duoc.induztek.model.Usuario
+import cl.duoc.induztek.ui.screen.ActaScreen
 
 import cl.duoc.induztek.ui.screen.LoginScreen
 import cl.duoc.induztek.ui.screen.SolicitarAccesoScreen
@@ -28,6 +30,8 @@ import cl.duoc.induztek.ui.screen.PruebaFormScreen
 
 import cl.duoc.induztek.ui.screen.ListaMensajesScreen
 import cl.duoc.induztek.ui.screen.ChatIndividualScreen
+import cl.duoc.induztek.ui.screen.ClienteEquipoScreen
+import cl.duoc.induztek.ui.screen.ClienteHomeScreen
 import cl.duoc.induztek.ui.screen.DetallesChatScreen
 import cl.duoc.induztek.ui.screen.PerfilScreen
 import cl.duoc.induztek.ui.screen.EditarPerfilScreen
@@ -50,6 +54,19 @@ private fun rutaChat(idContacto: Int): String =
 
 private fun rutaDetallesChat(idContacto: Int): String =
     "${Ruta.DetallesChat.ruta}/$idContacto"
+
+
+private fun rutaActa(idVisita: Int, cliente: Boolean): String =
+    "${Ruta.Acta.ruta}/$idVisita/${if (cliente) 1 else 0}"
+
+private fun rutaClienteEquipo(id: Int): String =
+    "${Ruta.Cliente.ruta}/equipo/$id"
+
+private fun rutaTrasLogin(u: Usuario): String =
+    if (u.rol == Rol.CLIENTE) Ruta.Cliente.ruta else Ruta.Inicio.ruta
+
+
+
 
 
 @Composable
@@ -78,8 +95,7 @@ fun AppNavegacion() {
     fun entrar(nuevoUsuario: Usuario) {
         usuario = nuevoUsuario
         sesion.guardar(nuevoUsuario.idUsuario)
-
-        navController.navigate(Ruta.Inicio.ruta) {
+        navController.navigate(rutaTrasLogin(nuevoUsuario)) {
             popUpTo(Ruta.Login.ruta) {
                 inclusive = true
             }
@@ -104,13 +120,15 @@ fun AppNavegacion() {
     NavHost(
         navController = navController,
         startDestination =
-            if (usuario != null) {
+            usuario?.let { rutaTrasLogin(it) } ?: Ruta.Login.ruta
+    ) {
+            /*if (usuario != null) {
                 Ruta.Inicio.ruta
             } else {
                 Ruta.Login.ruta
             }
     ) {
-
+*/
 
 
 
@@ -383,9 +401,8 @@ fun AppNavegacion() {
                         rutaPrueba(idEquipo, tipo)
                     )
                 },
-                onIrActa = {
-
-
+                onIrActa = { idVisita ->
+                    navController.navigate(rutaActa(idVisita, false))
                 }
             )
         }
@@ -428,6 +445,70 @@ fun AppNavegacion() {
                 },
                 onGuardado = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+
+        composable(
+            route = "${Ruta.Acta.ruta}/{idVisita}/{cliente}",
+            arguments = listOf(
+                navArgument("idVisita") {
+                    type = NavType.IntType
+                },
+                navArgument("cliente") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStack ->
+            val actual = usuario ?: return@composable
+
+            ActaScreen(
+                idVisita =
+                    backStack.arguments?.getInt("idVisita") ?: return@composable,
+                usuario = actual,
+                esCliente = (backStack.arguments?.getInt("cliente") ?: 0) == 1,
+                onAtras = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Ruta.Cliente.ruta) {
+            val actual = usuario ?: return@composable
+
+            ClienteHomeScreen(
+                usuario = actual,
+                onIrEquipo = { idEquipo ->
+                    navController.navigate(rutaClienteEquipo(idEquipo))
+                },
+                onIrActa = { idVisita ->
+                    navController.navigate(rutaActa(idVisita, true))
+                },
+                onSalir = {
+                    salir()
+                }
+            )
+        }
+
+        composable(
+            route = "${Ruta.Cliente.ruta}/equipo/{idEquipo}",
+            arguments = listOf(
+                navArgument("idEquipo") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStack ->
+            val actual = usuario ?: return@composable
+
+            ClienteEquipoScreen(
+                idEquipo =
+                    backStack.arguments?.getInt("idEquipo") ?: return@composable,
+                usuario = actual,
+                onAtras = {
+                    navController.popBackStack()
+                },
+                onConsultar = {
                 }
             )
         }

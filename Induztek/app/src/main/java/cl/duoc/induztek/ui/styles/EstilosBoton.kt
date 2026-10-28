@@ -34,7 +34,6 @@ object EstilosBoton {
         defaultElevation = Dimens.elevacionBoton,
         pressedElevation = Dimens.elevacionBoton,
         disabledElevation = Dimens.elevacionBoton
-        //pressedElevation = 1.dp
     )
 }
 

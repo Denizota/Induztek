@@ -23,7 +23,9 @@ import cl.duoc.induztek.ui.theme.GrisTexto
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
+import cl.duoc.induztek.ui.theme.LavandaBorde
 import cl.duoc.induztek.ui.theme.LavandaSuave
+import cl.duoc.induztek.ui.theme.esModoOscuro
 
 @Composable
 fun ControlSegmentado(opciones: List<String>, seleccionado: String, onSeleccion: (String) -> Unit) {
@@ -41,7 +43,10 @@ fun ControlSegmentado(opciones: List<String>, seleccionado: String, onSeleccion:
                     .weight(1f)
                     .height(Dimens.alturaSegmento)
                     .background(
-                        if (activo) FondoPantalla() else Color.Transparent,
+
+                        if (activo) {
+                            if (esModoOscuro()) LavandaBorde() else FondoPantalla()
+                        } else Color.Transparent,
                         RoundedCornerShape(Dimens.radioSegmento)
                     )
                     .clickable(role = Role.RadioButton) { onSeleccion(op) }
