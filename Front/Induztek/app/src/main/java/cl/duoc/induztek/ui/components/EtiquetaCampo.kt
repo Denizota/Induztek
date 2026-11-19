@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.TextoGris
+import cl.duoc.induztek.ui.theme.TextoTitulo
 
 @Composable
 fun EtiquetaCampo (
@@ -16,7 +16,7 @@ fun EtiquetaCampo (
     Text(
         text = texto,
         style = MaterialTheme.typography.labelMedium,
-        color = TextoGris(),
+        color = TextoTitulo(),
         modifier = modifier
     )
 }

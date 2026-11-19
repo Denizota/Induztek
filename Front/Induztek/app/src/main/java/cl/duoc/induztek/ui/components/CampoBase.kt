@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
@@ -37,8 +41,9 @@ import cl.duoc.induztek.R
 import cl.duoc.induztek.ui.styles.estiloCajaCampo
 import cl.duoc.induztek.ui.theme.Blanco
 import cl.duoc.induztek.ui.theme.Dimens
+import cl.duoc.induztek.ui.theme.IconoCampo
 import cl.duoc.induztek.ui.theme.Negro
-import cl.duoc.induztek.ui.theme.TextoOscuro
+import cl.duoc.induztek.ui.theme.TextoPrincipal
 import cl.duoc.induztek.ui.theme.TextoPlaceholder
 import cl.duoc.induztek.ui.theme.esModoOscuro
 
@@ -56,12 +61,18 @@ internal fun CampoBase(
     alto: Dp = Dimens.alturaCampo,
     unaSolaLinea: Boolean = true,
     transformacionVisual: VisualTransformation = VisualTransformation.None,
+    iconoInicial: Painter? = null,
     contenidoFinal: (@Composable () -> Unit)? = null
 ){
     var enfocado by remember { mutableStateOf(false) }
 
     val bloqueado = stringResource(R.string.cd_campo_bloqueado)
-    val estadoCampo = error ?: if (!habilitado) bloqueado else null
+    var estadoCampo: String? = null
+    if (error != null) {
+        estadoCampo = error
+    } else if (!habilitado) {
+        estadoCampo = bloqueado
+    }
     val modificadorColumna = modifier
         .fillMaxWidth()
         .then(
@@ -86,7 +97,7 @@ internal fun CampoBase(
             onValueChange = onValorCambia,
             modifier = modificadorCampo,
             singleLine = unaSolaLinea,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TextoOscuro()),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TextoPrincipal()),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             keyboardOptions = KeyboardOptions(keyboardType = tipoTeclado, imeAction = accionTeclado),
             visualTransformation = transformacionVisual,
@@ -100,6 +111,15 @@ internal fun CampoBase(
                         ),
                     verticalAlignment = if (unaSolaLinea) Alignment.CenterVertically else Alignment.Top
                 ) {
+                    if (iconoInicial != null) {
+                        Icon(
+                            painter = iconoInicial,
+                            contentDescription = null,
+                            tint = IconoCampo(),
+                            modifier = Modifier.size(Dimens.tamanoIconoCampo)
+                        )
+                        Spacer(Modifier.width(Dimens.salto3))
+                    }
                     Box(
                         modifier = Modifier.weight(1f),
                         contentAlignment = if (unaSolaLinea) Alignment.CenterStart else Alignment.TopStart
@@ -114,7 +134,7 @@ internal fun CampoBase(
                         }
                         campoInterno()
                     }
-                    contenidoFinal?.invoke()
+                    if (contenidoFinal != null) contenidoFinal.invoke()
                 }
             }
         )
@@ -127,7 +147,5 @@ internal fun CampoBase(
     }
 }
 
-
 @Composable
-fun colorCaja(): Color =
-    (if (esModoOscuro()) Negro else Blanco).copy(alpha = Dimens.alfaCajaBlanca)
+fun colorCaja(): Color = MaterialTheme.colorScheme.surface

@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import cl.duoc.induztek.R
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.GrisTexto
+import cl.duoc.induztek.ui.theme.TextoSecundario
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,13 +57,13 @@ fun CampoNumeroSugerido(
                 ) {
                     if (sufijo.isNotEmpty()) {
                         Text(sufijo,
-                            color = GrisTexto(),
+                            color = TextoSecundario(),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                     Text(
                         "▾",
-                        color = GrisTexto(),
+                        color = TextoSecundario(),
                         fontWeight = FontWeight.Bold)
                 }
             }
@@ -71,8 +71,7 @@ fun CampoNumeroSugerido(
         ExposedDropdownMenu(expanded = expandido, onDismissRequest = {
             expandido = false
         }) {
-            sugerencias.forEach {
-                    sugerencia ->
+            for (sugerencia in sugerencias) {
                 DropdownMenuItem(
                     text = { Text(sugerencia) },
                     onClick = { onCambio(sugerencia);expandido = false }

@@ -10,14 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.LavandaBorde
+import cl.duoc.induztek.ui.theme.BordeSuave
 
 @Composable
 fun BotonChico(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.radioBotonChico),
-        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde()),
+        border = BorderStroke(Dimens.bordeTarjeta, BordeSuave()),
         contentPadding = PaddingValues(
             horizontal = Dimens.rellenoBotonChicoH, vertical = Dimens.rellenoBotonChicoV
         ),

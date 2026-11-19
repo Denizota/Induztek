@@ -6,14 +6,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import cl.duoc.induztek.ui.theme.Blanco
 import cl.duoc.induztek.ui.theme.BotonDeshabilitado
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.Primario
+import cl.duoc.induztek.ui.theme.AzulMarca
 
 object EstilosBoton {
 
@@ -23,10 +23,10 @@ object EstilosBoton {
 
     @Composable
     fun coloresPrincipal(): ButtonColors = ButtonDefaults.buttonColors(
-        containerColor = Primario(),
-        contentColor = Blanco,
+        containerColor = AzulMarca(),
+        contentColor = MaterialTheme.colorScheme.onPrimary,
         disabledContainerColor = BotonDeshabilitado(),
-        disabledContentColor = Blanco
+        disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
     )
 
     @Composable

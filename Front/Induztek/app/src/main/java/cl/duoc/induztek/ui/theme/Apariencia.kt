@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 
-
 enum class Apariencia { SISTEMA, CLARO, OSCURO }
 
 object AjustesTema {
@@ -26,7 +25,11 @@ object AjustesTema {
         leida = true
         val guardado = contexto.getSharedPreferences(ARCHIVO, Context.MODE_PRIVATE)
             .getString(CLAVE, Apariencia.SISTEMA.name)
-        apariencia = Apariencia.entries.find { it.name == guardado } ?: Apariencia.SISTEMA
+        var elegida = Apariencia.SISTEMA
+        for (posible in Apariencia.entries) {
+            if (posible.name == guardado) elegida = posible
+        }
+        apariencia = elegida
     }
 
     fun guardar(contexto: Context, nueva: Apariencia) {
@@ -38,8 +41,8 @@ object AjustesTema {
 }
 
 @Composable
-fun Apariencia.esOscuro(): Boolean = when (this) {
-    Apariencia.CLARO -> false
-    Apariencia.OSCURO -> true
-    Apariencia.SISTEMA -> isSystemInDarkTheme()
+fun Apariencia.esOscuro(): Boolean {
+    if (this == Apariencia.CLARO) return false
+    if (this == Apariencia.OSCURO) return true
+    return isSystemInDarkTheme()
 }

@@ -10,7 +10,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.LavandaBorde
+import cl.duoc.induztek.ui.theme.BordeSuave
 
 @Composable
 fun Tarjeta(
@@ -21,7 +21,7 @@ fun Tarjeta(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.radioTarjeta),
         colors = CardDefaults.cardColors(containerColor = colorCaja()),
-        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde()),
+        border = BorderStroke(Dimens.bordeTarjeta, BordeSuave()),
         content = { Column(Modifier.padding(Dimens.rellenoTarjeta)) { content() } }
     )
 }

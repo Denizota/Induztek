@@ -1,6 +1,6 @@
 package cl.duoc.induztek.model
 
-data class Prueba (
+data class Prueba(
     val idPrueba: Int,
     val idProtocolo: Int,
     val tipoPrueba: TipoPrueba,

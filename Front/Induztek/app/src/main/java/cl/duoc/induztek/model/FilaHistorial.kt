@@ -1,7 +1,7 @@
 package cl.duoc.induztek.model
 
-data class FilaHistorial (
-    val numero: String, //XDDDDDDDD
+data class FilaHistorial(
+    val numero: String,
     val fecha: String,
     val valor: String,
     val resultado: String,

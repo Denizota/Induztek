@@ -4,87 +4,73 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-
 data class Paleta(
-    val textoGris: Color,
+    val textoTitulo: Color,
     val textoPlaceholder: Color,
-    val textoOlvido: Color,
+    val textoOlvidado: Color,
     val bordeCampo: Color,
     val fondoCampo: Color,
     val iconoCampo: Color,
     val botonDeshabilitado: Color,
-    val fondoRedSocial: Color,
     val fondoPantalla: Color,
-    val primario: Color,
-    val textoOscuro: Color,
-    val moraditoFin: Color,
-    val fonditoMorado: Color,
-    val lavandaPrimario: Color,
-    val lavandaSuave: Color,
-    val lavandaFondo: Color,
-    val lavandaBorde: Color,
+    val azulMarca: Color,
+    val textoPrincipal: Color,
+    val azulAcero: Color,
+    val fondoSuave: Color,
+    val bordeSuave: Color,
     val verdeAprobado: Color,
     val naranjaObservado: Color,
     val rojoRechazado: Color,
-    val grisTexto: Color,
+    val textoSecundario: Color,
     val fondoFilaTabla: Color,
-    val lavandaActa: Color,
-    val moradoFondo: Color
+    val fondoActa: Color,
+    val acento: Color
 )
 
 val PaletaClara = Paleta(
-    textoGris = TextoGrisClaro,
+    textoTitulo = TextoTituloClaro,
     textoPlaceholder = TextoPlaceholderClaro,
-    textoOlvido = TextoOlvidoClaro,
+    textoOlvidado = TextoOlvidadoClaro,
     bordeCampo = BordeCampoClaro,
     fondoCampo = FondoCampoClaro,
     iconoCampo = IconoCampoClaro,
     botonDeshabilitado = BotonDeshabilitadoClaro,
-    fondoRedSocial = FondoRedSocialClaro,
     fondoPantalla = FondoPantallaClaro,
-    primario = PrimarioClaro,
-    textoOscuro = TextoOscuroClaro,
-    moraditoFin = MoraditoFinClaro,
-    fonditoMorado = fonditoMoradoClaro,
-    lavandaPrimario = LavandaPrimarioClaro,
-    lavandaSuave = LavandaSuaveClaro,
-    lavandaFondo = LavandaFondoClaro,
-    lavandaBorde = LavandaBordeClaro,
+    azulMarca = AzulMarcaClaro,
+    textoPrincipal = TextoPrincipalClaro,
+    azulAcero = AzulAceroClaro,
+    fondoSuave = FondoSuaveClaro,
+    bordeSuave = BordeSuaveClaro,
     verdeAprobado = VerdeAprobadoClaro,
     naranjaObservado = NaranjaObservadoClaro,
     rojoRechazado = RojoRechazadoClaro,
-    grisTexto = GrisTextoClaro,
+    textoSecundario = TextoSecundarioClaro,
     fondoFilaTabla = FondoFilaTablaClaro,
-    lavandaActa = LavandaActaClaro,
-    moradoFondo = MoradoFondoClaro
+    fondoActa = FondoActaClaro,
+    acento = AcentoClaro
 )
 
-
 val PaletaOscura = Paleta(
-    textoGris = TextoGrisOscuro,
+    textoTitulo = TextoTituloOscuro,
     textoPlaceholder = TextoPlaceholderOscuro,
-    textoOlvido = TextoOlvidoOscuro,
+    textoOlvidado = TextoOlvidadoOscuro,
     bordeCampo = BordeCampoOscuro,
     fondoCampo = FondoCampoOscuro,
     iconoCampo = IconoCampoOscuro,
     botonDeshabilitado = BotonDeshabilitadoOscuro,
-    fondoRedSocial = FondoRedSocialOscuro,
     fondoPantalla = FondoPantallaOscuro,
-    primario = PrimarioOscuro,
-    textoOscuro = TextoOscuroOscuro,
-    moraditoFin = MoraditoFinOscuro,
-    fonditoMorado = fonditoMoradoOscuro,
-    lavandaPrimario = LavandaPrimarioOscuro,
-    lavandaSuave = LavandaSuaveOscuro,
-    lavandaFondo = LavandaFondoOscuro,
-    lavandaBorde = LavandaBordeOscuro,
+    azulMarca = AzulMarcaOscuro,
+    textoPrincipal = TextoPrincipalOscuro,
+    azulAcero = AzulAceroOscuro,
+    fondoSuave = FondoSuaveOscuro,
+    bordeSuave = BordeSuaveOscuro,
     verdeAprobado = VerdeAprobadoOscuro,
     naranjaObservado = NaranjaObservadoOscuro,
     rojoRechazado = RojoRechazadoOscuro,
-    grisTexto = GrisTextoOscuro,
+    textoSecundario = TextoSecundarioOscuro,
     fondoFilaTabla = FondoFilaTablaOscuro,
-    lavandaActa = LavandaActaOscuro,
-    moradoFondo = MoradoFondoOscuro
+    fondoActa = FondoActaOscuro,
+    acento = AcentoOscuro
 )
 
 val LocalPaleta = staticCompositionLocalOf { PaletaClara }
@@ -95,27 +81,23 @@ private val paletaActual: Paleta
 @Composable
 fun esModoOscuro(): Boolean = LocalPaleta.current === PaletaOscura
 
-@Composable fun TextoGris(): Color = paletaActual.textoGris
+@Composable fun TextoTitulo(): Color = paletaActual.textoTitulo
 @Composable fun TextoPlaceholder(): Color = paletaActual.textoPlaceholder
-@Composable fun TextoOlvido(): Color = paletaActual.textoOlvido
+@Composable fun TextoOlvidado(): Color = paletaActual.textoOlvidado
 @Composable fun BordeCampo(): Color = paletaActual.bordeCampo
 @Composable fun FondoCampo(): Color = paletaActual.fondoCampo
 @Composable fun IconoCampo(): Color = paletaActual.iconoCampo
 @Composable fun BotonDeshabilitado(): Color = paletaActual.botonDeshabilitado
-@Composable fun FondoRedSocial(): Color = paletaActual.fondoRedSocial
 @Composable fun FondoPantalla(): Color = paletaActual.fondoPantalla
-@Composable fun Primario(): Color = paletaActual.primario
-@Composable fun TextoOscuro(): Color = paletaActual.textoOscuro
-@Composable fun MoraditoClaro(): Color = paletaActual.moraditoFin
-@Composable fun fonditoMorado(): Color = paletaActual.fonditoMorado
-@Composable fun LavandaPrimario(): Color = paletaActual.lavandaPrimario
-@Composable fun LavandaSuave(): Color = paletaActual.lavandaSuave
-@Composable fun LavandaFondo(): Color = paletaActual.lavandaFondo
-@Composable fun LavandaBorde(): Color = paletaActual.lavandaBorde
+@Composable fun AzulMarca(): Color = paletaActual.azulMarca
+@Composable fun TextoPrincipal(): Color = paletaActual.textoPrincipal
+@Composable fun AzulAcero(): Color = paletaActual.azulAcero
+@Composable fun FondoSuave(): Color = paletaActual.fondoSuave
+@Composable fun BordeSuave(): Color = paletaActual.bordeSuave
 @Composable fun VerdeAprobado(): Color = paletaActual.verdeAprobado
 @Composable fun NaranjaObservado(): Color = paletaActual.naranjaObservado
 @Composable fun RojoRechazado(): Color = paletaActual.rojoRechazado
-@Composable fun GrisTexto(): Color = paletaActual.grisTexto
+@Composable fun TextoSecundario(): Color = paletaActual.textoSecundario
 @Composable fun FondoFilaTabla(): Color = paletaActual.fondoFilaTabla
-@Composable fun LavandaActa(): Color = paletaActual.lavandaActa
-@Composable fun MoradoFondo(): Color = paletaActual.moradoFondo
+@Composable fun FondoActa(): Color = paletaActual.fondoActa
+@Composable fun Acento(): Color = paletaActual.acento

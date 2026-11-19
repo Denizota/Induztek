@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cl.duoc.induztek.R
 import cl.duoc.induztek.ui.theme.InduztekTheme
-import cl.duoc.induztek.ui.theme.TextoGris
+import cl.duoc.induztek.ui.theme.TextoTitulo
 
 @Composable
 fun EncabezadoInicio(
@@ -24,31 +24,20 @@ fun EncabezadoInicio(
             Text(
                 text = stringResource(R.string.nombre_empresa),
                 style = MaterialTheme.typography.labelLarge,
-                color = TextoGris()
+                color = TextoTitulo()
             )
         }
         Text(
             text = titulo,
             style = MaterialTheme.typography.titleLarge,
-            color = TextoGris()
+            color = TextoTitulo()
         )
         if (subtitulo.isNotEmpty()) {
             Text(
                 text = subtitulo,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextoGris()
+                color = TextoTitulo()
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun EncabezadoInicioPreview(){
-    InduztekTheme {
-        EncabezadoInicio(
-            titulo = "Protocolos de prueba en terreno",
-            subtitulo = "Eslogan lindo tierno y adorable hola que tal."
-        )
     }
 }

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import cl.duoc.induztek.ui.styles.EstilosBotonRedSocial
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.FondoRedSocial
+import cl.duoc.induztek.ui.theme.FondoCampo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,11 +27,11 @@ fun BotonRedSocial(
         onClick = onClick,
         modifier = modifier.height(Dimens.alturaBotonRedsocial),
         shape = EstilosBotonRedSocial.forma,
-        color = FondoRedSocial(),
+        color = FondoCampo(),
         shadowElevation = Dimens.elevacionBotonRedsocial
     ) {
         Box(contentAlignment = Alignment.Center){
-            Image( //para poder ponerle color a los iconos oks
+            Image(
                 painter = painterResource(id = icono),
                 contentDescription = descripcion,
                 modifier = Modifier.size(Dimens.tamanoIconoRedSocial)

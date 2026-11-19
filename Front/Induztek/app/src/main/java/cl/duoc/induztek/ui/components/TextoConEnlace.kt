@@ -13,7 +13,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import cl.duoc.induztek.ui.theme.InduztekTheme
-import cl.duoc.induztek.ui.theme.TextoGris
+import cl.duoc.induztek.ui.theme.TextoTitulo
 
 @Composable
 fun TextoConEnlace(
@@ -30,25 +30,14 @@ fun TextoConEnlace(
         Text(
             text = "$textoNormal ",
             style = MaterialTheme.typography.bodySmall,
-            color = TextoGris()
+            color = TextoTitulo()
         )
         Text(
             text = textoEnlace,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-            color = TextoGris(),
+            color = TextoTitulo(),
             modifier = Modifier.clickable(role = Role.Button, onClick = onClickEnlace)
         )
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun TextoConEnlacePreview(){
-    InduztekTheme {
-        TextoConEnlace(
-            textoNormal = "¿No tienes una cuenta?",
-            textoEnlace = "¡Registrate aquí!",
-            onClickEnlace = {}
-        )
-    }
-}

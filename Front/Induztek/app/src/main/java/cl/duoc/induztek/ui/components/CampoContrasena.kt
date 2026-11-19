@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -32,7 +33,8 @@ fun CampoContrasena(
     onAlternarVisible: ()-> Unit,
     modifier: Modifier = Modifier,
     error: String? = null,
-    accionTeclado: ImeAction = ImeAction.Next
+    accionTeclado: ImeAction = ImeAction.Next,
+    iconoInicial: Painter? = null
 ) {
     CampoBase(
         valor = valor,
@@ -44,6 +46,7 @@ fun CampoContrasena(
         tipoTeclado = KeyboardType.Password,
         accionTeclado = accionTeclado,
         transformacionVisual = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+        iconoInicial = iconoInicial,
         contenidoFinal = {
             Box(
                 modifier = Modifier.size(Dimens.alturaCampo)
@@ -63,20 +66,4 @@ fun CampoContrasena(
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun CampoContrasenaPreview(){
-    InduztekTheme {
-        CampoContrasena(
-            valor = "abc123",
-            onValorCambia = {},
-            etiqueta = "Contraseña",
-            textoSugerido = "*******************",
-            visible = false,
-            onAlternarVisible = {},
-            modifier = Modifier.padding(16.dp)
-        )
-    }
 }

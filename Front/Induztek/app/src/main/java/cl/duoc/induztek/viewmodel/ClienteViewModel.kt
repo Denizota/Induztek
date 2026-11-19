@@ -1,45 +1,66 @@
 package cl.duoc.induztek.viewmodel
 
-
-
-
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import cl.duoc.induztek.data.InduztekDbHelper
+import cl.duoc.induztek.data.*
 import cl.duoc.induztek.model.EstadoProtocolo
 
+class ClienteViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
+    private val baseDatos = InduztekDbHelper.obtener(aplicacion)
 
+    fun equiposDe(idEmpresa: Int) = baseDatos.listarEquiposDeCliente(idEmpresa)
+    fun protocolosVisitaCliente(idEmpresa: Int) = baseDatos.listarProtocolosVisitaCliente(idEmpresa)
+    fun visitaPorId(id: Int) = baseDatos.visitaPorId(id)
+    fun instalacionPorId(id: Int) = baseDatos.instalacionPorId(id)
+    fun recepcionDeVisita(id: Int) = baseDatos.recepcionDeVisita(id)
+    fun protocolosDeVisita(id: Int) = baseDatos.protocolosDeVisita(id)
+    fun nombreDe(id: Int): String {
+        val persona = baseDatos.buscarUsuarioPorId(id)
+        if (persona == null) return ""
+        return persona.nombre
+    }
+    fun equipo(id: Int) = baseDatos.equipoPorId(id)
+    fun historial(idEquipo: Int) = baseDatos.historialAislacion(idEquipo)
+    fun pruebasDe(idProtocolo: Int) = baseDatos.listarPruebas(idProtocolo)
+    fun formalizadoPor(idProtocolo: Int) = baseDatos.formalizadoPor(idProtocolo)
+    fun equipoDeCliente(idEquipo: Int, idEmpresa: Int) = baseDatos.equipoDeCliente(idEquipo, idEmpresa)
 
-class ClienteViewModel(app: Application) : AndroidViewModel(app) {
-    private val db = InduztekDbHelper.obtener(app)
-
-    fun equiposDe(idEmpresa: Int) = db.listarEquiposDeCliente(idEmpresa)
-    fun protocolosVisitaCliente(idEmpresa: Int) = db.listarProtocolosVisitaCliente(idEmpresa)
-    fun visitaPorId(id: Int) = db.visitaPorId(id)
-    fun instalacionPorId(id: Int) = db.instalacionPorId(id)
-    fun recepcionDeVisita(id: Int) = db.recepcionDeVisita(id)
-    fun protocolosDeVisita(id: Int) = db.protocolosDeVisita(id)
-    fun nombreDe(id: Int) = db.buscarUsuarioPorId(id)?.nombre ?: ""
-    fun ingenieroDe(idVisita: Int) =
-        db.visitaPorId(idVisita)?.idIngenieroCargo?.let { nombreDe(it) } ?: ""
-    fun equipo(id: Int) = db.equipoPorId(id)
-    fun historial(idEquipo: Int) = db.historialAislacion(idEquipo)
-    fun pruebasDe(idProtocolo: Int) = db.listarPruebas(idProtocolo)
-
-
-
-
-    fun equipoDeCliente(idEquipo: Int, idEmpresa: Int) = db.equipoDeCliente(idEquipo, idEmpresa)
-
-
-
-    fun protocolosDeEquipo(idEquipo: Int, idEmpresa: Int) = db.listarProtocolos()
-        .filter {
-            it.idEquipo == idEquipo && it.estado != EstadoProtocolo.BORRADOR &&
-                    it.estado != EstadoProtocolo.ANULADO && esDeLaEmpresa(it.idVisita, idEmpresa)
+    fun ingenieroDe(idVisita: Int): String {
+        val visita = baseDatos.visitaPorId(idVisita)
+        if (visita == null) {
+            return ""
         }
-        .sortedByDescending { it.fechaHoraPrueba }
+        val idIngeniero = visita.idIngenieroCargo
+        if (idIngeniero == null) {
+            return ""
+        }
+        return nombreDe(idIngeniero)
+    }
 
-    private fun esDeLaEmpresa(idVisita: Int, idEmpresa: Int) =
-        db.instalacionPorId(db.visitaPorId(idVisita)?.idInstalacion ?: -1)?.idUsuarioCliente == idEmpresa
+    fun protocolosDeEquipo(idEquipo: Int, idEmpresa: Int): List<cl.duoc.induztek.model.Protocolo> {
+        val todos = baseDatos.listarProtocolos()
+        val propios = mutableListOf<cl.duoc.induztek.model.Protocolo>()
+        for (protocolo in todos) {
+            if (protocolo.idEquipo == idEquipo &&
+                protocolo.estado != EstadoProtocolo.BORRADOR &&
+                protocolo.estado != EstadoProtocolo.ANULADO &&
+                esDeLaEmpresa(protocolo.idVisita, idEmpresa)
+            ) {
+                propios.add(protocolo)
+            }
+        }
+        return propios.sortedByDescending { it.fechaHoraPrueba }
+    }
+
+    private fun esDeLaEmpresa(idVisita: Int, idEmpresa: Int): Boolean {
+        val visita = baseDatos.visitaPorId(idVisita)
+        if (visita == null) {
+            return false
+        }
+        val instalacion = baseDatos.instalacionPorId(visita.idInstalacion)
+        if (instalacion == null) {
+            return false
+        }
+        return instalacion.idUsuarioCliente == idEmpresa
+    }
 }

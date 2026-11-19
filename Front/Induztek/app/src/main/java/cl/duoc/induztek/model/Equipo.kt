@@ -1,6 +1,6 @@
 package cl.duoc.induztek.model
 
-data class Equipo (
+data class Equipo(
     val idEquipo: Int,
     val idInstalacion: Int,
     val tag: String,
@@ -8,7 +8,7 @@ data class Equipo (
     val tipoEquipo: String,
     val clasificacion: String,
     val marca: String,
-    val modelo: String, //ups
+    val modelo: String,
     val numeroSerie: String,
     val anioFabricacion: Int,
     val potenciaKva: Double?,
@@ -18,7 +18,7 @@ data class Equipo (
     val maxContactosUohm: Double?,
     val observaciones: String,
     val instalacionNombre: String = ""
-){
+) {
     val exigeLectura10Min: Boolean
         get() = tipoEquipo == "Transformador" || tipoEquipo == "Cable de poder"
 }

@@ -3,11 +3,11 @@ package cl.duoc.induztek.viewmodel
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import cl.duoc.induztek.data.InduztekDbHelper
+import cl.duoc.induztek.data.*
 import cl.duoc.induztek.model.RecepcionActa
 
-class ActaViewModel(app: Application) : AndroidViewModel(app) {
-    private val db = InduztekDbHelper.obtener(app)
+class ActaViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
+    private val baseDatos = InduztekDbHelper.obtener(aplicacion)
 
     val nombre = mutableStateOf("")
     val rut = mutableStateOf("")
@@ -17,18 +17,19 @@ class ActaViewModel(app: Application) : AndroidViewModel(app) {
     val errCargo = mutableStateOf<String?>(null)
     private var preparadoDe: Int? = null
 
-    fun visitaPorId(id: Int) = db.visitaPorId(id)
-    fun instalacionPorId(id: Int) = db.instalacionPorId(id)
-    fun protocolosDeVisita(id: Int) = db.protocolosDeVisita(id)
-    fun protocolosCliente(idVisita: Int, idEmpresa: Int) = db.protocolosDeVisitaCliente(idVisita, idEmpresa)
-    fun recepcionDeVisita(id: Int) = db.recepcionDeVisita(id)
-    fun pruebasDe(idProtocolo: Int) = db.listarPruebas(idProtocolo)
+    fun visitaPorId(id: Int) = baseDatos.visitaPorId(id)
+    fun instalacionPorId(id: Int) = baseDatos.instalacionPorId(id)
+    fun protocolosDeVisita(id: Int) = baseDatos.protocolosDeVisita(id)
+    fun protocolosCliente(idVisita: Int, idEmpresa: Int) = baseDatos.protocolosDeVisitaCliente(idVisita, idEmpresa)
+    fun recepcionDeVisita(id: Int) = baseDatos.recepcionDeVisita(id)
+    fun pruebasDe(idProtocolo: Int) = baseDatos.listarPruebas(idProtocolo)
     fun cerrarVisita(idVisita: Int, nombre: String, rut: String, cargo: String) =
-        db.cerrarVisita(idVisita, nombre, rut, cargo)
-
+        baseDatos.cerrarVisita(idVisita, nombre, rut, cargo)
 
     fun preparar(idVisita: Int, recepcion: RecepcionActa?) {
-        if (preparadoDe == idVisita || recepcion == null) return
+        if (preparadoDe == idVisita || recepcion == null) {
+            return
+        }
         preparadoDe = idVisita
         nombre.value = recepcion.receptorNombre
         rut.value = recepcion.receptorRut

@@ -1,6 +1,5 @@
 package cl.duoc.induztek.model
 
-
 enum class EstadoProtocolo(val codigo: String, val nombre: String) {
     BORRADOR("BORRADOR", "Borrador"),
     REGISTRADO("REGISTRADO_TERRENO", "Registrado en terreno"),

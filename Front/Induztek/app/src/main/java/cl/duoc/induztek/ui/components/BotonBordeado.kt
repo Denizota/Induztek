@@ -11,20 +11,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.LavandaBorde
-
+import cl.duoc.induztek.ui.theme.BordeSuave
 
 @Composable
 fun BotonBordeado(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.radioTarjeta),
-        border = BorderStroke(Dimens.bordeTarjeta, LavandaBorde()),
+        border = BorderStroke(Dimens.bordeTarjeta, BordeSuave()),
         modifier = modifier.fillMaxWidth().height(Dimens.alturaBotonGrande)
-    ) { Text(
-        texto,
-        fontWeight = FontWeight.Medium,
-        color = MaterialTheme.colorScheme.primary
-    )
+    ) {
+        Text(
+            texto,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }

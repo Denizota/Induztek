@@ -1,25 +1,32 @@
 package cl.duoc.induztek.ui.screen
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.induztek.R
@@ -28,10 +35,10 @@ import cl.duoc.induztek.ui.components.BotonPrincipal
 import cl.duoc.induztek.ui.components.CampoContrasena
 import cl.duoc.induztek.ui.components.CampoSeleccion
 import cl.duoc.induztek.ui.components.CampoTexto
-import cl.duoc.induztek.ui.components.EncabezadoInicio
 import cl.duoc.induztek.ui.components.FondoInicio
 import cl.duoc.induztek.ui.components.TextoConEnlace
 import cl.duoc.induztek.ui.theme.Dimens
+import cl.duoc.induztek.ui.theme.TextoSecundario
 import cl.duoc.induztek.ui.theme.InduztekTheme
 import cl.duoc.induztek.viewmodel.SolicitudAccesoViewModel
 
@@ -42,8 +49,7 @@ fun SolicitarAccesoScreen(
     viewModel: SolicitudAccesoViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    val context = LocalContext.current
+    var enviada by remember { mutableStateOf(false) }
 
     SolicitarAccesoContent(
         uiState = uiState,
@@ -58,14 +64,29 @@ fun SolicitarAccesoScreen(
         onAlternarVisibilidadContrasena = viewModel::onAlternarVisibilidadContrasena,
         onAlternarVisibilidadRepetirContrasena = viewModel::onAlternarVisibilidadRepetirContrasena,
         onRegistrarse = {
-            if (viewModel.onRegistrarse()) {
-                Toast.makeText(context, "¡Tu solicitud ha sido enviada ! ", Toast.LENGTH_LONG).show()
-                onSolicitudEnviada()
-            }
+            viewModel.onRegistrarse { enviada = it }
         },
         onVolverAIngreso = onVolverAIngreso
 
     )
+
+    if (enviada) {
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text(stringResource(R.string.sol_enviada_titulo)) },
+            text = { Text(stringResource(R.string.sol_enviada_texto)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        enviada = false
+                        onSolicitudEnviada()
+                    }
+                ) {
+                    Text(stringResource(R.string.sol_enviada_volver))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -84,24 +105,36 @@ fun SolicitarAccesoContent(
     onRegistrarse: () -> Unit,
     onVolverAIngreso: () -> Unit
 ) {
-    FondoInicio {
+    FondoInicio(
+        cabecera = {
+            Column(
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(horizontal = Dimens.margenHorizontalPantalla)
+                    .padding(bottom = Dimens.salto7)
+            ) {
+                Text(
+                    text = stringResource(R.string.titulo_solicitar_acceso),
+                    style = MaterialTheme.typography.displaySmall,
+                    color = Color.White
+                )
+            }
+        }
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .safeDrawingPadding() // respeta barra de estado, barra de abajo y teclado
-                .verticalScroll(rememberScrollState())
+            Modifier
+                .navigationBarsPadding()
                 .padding(horizontal = Dimens.margenHorizontalPantalla)
         ) {
-            Spacer(Modifier.height(Dimens.espacioSuperiorencabezado))
+            Spacer(Modifier.height(Dimens.espacioAntescorreo))
 
-            EncabezadoInicio(
-                titulo = stringResource(R.string.titulo_solicitar_acceso),
-                subtitulo = stringResource(R.string.subtitulo_solicitar_acceso)
+            Text(
+                text = stringResource(R.string.subtitulo_solicitar_acceso).trim(),
+                style = MaterialTheme.typography.bodySmall,
+                color = TextoSecundario()
             )
 
-            Spacer(Modifier.height(Dimens.espacioEncabezadoACuerpo))
-
-
+            Spacer(Modifier.height(Dimens.salto9))
 
             Row(horizontalArrangement = Arrangement.spacedBy(Dimens.espacioNombreApellido)) {
                 CampoTexto(
@@ -194,8 +227,13 @@ fun SolicitarAccesoContent(
             BotonPrincipal(
                 texto = stringResource(R.string.btn_registrarse),
                 onClick = onRegistrarse,
-                habilitado = uiState.registrarseHabilitado,
                 modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(Dimens.salto2))
+            Text(
+                stringResource(R.string.sol_aviso_revision),
+                style = MaterialTheme.typography.labelSmall,
+                color = TextoSecundario()
             )
 
             Spacer(Modifier.height(Dimens.espacioMedio))

@@ -2,66 +2,80 @@ package cl.duoc.induztek.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cl.duoc.induztek.data.InduztekDbHelper
-import cl.duoc.induztek.data.Seguridad
 import cl.duoc.induztek.data.SesionPreferencias
-
+import cl.duoc.induztek.data.buscarUsuarioPorCorreo
+import cl.duoc.induztek.data.buscarUsuarioPorId
+import cl.duoc.induztek.data.verificarClave
 import cl.duoc.induztek.model.LoginUiState
 import cl.duoc.induztek.model.Usuario
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+enum class ResultadoGoogle { ENTRAR, NO_REGISTRADO, INACTIVO }
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
-
-    private val bd = InduztekDbHelper.obtener(application)
+    private val baseDatos = InduztekDbHelper.obtener(application)
     private val sesion = SesionPreferencias(application)
-    private val _uiState = MutableStateFlow(LoginUiState(perfiles = bd.listarPerfilesRapidos()))
+    private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
+    private var ingresando = false
+
     fun onCorreoCambia(valor: String) {
-        _uiState.update { it.copy(correo = valor.trim(), errorCorreo = null) }
+        _uiState.value = _uiState.value.copy(correo = valor.trim(), errorCorreo = null)
     }
 
     fun onContrasenaCambia(valor: String) {
-        _uiState.update { it.copy(contrasena = valor, errorContrasena = null) }
+        _uiState.value = _uiState.value.copy(contrasena = valor, errorContrasena = null)
     }
 
     fun onAlternarVisibilidad() {
-        _uiState.update { it.copy(contrasenaVisible = !it.contrasenaVisible) }
+        _uiState.value = _uiState.value.copy(contrasenaVisible = !_uiState.value.contrasenaVisible)
     }
 
-
-
-    fun onIngresar(): Boolean {
+    fun onIngresar(alTerminar: (Boolean) -> Unit) {
+        if (ingresando) return
         val estado = _uiState.value
 
-
-
-        val errorCorreo = if (!estado.correo.contains("@") || !estado.correo.contains("."))
-            "Ingresa un correo válido !" else null
-        val errorContrasena = if (estado.contrasena.isBlank())
-            "Ingresa tu contraseña !" else null
+        var errorCorreo: String? = null
+        if (!estado.correo.contains("@") || !estado.correo.contains(".")) {
+            errorCorreo = "Ingresa un correo válido !"
+        }
+        var errorContrasena: String? = null
+        if (estado.contrasena.isBlank()) {
+            errorContrasena = "Ingresa tu contraseña !"
+        }
 
         if (errorCorreo != null || errorContrasena != null) {
-            _uiState.update { it.copy(errorCorreo = errorCorreo, errorContrasena = errorContrasena) }
-            return false
+            _uiState.value = _uiState.value.copy(errorCorreo = errorCorreo, errorContrasena = errorContrasena)
+            alTerminar(false)
+            return
         }
 
+        ingresando = true
+        viewModelScope.launch {
+            val entro = withContext(Dispatchers.IO) { ingresar(estado.correo, estado.contrasena) }
+            ingresando = false
+            alTerminar(entro)
+        }
+    }
 
-        val usuario = bd.buscarUsuarioPorCorreo(estado.correo)
-        if (usuario == null || !bd.verificarClave(estado.correo, estado.contrasena)) {
-
-            _uiState.update { it.copy(errorContrasena = "Correo o contraseña incorrectos !") }
+    private fun ingresar(correo: String, contrasena: String): Boolean {
+        val usuario = baseDatos.buscarUsuarioPorCorreo(correo)
+        if (usuario == null || !baseDatos.verificarClave(correo, contrasena)) {
+            _uiState.value = _uiState.value.copy(errorContrasena = "Correo o contraseña incorrectos !")
             return false
         }
-
 
         if (!usuario.activo) {
-            _uiState.update { it.copy(errorCorreo = "Tu cuenta aún no está activa") }
+            _uiState.value = _uiState.value.copy(errorCorreo = "Tu cuenta aún no está activa")
             return false
         }
 
@@ -69,13 +83,23 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    fun onEntrarComo(idUsuario: Int): Boolean {
-        val usuario = bd.buscarUsuarioPorId(idUsuario)
-        if (usuario == null || !usuario.activo) return false
+    fun onIngresarConGoogle(correo: String): ResultadoGoogle {
+        val usuario = baseDatos.buscarUsuarioPorCorreo(correo)
+        if (usuario == null) {
+            return ResultadoGoogle.NO_REGISTRADO
+        }
+        if (!usuario.activo) {
+            return ResultadoGoogle.INACTIVO
+        }
         sesion.guardar(usuario.idUsuario)
-        return true
+        return ResultadoGoogle.ENTRAR
     }
 
-    /** El usuario que quedó guardado en la sesión; la navegación lo pide al saltar de pantalla. */
-    fun usuarioEnSesion(): Usuario? = bd.buscarUsuarioPorId(sesion.leer())?.takeIf { it.activo }
+    fun usuarioEnSesion(): Usuario? {
+        val usuario = baseDatos.buscarUsuarioPorId(sesion.leer())
+        if (usuario == null || !usuario.activo) {
+            return null
+        }
+        return usuario
+    }
 }

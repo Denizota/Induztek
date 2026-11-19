@@ -1,7 +1,5 @@
 package cl.duoc.induztek.viewmodel
 
-
-
 import android.app.Application
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
@@ -9,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import cl.duoc.induztek.R
-import cl.duoc.induztek.data.InduztekDbHelper
+import cl.duoc.induztek.data.*
 import cl.duoc.induztek.model.EstadoProtocolo
 import cl.duoc.induztek.model.Instrumento
 import cl.duoc.induztek.model.Prueba
@@ -17,10 +15,8 @@ import cl.duoc.induztek.model.Protocolo
 import cl.duoc.induztek.model.TipoPrueba
 import cl.duoc.induztek.model.Usuario
 
-
-
-class EquipoViewModel(app: Application) : AndroidViewModel(app) {
-    private val db = InduztekDbHelper.obtener(app)
+class EquipoViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
+    private val baseDatos = InduztekDbHelper.obtener(aplicacion)
 
     val temp = mutableStateOf("")
     val humedad = mutableStateOf("")
@@ -40,79 +36,156 @@ class EquipoViewModel(app: Application) : AndroidViewModel(app) {
 
     private var borradorDe: Int? = null
 
-    fun equipo(id: Int) = db.equipoPorId(id)
-    fun calibracionDe(prueba: Prueba): Instrumento? =
-        prueba.idInstrumento?.let { id -> db.listarInstrumentos().firstOrNull { it.idInstrumento == id } }
+    fun equipo(id: Int) = baseDatos.equipoPorId(id)
 
-    fun motivoDevolucionGuardada(idProtocolo: Int) = db.ultimoMotivo(idProtocolo)
+    fun calibracionDe(prueba: Prueba): Instrumento? {
+        val idInstrumento = prueba.idInstrumento
+        if (idInstrumento == null) {
+            return null
+        }
+        val instrumentos = baseDatos.listarInstrumentos()
+        for (instrumento in instrumentos) {
+            if (instrumento.idInstrumento == idInstrumento) {
+                return instrumento
+            }
+        }
+        return null
+    }
 
+    fun motivoDevolucionGuardada(idProtocolo: Int) = baseDatos.ultimoMotivo(idProtocolo)
 
-
-    fun visitaAbierta(idVisita: Int) = db.visitaPorId(idVisita)?.fechaHoraCierre == null
+    fun visitaAbierta(idVisita: Int): Boolean {
+        val visita = baseDatos.visitaPorId(idVisita)
+        if (visita == null) return true
+        return visita.fechaHoraCierre == null
+    }
 
     fun refrescar(idEquipo: Int) {
         protocoloActual = protocoloEnCurso(idEquipo)
-        pruebas = protocoloActual?.let { db.listarPruebas(it.idProtocolo) } ?: emptyList()
-        tipos = db.tiposPruebaDeEquipo(idEquipo)
-        historial = db.historialAislacion(idEquipo)
+        val protocolo = protocoloActual
+        if (protocolo == null) {
+            pruebas = emptyList()
+        } else {
+            pruebas = baseDatos.listarPruebas(protocolo.idProtocolo)
+        }
+        tipos = baseDatos.tiposPruebaDeEquipo(idEquipo)
+        historial = baseDatos.historialAislacion(idEquipo)
         mensaje = null
     }
 
-
-
-    fun prepararBorrador(p: Protocolo?) {
-        val id = p?.idProtocolo
-        if (borradorDe == id) return
-        borradorDe = id
-        temp.value = p?.temperaturaC.trimDecimal()
-        humedad.value = p?.humedadPct.trimDecimal()
-        observaciones.value = p?.observaciones ?: ""
+    fun prepararBorrador(protocolo: Protocolo?) {
+        var idProtocolo: Int? = null
+        if (protocolo != null) idProtocolo = protocolo.idProtocolo
+        if (borradorDe == idProtocolo) {
+            return
+        }
+        borradorDe = idProtocolo
+        var temperatura: Double? = null
+        var humedadGuardada: Double? = null
+        var textoObservaciones = ""
+        if (protocolo != null) {
+            temperatura = protocolo.temperaturaC
+            humedadGuardada = protocolo.humedadPct
+            textoObservaciones = protocolo.observaciones
+        }
+        temp.value = trimDecimal(temperatura)
+        humedad.value = trimDecimal(humedadGuardada)
+        observaciones.value = textoObservaciones
     }
 
-    private fun Double?.trimDecimal(): String =
-        this?.let { if (it % 1.0 == 0.0) it.toInt().toString() else it.toString() } ?: ""
+    private fun trimDecimal(numero: Double?): String {
+        if (numero == null) {
+            return ""
+        }
+        if (numero % 1.0 == 0.0) {
+            return numero.toInt().toString()
+        }
+        return numero.toString()
+    }
 
     fun marcarRegistrado(
-        p: Protocolo, usuario: Usuario, tipos: List<TipoPrueba>, pruebas: List<Prueba>
+        protocolo: Protocolo, usuario: Usuario, tipos: List<TipoPrueba>, pruebas: List<Prueba>
     ) {
-        val faltan = tipos.filter { t -> pruebas.none { it.tipoPrueba == t } }
-        val t = temp.value.toDoubleOrNull()
-        val h = humedad.value.toDoubleOrNull()
-        when {
-            faltan.isNotEmpty() ->
-                mensaje = txt(R.string.vm_faltan, faltan.joinToString { it.nombre.substringBefore(" (") })
-            t == null || h == null ->
-                mensaje = txt(R.string.vm_hu02)
-            else -> {
-                db.guardarAmbientes(p.idProtocolo, t, h, observaciones.value)
-                db.cambiarEstado(p.idProtocolo, EstadoProtocolo.REGISTRADO, usuario.idUsuario)
-                mensaje = txt(R.string.vm_registrado)
-                refrescar(p.idEquipo)
+        val faltan = mutableListOf<String>()
+        for (tipo in tipos) {
+            var encontrada = false
+            for (prueba in pruebas) {
+                if (prueba.tipoPrueba == tipo) {
+                    encontrada = true
+                }
+            }
+            if (!encontrada) {
+                faltan.add(tipo.nombre.substringBefore(" ("))
             }
         }
+        val temperaturaAmbiente = temp.value.toDoubleOrNull()
+        val humedadAmbiente = humedad.value.toDoubleOrNull()
+
+        if (faltan.isNotEmpty()) {
+            var listaFaltan = ""
+            for (nombre in faltan) {
+                if (listaFaltan.isNotEmpty()) listaFaltan = listaFaltan + ", "
+                listaFaltan = listaFaltan + nombre
+            }
+            mensaje = texto(R.string.vm_faltan, listaFaltan)
+            return
+        }
+        if (temperaturaAmbiente == null || humedadAmbiente == null) {
+            mensaje = texto(R.string.vm_hu02)
+            return
+        }
+        baseDatos.guardarAmbientes(protocolo.idProtocolo, temperaturaAmbiente, humedadAmbiente, observaciones.value)
+        baseDatos.cambiarEstado(protocolo.idProtocolo, EstadoProtocolo.REGISTRADO, usuario.idUsuario)
+        mensaje = texto(R.string.vm_registrado)
+        refrescar(protocolo.idEquipo)
     }
 
-    fun formalizar(p: Protocolo, usuario: Usuario) {
-        db.cambiarEstado(p.idProtocolo, EstadoProtocolo.FORMALIZADO, usuario.idUsuario)
-        mensaje = txt(R.string.vm_formalizado)
-        refrescar(p.idEquipo)
+    fun formalizar(protocolo: Protocolo, usuario: Usuario) {
+        baseDatos.cambiarEstado(protocolo.idProtocolo, EstadoProtocolo.FORMALIZADO, usuario.idUsuario)
+        mensaje = texto(R.string.vm_formalizado)
+        refrescar(protocolo.idEquipo)
     }
 
-    fun devolverConObservacion(p: Protocolo, usuario: Usuario, motivo: String) {
-        db.cambiarEstado(p.idProtocolo, EstadoProtocolo.OBSERVADO, usuario.idUsuario, motivo)
+    fun devolverConObservacion(protocolo: Protocolo, usuario: Usuario, motivo: String) {
+        baseDatos.cambiarEstado(protocolo.idProtocolo, EstadoProtocolo.OBSERVADO, usuario.idUsuario, motivo)
         motivoDevolucion.value = null
-        mensaje = txt(R.string.vm_devuelto)
-        refrescar(p.idEquipo)
+        mensaje = texto(R.string.vm_devuelto)
+        refrescar(protocolo.idEquipo)
     }
 
-    private fun txt(@StringRes id: Int, vararg args: Any): String =
+    private fun texto(@StringRes id: Int, vararg args: Any): String =
         getApplication<Application>().getString(id, *args)
 
-
     private fun protocoloEnCurso(idEquipo: Int): Protocolo? {
-        val equipo = db.equipoPorId(idEquipo) ?: return null
-        val idVisita = db.visitaAbierta(equipo.idInstalacion)
-            ?: return db.listarProtocolos().filter { it.idEquipo == idEquipo }.maxByOrNull { it.fechaHoraPrueba }
-        return db.protocolosDeVisita(idVisita).firstOrNull { it.idEquipo == idEquipo }
+        val equipo = baseDatos.equipoPorId(idEquipo)
+        if (equipo == null) {
+            return null
+        }
+        val idVisita = baseDatos.visitaAbierta(equipo.idInstalacion)
+        if (idVisita == null) {
+            val todos = baseDatos.listarProtocolos()
+            val delEquipo = mutableListOf<Protocolo>()
+            for (protocolo in todos) {
+                if (protocolo.idEquipo == idEquipo) {
+                    delEquipo.add(protocolo)
+                }
+            }
+            var elUltimo: Protocolo? = null
+            for (protocolo in delEquipo) {
+                if (elUltimo == null) {
+                    elUltimo = protocolo
+                } else if (protocolo.fechaHoraPrueba > elUltimo.fechaHoraPrueba) {
+                    elUltimo = protocolo
+                }
+            }
+            return elUltimo
+        }
+        val deLaVisita = baseDatos.protocolosDeVisita(idVisita)
+        for (protocolo in deLaVisita) {
+            if (protocolo.idEquipo == idEquipo) {
+                return protocolo
+            }
+        }
+        return null
     }
 }

@@ -8,10 +8,10 @@ data class Instrumento(
     val numeroSerie: String,
     val fechaUltimaCal: String,
     val fechaVence: String
-){
-    fun vigenteEn(fecha: String): Boolean = fechaVence
-        .replace("-", "")
-        .toInt() >= fecha
-        .replace("-", "")
-        .toInt()
+) {
+    fun vigenteEn(fecha: String): Boolean {
+        val vence = fechaVence.replace("-", "").toInt()
+        val hoy = fecha.replace("-", "").toInt()
+        return vence >= hoy
+    }
 }

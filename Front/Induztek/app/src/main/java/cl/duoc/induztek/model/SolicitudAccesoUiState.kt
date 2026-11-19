@@ -20,8 +20,4 @@ data class SolicitudAccesoUiState(
     val errorCorreo: String? = null,
     val errorContrasena: String? = null,
     val errorRepetirContrasena: String? = null
-) {
-    val registrarseHabilitado: Boolean
-        get()= nombre.isNotBlank() && apellido.isNotBlank() && correo.isNotBlank()
-                && contrasena.isNotBlank() && repetirContrasena.isNotBlank()
-}
+)

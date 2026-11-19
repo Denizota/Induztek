@@ -3,6 +3,7 @@ package cl.duoc.induztek.ui.components
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +24,8 @@ fun CampoTexto(
     tipoTeclado: KeyboardType = KeyboardType.Text,
     accionTeclado: ImeAction = ImeAction.Next,
     alto: Dp = Dimens.alturaCampo,
-    unaSolaLinea: Boolean = true
+    unaSolaLinea: Boolean = true,
+    iconoInicial: Painter? = null
 ) {
     CampoBase(
         valor = valor,
@@ -36,35 +38,8 @@ fun CampoTexto(
         tipoTeclado = tipoTeclado,
         accionTeclado = accionTeclado,
         alto = alto,
-        unaSolaLinea = unaSolaLinea
+        unaSolaLinea = unaSolaLinea,
+        iconoInicial = iconoInicial
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun CampoTextoPreview(){
-    InduztekTheme {
-        CampoTexto(
-            valor = "",
-            onValorCambia = {},
-            etiqueta = "Correo",
-            textoSugerido = "yisang@induztek.cl",
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Con error")
-@Composable
-private fun CampoTextoErrorPreview(){
-    InduztekTheme {
-        CampoTexto(
-            valor = "ana@",
-            onValorCambia = {},
-            etiqueta = "Correo",
-            textoSugerido = "yisang@induztek.cl",
-            error = "Ingresa un correo valido !!",
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}

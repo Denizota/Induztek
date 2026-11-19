@@ -29,7 +29,7 @@ import cl.duoc.induztek.ui.styles.estiloCajaCampo
 import cl.duoc.induztek.ui.theme.Dimens
 import cl.duoc.induztek.ui.theme.IconoCampo
 import cl.duoc.induztek.ui.theme.InduztekTheme
-import cl.duoc.induztek.ui.theme.TextoOscuro
+import cl.duoc.induztek.ui.theme.TextoPrincipal
 import cl.duoc.induztek.ui.theme.TextoPlaceholder
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +67,7 @@ fun CampoSeleccion (
                 Text(
                     text = valor.ifEmpty { textoSugerido },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (valor.isEmpty()) TextoPlaceholder() else TextoOscuro(),
+                    color = if (valor.isEmpty()) TextoPlaceholder() else TextoPrincipal(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
@@ -81,7 +81,7 @@ fun CampoSeleccion (
                 expanded = expandido,
                 onDismissRequest = {expandido = false}
             ) {
-                opciones.forEach { opcion ->
+                for (opcion in opciones) {
                     DropdownMenuItem(
                         text = {Text(opcion)},
                         onClick = {
@@ -92,20 +92,5 @@ fun CampoSeleccion (
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun CampoSeleccionPreview(){
-    InduztekTheme {
-        CampoSeleccion(
-            valor = "",
-            opciones = listOf("Chile", "Peru", "Argentina"),
-            onSeleccionar = {},
-            etiqueta = "Pais",
-            textoSugerido = "No seleccionado",
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }

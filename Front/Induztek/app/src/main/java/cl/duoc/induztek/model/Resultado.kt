@@ -7,10 +7,16 @@ enum class Resultado(val codigo: String, val nombre: String) {
 
     companion object {
         fun peor(a: Resultado?, b: Resultado?): Resultado? {
-            if (a == null) return b
-            if (b == null) return a
-            return if (a.ordinal >= b.ordinal) a else b
+            if (a == null) {
+                return b
+            }
+            if (b == null) {
+                return a
+            }
+            if (a.ordinal >= b.ordinal) {
+                return a
+            }
+            return b
         }
-
     }
 }

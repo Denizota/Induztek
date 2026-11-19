@@ -1,6 +1,5 @@
 package cl.duoc.induztek.ui.components
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,7 @@ import cl.duoc.induztek.R
 import cl.duoc.induztek.ui.theme.Dimens
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
-import cl.duoc.induztek.ui.theme.GrisTexto
+import cl.duoc.induztek.ui.theme.TextoSecundario
 
 @Composable
 fun EncabezadoPantalla(titulo: String, subtitulo: String = "", onAtras: (() -> Unit)? = null) {
@@ -34,25 +33,28 @@ fun EncabezadoPantalla(titulo: String, subtitulo: String = "", onAtras: (() -> U
     Column(Modifier.fillMaxWidth().padding(bottom = Dimens.espacioEncabezadoCuerpo)) {
         if (onAtras != null) {
 
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                Modifier
+                    .clip(CircleShape)
+                    .clickable(role = Role.Button, onClick = onAtras)
+                    .semantics(mergeDescendants = true) { contentDescription = atras }
+                    .padding(end = Dimens.salto3, top = Dimens.salto1, bottom = Dimens.salto1),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Box(
-                    Modifier
-                        .size(Dimens.tamanoBotonAtras)
-                        .clip(CircleShape)
-                        .clickable(role = Role.Button, onClick = onAtras)
-                        .semantics(mergeDescendants = true) {
-                            contentDescription = atras
-                        },
+                    Modifier.size(Dimens.tamanoBotonAtras),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "‹", color = GrisTexto(), fontWeight = FontWeight.Bold, maxLines = 1,
+                        "‹", color = TextoSecundario(), fontWeight = FontWeight.Bold, maxLines = 1,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
-                Spacer(Modifier.width(Dimens.salto1))
-                Text(stringResource(R.string.atras_equipos), color = GrisTexto(), style = MaterialTheme.typography.labelMedium)
+                Text(
+                    stringResource(R.string.atras_equipos),
+                    color = TextoSecundario(),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
             Spacer(Modifier.height(Dimens.espacioTituloAtras))
         }

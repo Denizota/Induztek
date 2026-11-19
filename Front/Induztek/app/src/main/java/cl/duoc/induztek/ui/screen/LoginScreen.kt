@@ -1,51 +1,35 @@
+
 package cl.duoc.induztek.ui.screen
 
-
-
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.induztek.R
-import cl.duoc.induztek.ui.components.BotonPrincipal
-import cl.duoc.induztek.ui.components.BotonRedSocial
-import cl.duoc.induztek.ui.components.CampoContrasena
-import cl.duoc.induztek.ui.components.CampoTexto
-import cl.duoc.induztek.ui.components.EncabezadoInicio
-import cl.duoc.induztek.ui.components.TextoConEnlace
-import cl.duoc.induztek.ui.styles.EstilosBotonRedSocial
-import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.InduztekTheme
-import cl.duoc.induztek.ui.theme.TextoGris
 import cl.duoc.induztek.viewmodel.LoginViewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
-import cl.duoc.induztek.model.LoginUiState
-import cl.duoc.induztek.ui.components.FondoInicio
-import cl.duoc.induztek.ui.theme.TextoOlvido
-
+import cl.duoc.induztek.viewmodel.ResultadoGoogle
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import android.accounts.AccountManager
+import android.app.Activity
+import android.util.Base64
 
 @Composable
 fun LoginScreen(
@@ -55,204 +39,128 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val contexto = LocalContext.current
+    val recursos = LocalResources.current
+    val alcance = rememberCoroutineScope()
+    val clienteGoogle = stringResource(R.string.google_web_client_id).trim()
+    var mensajeGoogle by remember { mutableStateOf<String?>(null) }
+    var googleEnCurso by remember { mutableStateOf(false) }
+
+    fun entrarConCorreo(correo: String) {
+        val comoEntro = viewModel.onIngresarConGoogle(correo)
+        if (comoEntro == ResultadoGoogle.ENTRAR) {
+            onIngresoExitoso()
+        } else if (comoEntro == ResultadoGoogle.NO_REGISTRADO) {
+            mensajeGoogle = recursos.getString(R.string.google_no_registrado, correo)
+        } else if (comoEntro == ResultadoGoogle.INACTIVO) {
+            mensajeGoogle = recursos.getString(R.string.google_inactivo, correo)
+        }
+    }
+
+    val lanzadorCuentas = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { resultado ->
+        googleEnCurso = false
+        if (resultado.resultCode == Activity.RESULT_OK) {
+            val datos = resultado.data
+            if (datos != null) {
+                val correo = datos.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
+                if (correo != null && correo.isNotBlank()) entrarConCorreo(correo)
+            }
+        }
+    }
+
+    fun entrarConGoogle() {
+        if (googleEnCurso) return
+        mensajeGoogle = null
+        if (clienteGoogle.isBlank()) {
+            googleEnCurso = true
+            try {
+                lanzadorCuentas.launch(
+                    AccountManager.newChooseAccountIntent(
+                        null, null, arrayOf("com.google"), true, null, null, null, null
+                    )
+                )
+            } catch (e: Exception) {
+                googleEnCurso = false
+                mensajeGoogle = recursos.getString(R.string.google_sin_cuentas)
+            }
+            return
+        }
+        googleEnCurso = true
+        alcance.launch {
+            try {
+                val respuesta = CredentialManager.create(contexto).getCredential(
+                    context = contexto,
+                    request = GetCredentialRequest.Builder()
+                        .addCredentialOption(
+                            GetGoogleIdOption.Builder()
+                                .setFilterByAuthorizedAccounts(false)
+                                .setServerClientId(clienteGoogle)
+                                .setAutoSelectEnabled(false)
+                                .build()
+                        )
+                        .build()
+                )
+                val credencial = respuesta.credential
+                val correo = if (credencial is CustomCredential &&
+                    credencial.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                ) {
+                    correoDelToken(
+                        GoogleIdTokenCredential.createFrom(credencial.data).idToken,
+                        clienteGoogle
+                    )
+                } else {
+                    null
+                }
+
+                if (correo == null) {
+                    mensajeGoogle = recursos.getString(R.string.google_error)
+                } else {
+                    entrarConCorreo(correo)
+                }
+            } catch (e: GetCredentialCancellationException) {
+            } catch (e: NoCredentialException) {
+                mensajeGoogle = recursos.getString(R.string.google_sin_cuentas)
+            } catch (e: GetCredentialException) {
+                mensajeGoogle = recursos.getString(R.string.google_error)
+            } finally {
+                googleEnCurso = false
+            }
+        }
+    }
+
     LoginContent(
         uiState = uiState,
         onCorreoCambia = viewModel::onCorreoCambia,
         onContrasenaCambia = viewModel::onContrasenaCambia,
         onAlternarVisibilidad = viewModel::onAlternarVisibilidad,
         onIngresar = {
-            if (viewModel.onIngresar()) {
-                onIngresoExitoso()
+            viewModel.onIngresar { entro ->
+                if (entro) onIngresoExitoso()
             }
         },
-        onEntrarComo = {
-            if (viewModel.onEntrarComo(it)) {
-                onIngresoExitoso()
-            }
-        },
-        onSolicitarAcceso = onSolicitarAcceso
+        onSolicitarAcceso = onSolicitarAcceso,
+        onGoogle = { entrarConGoogle() },
+        mensajeGoogle = mensajeGoogle,
+        googleEnCurso = googleEnCurso
     )
 }
 
-@Composable
-fun LoginContent(
-    uiState: LoginUiState,
-    onCorreoCambia: (String) -> Unit,
-    onContrasenaCambia: (String) -> Unit,
-    onAlternarVisibilidad: () -> Unit,
-    onIngresar: ()-> Unit,
-    onSolicitarAcceso: () -> Unit,
-    onOlvideContrasena: () -> Unit = {},
-    onEntrarComo: (Int) -> Unit = {}
-){
-    FondoInicio{
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .safeDrawingPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = Dimens.margenHorizontalPantalla)
-        ) {
-            Spacer(Modifier.height(Dimens.espacioSuperiorencabezado))
-            EncabezadoInicio(
-                titulo = stringResource(R.string.titulo_login),
-                subtitulo = stringResource(R.string.eslogan)
-            )
-            Spacer(Modifier.height(Dimens.espacioEncabezadoACuerpo))
-
-            Text(
-                text = stringResource(R.string.texto_entrar_como),
-                style = MaterialTheme.typography.labelSmall,
-                color = TextoGris()
-            )
-            uiState.perfiles.forEach { perfil ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(role = Role.Button) { onEntrarComo(perfil.idUsuario) }
-                        .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = perfil.rol.nombre,
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(
-                        text = perfil.nombre,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextoGris(),
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(text = ">", color = TextoGris())
-                }
-                HorizontalDivider()
-            }
-
-            Spacer(Modifier.height(Dimens.espacioAntescorreo))
-            Text(
-                text = stringResource(R.string.texto_o_correo),
-                style = MaterialTheme.typography.labelSmall,
-                color = TextoGris()
-            )
-
-            Spacer(Modifier.height(Dimens.espacioDespuesTextoCorreo))
-
-            CampoTexto(
-                valor = uiState.correo,
-                onValorCambia = onCorreoCambia,
-                etiqueta = stringResource(R.string.campo_correo),
-                textoSugerido = stringResource(R.string.placeholder_correo),
-                error = uiState.errorCorreo,
-                tipoTeclado = KeyboardType.Email
-            )
-            Spacer(Modifier.height(Dimens.espacioEntreCampos))
-            CampoContrasena(
-                valor = uiState.contrasena,
-                onValorCambia = onContrasenaCambia,
-                etiqueta = stringResource(R.string.campo_contrasena),
-                textoSugerido = stringResource(R.string.placeholder_contrasena),
-                visible = uiState.contrasenaVisible,
-                onAlternarVisible = onAlternarVisibilidad,
-                error = uiState.errorContrasena,
-                accionTeclado = ImeAction.Done
-            )
-
-            Text(
-                text = stringResource(R.string.enlace_olvido),
-                style = MaterialTheme.typography.bodySmall,
-                color = TextoOlvido(),
-                modifier = Modifier
-                    .padding(top = Dimens.espacioMini)
-                    .clickable(role = Role.Button, onClick = onOlvideContrasena)
-            )
-
-            Spacer(Modifier.height(Dimens.espacioAntesBoton))
-
-            BotonPrincipal(
-                texto = stringResource(R.string.btn_ingresar),
-                onClick = onIngresar,
-                habilitado = uiState.ingresarHabilitado,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(Dimens.espacioAntesRedes))
-
-            Text(
-                text = stringResource(R.string.texto_o_redes),
-                style = MaterialTheme.typography.bodySmall,
-                color = TextoGris(),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(Dimens.espacioTextoRedes))
-
-
-
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(EstilosBotonRedSocial.anchoRelativoDelGrupo)
-                    .align(Alignment.CenterHorizontally),
-                horizontalArrangement = Arrangement.spacedBy(Dimens.espacioRedes)
-            ) {
-                BotonRedSocial(
-                    icono = R.drawable.ic_google,
-                    descripcion = stringResource(R.string.cd_google),
-                    onClick = {},
-                    modifier = Modifier.weight(1f)
-                )
-                BotonRedSocial(
-                    icono = R.drawable.ic_linkedin,
-                    descripcion = stringResource(R.string.cd_linkedin),
-                    onClick = {},
-                    modifier = Modifier.weight(1f)
-                )
-                BotonRedSocial(
-                    icono = R.drawable.ic_facebook,
-                    descripcion = stringResource(R.string.cd_facebook),
-                    onClick = {},
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Spacer(Modifier.height(Dimens.espacioAntesSinCuenta))
-
-            TextoConEnlace(
-                textoNormal = stringResource(R.string.texto_sin_cuenta),
-                textoEnlace = stringResource(R.string.enlace_registrate),
-                onClickEnlace = onSolicitarAcceso
-            )
-
-            Spacer(Modifier.height(Dimens.espacioGrande))
-        }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true, name = "Vacío")
-@Composable
-private fun LoginVacioPreview() {
-    InduztekTheme {
-        LoginContent(
-            uiState = LoginUiState(),
-            onCorreoCambia = {}, onContrasenaCambia = {}, onAlternarVisibilidad = {},
-            onIngresar = {}, onSolicitarAcceso = {}
+private fun correoDelToken(idToken: String, clienteWeb: String): String? {
+    try {
+        val partes = idToken.split('.')
+        if (partes.size < 2) return null
+        val json = JSONObject(
+            String(Base64.decode(partes[1], Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING))
         )
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true, name = "Con datos y error")
-@Composable
-private fun LoginConDatosPreview() {
-    InduztekTheme {
-        LoginContent(
-            uiState = LoginUiState(
-                correo = "skibidi@",
-                contrasena = "123456",
-                errorCorreo = "Ingresa un correo válido !!",
-                errorContrasena = "Ingresa una contrasenia valida !!"
-            ),
-            onCorreoCambia = {}, onContrasenaCambia = {}, onAlternarVisibilidad = {},
-            onIngresar = {}, onSolicitarAcceso = {}
-        )
+        val emisor = json.optString("iss")
+        val paraEstaApp = emisor == "https://accounts.google.com" || emisor == "accounts.google.com"
+        if (!paraEstaApp || json.optString("aud") != clienteWeb) return null
+        val correo = json.optString("email")
+        if (correo.isBlank()) return null
+        return correo
+    } catch (e: Exception) {
+        return null
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.compose.ui.unit.dp
 
+
 data class ConfiguracionTema(
     val modoOscuro: Boolean,
     val cambiarModoOscuro: (Boolean) -> Unit
@@ -35,51 +36,79 @@ val LocalConfiguracionTema = compositionLocalOf {
 }
 
 private val EsquemaClaro = lightColorScheme(
-    primary = Primario,
+    primary = AzulMarcaClaro,
     onPrimary = Blanco,
-    background = Color(0xFFF7F8FB),
-    onBackground = TextoOscuro,
-    surface = Blanco,
-    onSurface = TextoOscuro,
-    onSurfaceVariant = Color(0xFF50586A),
-    surfaceVariant = Color(0xFFEFF0F5),
-    secondaryContainer = Color(0xFFEDEAF8),
-    onSecondaryContainer = Color(0xFF2F264C),
-    tertiary = Color(0xFF3D7628),
+    primaryContainer = Color(0xFFE3EBF1),
+    onPrimaryContainer = Color(0xFF0B2436),
+    secondary = AcentoClaro,
+    onSecondary = Color(0xFF2B1A00),
+    secondaryContainer = Color(0xFFFFF1D6),
+    onSecondaryContainer = Color(0xFF4A2E00),
+    tertiary = VerdeAprobadoClaro,
     onTertiary = Blanco,
-    tertiaryContainer = Color(0xFFE5F3DC),
-    onTertiaryContainer = Color(0xFF24451D),
-    outline = Color(0xFF72788A)
+    tertiaryContainer = Color(0xFFE2F1E8),
+    onTertiaryContainer = Color(0xFF0D3D24),
+    error = RojoRechazadoClaro,
+    onError = Blanco,
+    errorContainer = Color(0xFFFBE9E7),
+    onErrorContainer = Color(0xFF7A1F16),
+    background = FondoPantallaClaro,
+    onBackground = TextoPrincipalClaro,
+    surface = FondoCampoClaro,
+    onSurface = TextoPrincipalClaro,
+    surfaceVariant = FondoFilaTablaClaro,
+    onSurfaceVariant = Color(0xFF4C5865),
+    outline = Color(0xFFB7C1CB),
+    outlineVariant = BordeSuaveClaro,
+    scrim = Negro,
+    inverseSurface = Color(0xFF1B242C),
+    inverseOnSurface = Color(0xFFF1F4F7),
+    inversePrimary = AzulMarcaOscuro
 )
 
 private val EsquemaOscuro = darkColorScheme(
-    primary = Color(0xFFC3B3FF),
-    onPrimary = Color(0xFF281B61),
-    background = Color(0xFF12151B),
-    onBackground = Color(0xFFE9EAF0),
-    surface = Color(0xFF1E232C),
-    onSurface = Color(0xFFE9EAF0),
-    surfaceVariant = Color(0xFF2A303A),
-    onSurfaceVariant = Color(0xFFC3C8D3),
-    secondaryContainer = Color(0xFF35304A),
-    onSecondaryContainer = Color(0xFFF0EAFF),
-    tertiary = Color(0xFFA6E58F),
-    onTertiary = Color(0xFF1D421B),
-    tertiaryContainer = Color(0xFF263D2A),
-    onTertiaryContainer = Color(0xFFC7EFC0),
-    outline = Color(0xFF939AA8)
+    primary = AzulMarcaOscuro,
+    onPrimary = Color(0xFF0B1B28),
+    primaryContainer = Color(0xFF1C3A52),
+    onPrimaryContainer = Color(0xFFD6E6F3),
+    secondary = AcentoOscuro,
+    onSecondary = Color(0xFF2B1A00),
+    secondaryContainer = Color(0xFF3D2C08),
+    onSecondaryContainer = Color(0xFFFFE7BC),
+    tertiary = VerdeAprobadoOscuro,
+    onTertiary = Color(0xFF0D3D24),
+    tertiaryContainer = Color(0xFF1B3A2A),
+    onTertiaryContainer = Color(0xFFC6EFD8),
+    error = RojoRechazadoOscuro,
+    onError = Color(0xFF3B0A05),
+    errorContainer = Color(0xFF5A201A),
+    onErrorContainer = Color(0xFFFFDAD4),
+    background = FondoPantallaOscuro,
+    onBackground = Color(0xFFE6EBF0),
+    surface = Color(0xFF131B22),
+    onSurface = Color(0xFFE6EBF0),
+    surfaceVariant = FondoSuaveOscuro,
+    onSurfaceVariant = Color(0xFFB3BEC9),
+    outline = Color(0xFF5B6772),
+    outlineVariant = BordeSuaveOscuro,
+    scrim = Color(0xFF000000),
+    inverseSurface = Color(0xFFE6EBF0),
+    inverseOnSurface = Color(0xFF16212B),
+    inversePrimary = AzulMarcaClaro
 )
 
 private val Formas = Shapes(
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(12.dp),
-    large = RoundedCornerShape(20.dp)
+    extraSmall = RoundedCornerShape(3.dp),
+    small = RoundedCornerShape(6.dp),
+    medium = RoundedCornerShape(8.dp),
+    large = RoundedCornerShape(10.dp),
+    extraLarge = RoundedCornerShape(12.dp)
 )
 
 @Composable
 fun InduztekTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current
-    val view = LocalView.current
+    val vista = LocalView.current
 
     AjustesTema.cargarSiFalta(context)
     val modoOscuro = AjustesTema.apariencia.esOscuro()
@@ -101,7 +130,7 @@ fun InduztekTheme(content: @Composable () -> Unit) {
             actual = actual.baseContext
         }
         if (actual is Activity) {
-            val controller = WindowCompat.getInsetsController(actual.window, view)
+            val controller = WindowCompat.getInsetsController(actual.window, vista)
             controller.isAppearanceLightStatusBars = !modoOscuro
             controller.isAppearanceLightNavigationBars = !modoOscuro
             actual.window.decorView.setBackgroundColor(paleta.fondoPantalla.toArgb())
@@ -117,7 +146,7 @@ fun InduztekTheme(content: @Composable () -> Unit) {
             typography = Tipografia,
             shapes = Formas
         ) {
-            CompositionLocalProvider(LocalContentColor provides paleta.textoOscuro) {
+            CompositionLocalProvider(LocalContentColor provides paleta.textoPrincipal) {
                 content()
             }
         }

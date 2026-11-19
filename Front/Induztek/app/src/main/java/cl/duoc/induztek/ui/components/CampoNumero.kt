@@ -9,7 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import cl.duoc.induztek.R
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.GrisTexto
+import cl.duoc.induztek.ui.theme.TextoSecundario
 
 @Composable
 fun CampoNumero(
@@ -35,7 +35,7 @@ fun CampoNumero(
         contenidoFinal = if (sufijo.isNotEmpty()) {
             {
                 Text(
-                    sufijo, color = GrisTexto(), style = MaterialTheme.typography.bodySmall,
+                    sufijo, color = TextoSecundario(), style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(start = Dimens.salto2)
                 )
             }

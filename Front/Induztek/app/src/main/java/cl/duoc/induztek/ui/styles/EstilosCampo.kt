@@ -31,4 +31,8 @@ fun Modifier.estiloCajaCampo(enfocado: Boolean, hayError: Boolean, alto: Dp) : M
     this.fillMaxWidth()
         .height(alto)
         .background(FondoCampo(), EstilosCampo.forma)
-        .border(Dimens.bordeCampo, EstilosCampo.colorBorde(enfocado, hayError), EstilosCampo.forma)
+        .border(
+            if (enfocado || hayError) Dimens.grosorBordeEnfocado else Dimens.bordeCampo,
+            EstilosCampo.colorBorde(enfocado, hayError),
+            EstilosCampo.forma
+        )

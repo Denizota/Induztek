@@ -1,8 +1,5 @@
 package cl.duoc.induztek.model
 
-
-
-
 data class Instalacion(
     val idInstalacion: Int,
     val idUsuarioCliente: Int,

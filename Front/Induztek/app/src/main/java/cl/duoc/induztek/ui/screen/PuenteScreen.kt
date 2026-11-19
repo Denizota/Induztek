@@ -42,16 +42,16 @@ import cl.duoc.induztek.ui.components.Tarjeta
 import cl.duoc.induztek.ui.theme.AjustesTema
 import cl.duoc.induztek.ui.theme.Apariencia
 import cl.duoc.induztek.ui.theme.Dimens
-import cl.duoc.induztek.ui.theme.GrisTexto
+import cl.duoc.induztek.ui.theme.TextoSecundario
 import cl.duoc.induztek.viewmodel.PuenteViewModel
 
 @Composable
 fun PuenteScreen(
     onIrEquipo: (Int) -> Unit,
     onSalir: () -> Unit,
-    vm: PuenteViewModel = viewModel()
+    modeloPantalla: PuenteViewModel = viewModel()
 ) {
-    val equipos = vm.listarEquipos()
+    val equipos = modeloPantalla.listarEquipos()
 
     Column(
         Modifier
@@ -63,34 +63,32 @@ fun PuenteScreen(
     ) {
         AjustesAccesibilidad()
 
-        equipos.forEach { e ->
-            BotonPrincipal(texto = e.tag, onClick = { onIrEquipo(e.idEquipo) }, modifier = Modifier.fillMaxWidth())
+        for (equipo in equipos) {
+            BotonPrincipal(texto = equipo.tag, onClick = { onIrEquipo(equipo.idEquipo) }, modifier = Modifier.fillMaxWidth())
         }
 
-        BotonBordeado(texto = stringResource(R.string.puente_reiniciar), onClick = { vm.reiniciarDemo() })
+        BotonBordeado(texto = stringResource(R.string.puente_reiniciar), onClick = { modeloPantalla.reiniciarDemo() })
         BotonBordeado(texto = stringResource(R.string.puente_salir), onClick = {
-            vm.borrarSesion()
+            modeloPantalla.borrarSesion()
             onSalir()
         })
     }
 }
-
 
 @Composable
 private fun AjustesAccesibilidad() {
     val contexto = LocalContext.current
     val manager = contexto.getSystemService(AccessibilityManager::class.java)
 
-
-    var locutor by remember { mutableStateOf(manager?.isTouchExplorationEnabled == true) }
+    var lectorPrendido = false
+    if (manager != null && manager.isTouchExplorationEnabled) lectorPrendido = true
+    var locutor by remember { mutableStateOf(lectorPrendido) }
     DisposableEffect(manager) {
         if (manager == null) return@DisposableEffect onDispose { }
         val oyente = AccessibilityManager.TouchExplorationStateChangeListener { locutor = it }
         manager.addTouchExplorationStateChangeListener(oyente)
         onDispose { manager.removeTouchExplorationStateChangeListener(oyente) }
     }
-
-
 
     val etiquetas = listOf(
         stringResource(R.string.apariencia_sistema),
@@ -111,7 +109,7 @@ private fun AjustesAccesibilidad() {
             opciones = etiquetas,
             seleccionado = etiquetas[AjustesTema.apariencia.ordinal]
         ) { elegida ->
-            AjustesTema.guardar(contexto, Apariencia.entries[etiquetas.indexOf(elegida)])
+            AjustesTema.guardar(contexto, Apariencia.values()[etiquetas.indexOf(elegida)])
         }
         Spacer(Modifier.height(Dimens.espacioChico))
         Row(
@@ -129,7 +127,7 @@ private fun AjustesAccesibilidad() {
         Text(
             stringResource(R.string.puente_locutor_nota),
             style = MaterialTheme.typography.labelSmall,
-            color = GrisTexto()
+            color = TextoSecundario()
         )
     }
 }

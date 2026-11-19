@@ -14,60 +14,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
-import cl.duoc.induztek.data.InduztekDbHelper
-import cl.duoc.induztek.data.SesionPreferencias
+import cl.duoc.induztek.data.*
 import cl.duoc.induztek.model.Rol
 import cl.duoc.induztek.model.TipoPrueba
 import cl.duoc.induztek.model.Usuario
-import cl.duoc.induztek.ui.screen.ActaScreen
 
 import cl.duoc.induztek.ui.screen.LoginScreen
 import cl.duoc.induztek.ui.screen.SolicitarAccesoScreen
-import cl.duoc.induztek.ui.screen.InicioScreen
 import cl.duoc.induztek.ui.screen.PuenteScreen
 import cl.duoc.induztek.ui.screen.EquipoScreen
 import cl.duoc.induztek.ui.screen.PruebaFormScreen
 
-import cl.duoc.induztek.ui.screen.ListaMensajesScreen
-import cl.duoc.induztek.ui.screen.ChatIndividualScreen
-import cl.duoc.induztek.ui.screen.ClienteEquipoScreen
-import cl.duoc.induztek.ui.screen.ClienteHomeScreen
-import cl.duoc.induztek.ui.screen.DetallesChatScreen
-import cl.duoc.induztek.ui.screen.PerfilScreen
-import cl.duoc.induztek.ui.screen.EditarPerfilScreen
-import cl.duoc.induztek.ui.screen.PersonalHistorialScreen
-import cl.duoc.induztek.ui.screen.ValidacionRegistroScreen
-
 import cl.duoc.induztek.viewmodel.LoginViewModel
-
-private fun rutaEquipo(id: Int): String =
-    "${Ruta.Equipo.ruta}/$id"
-
-private fun rutaPrueba(
-    id: Int,
-    tipo: TipoPrueba
-): String =
-    "${Ruta.Prueba.ruta}/$id/${tipo.name}"
-
-private fun rutaChat(idContacto: Int): String =
-    "${Ruta.Chat.ruta}/$idContacto"
-
-private fun rutaDetallesChat(idContacto: Int): String =
-    "${Ruta.DetallesChat.ruta}/$idContacto"
-
-
-private fun rutaActa(idVisita: Int, cliente: Boolean): String =
-    "${Ruta.Acta.ruta}/$idVisita/${if (cliente) 1 else 0}"
-
-private fun rutaClienteEquipo(id: Int): String =
-    "${Ruta.Cliente.ruta}/equipo/$id"
-
-private fun rutaTrasLogin(u: Usuario): String =
-    if (u.rol == Rol.CLIENTE) Ruta.Cliente.ruta else Ruta.Inicio.ruta
-
-
-
-
 
 @Composable
 fun AppNavegacion() {
@@ -79,67 +37,85 @@ fun AppNavegacion() {
         SesionPreferencias(context)
     }
 
-    val bd = remember {
+    val baseDatos = remember {
         InduztekDbHelper.obtener(context)
     }
 
     var usuario by remember {
-        mutableStateOf<Usuario?>(
-            bd.buscarUsuarioPorId(sesion.leer())
-                ?.takeIf { it.activo }
-        )
+        val guardado = baseDatos.buscarUsuarioPorId(sesion.leer())
+        var inicial: Usuario? = null
+        if (guardado != null && guardado.activo) {
+            inicial = guardado
+        }
+        mutableStateOf(inicial)
     }
 
-
+    fun limpiarPila() {
+        navController.popBackStack(navController.graph.startDestinationId, inclusive = true)
+    }
 
     fun entrar(nuevoUsuario: Usuario) {
         usuario = nuevoUsuario
         sesion.guardar(nuevoUsuario.idUsuario)
+        limpiarPila()
+
         navController.navigate(rutaTrasLogin(nuevoUsuario)) {
-            popUpTo(Ruta.Login.ruta) {
-                inclusive = true
-            }
             launchSingleTop = true
         }
     }
-
-
 
     fun salir() {
         sesion.borrar()
         usuario = null
+        limpiarPila()
 
         navController.navigate(Ruta.Login.ruta) {
-            popUpTo(navController.graph.id) {
-                inclusive = true
-            }
             launchSingleTop = true
         }
     }
 
+    fun irA(destino: String) {
+        var raiz = Ruta.Inicio.ruta
+        val actual = usuario
+        if (actual != null && actual.rol == Rol.CLIENTE) {
+            raiz = Ruta.Cliente.ruta
+        }
+        navController.navigate(destino) {
+            popUpTo(raiz) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    fun irAEquipos() {
+        val actual = usuario
+        if (actual != null && actual.rol == Rol.CLIENTE) {
+            navController.navigate(Ruta.Cliente.ruta) {
+                popUpTo(Ruta.Cliente.ruta) { inclusive = false }
+                launchSingleTop = true
+            }
+        } else {
+            irA(Ruta.Inicio.ruta)
+        }
+    }
+
+    val sesionActiva = usuario
+    val pantallaArranque = if (sesionActiva == null) Ruta.Login.ruta else rutaTrasLogin(sesionActiva)
+
     NavHost(
         navController = navController,
-        startDestination =
-            usuario?.let { rutaTrasLogin(it) } ?: Ruta.Login.ruta
+        startDestination = pantallaArranque
     ) {
-            /*if (usuario != null) {
-                Ruta.Inicio.ruta
-            } else {
-                Ruta.Login.ruta
-            }
-    ) {
-*/
-
-
 
         composable(Ruta.Login.ruta) {
 
-            val vm: LoginViewModel = viewModel()
+            val modeloPantalla: LoginViewModel = viewModel()
 
             LoginScreen(
-                viewModel = vm,
+                viewModel = modeloPantalla,
                 onIngresoExitoso = {
-                    vm.usuarioEnSesion()?.let { nuevo ->
+                    val nuevo = modeloPantalla.usuarioEnSesion()
+                    if (nuevo != null) {
                         entrar(nuevo)
                     }
                 },
@@ -150,8 +126,6 @@ fun AppNavegacion() {
                 }
             )
         }
-
-
 
         composable(Ruta.SolicitarAcceso.ruta) {
 
@@ -165,34 +139,7 @@ fun AppNavegacion() {
             )
         }
 
-
-
-        composable(Ruta.Inicio.ruta) {
-
-            InicioScreen(
-                onProtocolosClick = {
-                    navController.navigate(
-                        Ruta.Puente.ruta
-                    )
-                },
-                onChatClick = {
-                    navController.navigate(
-                        Ruta.Mensajes.ruta
-                    )
-                },
-                onPerfilClick = {
-                    navController.navigate(
-                        Ruta.Perfil.ruta
-                    )
-                },
-                onCerrarSesion = {
-                    salir()
-                }
-            )
-        }
-
-
-
+        rutasStaff(navController, { irA(it) }, { salir() })
 
         composable(Ruta.Puente.ruta) {
 
@@ -208,173 +155,6 @@ fun AppNavegacion() {
             )
         }
 
-
-
-
-        composable(Ruta.Mensajes.ruta) {
-
-            val actual = usuario ?: return@composable
-
-            ListaMensajesScreen(
-                usuario = actual,
-                onAbrirChat = { idContacto ->
-                    navController.navigate(
-                        rutaChat(idContacto)
-                    )
-                },
-                onVolver = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-
-
-        composable(
-            route = "${Ruta.Chat.ruta}/{idContacto}",
-            arguments = listOf(
-                navArgument("idContacto") {
-                    type = NavType.IntType
-                }
-            )
-        ) { backStack ->
-
-            val actual = usuario ?: return@composable
-
-            val idContacto =
-                backStack.arguments?.getInt("idContacto")
-                    ?: return@composable
-
-            ChatIndividualScreen(
-                usuario = actual,
-                idContacto = idContacto,
-                onDetalles = {
-                    navController.navigate(
-                        rutaDetallesChat(idContacto)
-                    )
-                },
-                onVolver = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-
-        composable(
-            route = "${Ruta.DetallesChat.ruta}/{idContacto}",
-            arguments = listOf(
-                navArgument("idContacto") {
-                    type = NavType.IntType
-                }
-            )
-        ) { backStack ->
-
-            val actual = usuario ?: return@composable
-
-            val idContacto =
-                backStack.arguments?.getInt("idContacto")
-                    ?: return@composable
-
-            DetallesChatScreen(
-                usuario = actual,
-                idContacto = idContacto,
-                onVolver = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-
-
-        composable(Ruta.Perfil.ruta) {
-
-            val actual = usuario ?: return@composable
-
-            PerfilScreen(
-                usuarioId = actual.idUsuario,
-                onEditar = {
-                    navController.navigate(
-                        Ruta.EditarPerfil.ruta
-                    )
-                },
-                onPersonal = {
-                    navController.navigate(
-                        Ruta.Personal.ruta
-                    )
-                },
-                onValidar = {
-                    navController.navigate(
-                        Ruta.Validacion.ruta
-                    )
-                },
-                onSalir = {
-                    salir()
-                },
-                onVolver = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-
-        composable(Ruta.EditarPerfil.ruta) {
-
-            val actual = usuario ?: return@composable
-
-            EditarPerfilScreen(
-                usuarioId = actual.idUsuario,
-                onGuardado = {
-                    usuario = bd.buscarUsuarioPorId(
-                        actual.idUsuario
-                    )
-                    navController.popBackStack()
-                },
-                onVolver = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-
-        composable(Ruta.Personal.ruta) {
-
-            val actual = usuario ?: return@composable
-
-            PersonalHistorialScreen(
-                usuarioId = actual.idUsuario,
-                onValidar = {
-                    navController.navigate(
-                        Ruta.Validacion.ruta
-                    )
-                },
-                onVolver = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-
-
-        composable(Ruta.Validacion.ruta) {
-
-            val actual = usuario ?: return@composable
-
-            ValidacionRegistroScreen(
-                usuarioId = actual.idUsuario,
-                onVolver = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-
         composable(
             route = "${Ruta.Equipo.ruta}/{idEquipo}",
             arguments = listOf(
@@ -384,11 +164,16 @@ fun AppNavegacion() {
             )
         ) { backStack ->
 
-            val actual = usuario ?: return@composable
+            val actual = usuario
+            if (actual == null) {
+                return@composable
+            }
 
-            val idEquipo =
-                backStack.arguments?.getInt("idEquipo")
-                    ?: return@composable
+            val argumentos = backStack.arguments
+            if (argumentos == null) {
+                return@composable
+            }
+            val idEquipo = argumentos.getInt("idEquipo")
 
             EquipoScreen(
                 idEquipo = idEquipo,
@@ -407,9 +192,6 @@ fun AppNavegacion() {
             )
         }
 
-
-
-
         composable(
             route = "${Ruta.Prueba.ruta}/{idEquipo}/{tipo}",
             arguments = listOf(
@@ -422,19 +204,31 @@ fun AppNavegacion() {
             )
         ) { backStack ->
 
-            val actual = usuario ?: return@composable
+            val actual = usuario
+            if (actual == null) {
+                return@composable
+            }
 
-            val idEquipo =
-                backStack.arguments?.getInt("idEquipo")
-                    ?: return@composable
+            val argumentos = backStack.arguments
+            if (argumentos == null) {
+                return@composable
+            }
+            val idEquipo = argumentos.getInt("idEquipo")
 
-            val tipoNombre =
-                backStack.arguments?.getString("tipo")
-                    ?: return@composable
+            val tipoNombre = argumentos.getString("tipo")
+            if (tipoNombre == null) {
+                return@composable
+            }
 
-            val tipo = TipoPrueba.entries.find {
-                it.name == tipoNombre
-            } ?: return@composable
+            var tipo: TipoPrueba? = null
+            for (posible in TipoPrueba.values()) {
+                if (posible.name == tipoNombre) {
+                    tipo = posible
+                }
+            }
+            if (tipo == null) {
+                return@composable
+            }
 
             PruebaFormScreen(
                 idEquipo = idEquipo,
@@ -449,68 +243,7 @@ fun AppNavegacion() {
             )
         }
 
-
-        composable(
-            route = "${Ruta.Acta.ruta}/{idVisita}/{cliente}",
-            arguments = listOf(
-                navArgument("idVisita") {
-                    type = NavType.IntType
-                },
-                navArgument("cliente") {
-                    type = NavType.IntType
-                }
-            )
-        ) { backStack ->
-            val actual = usuario ?: return@composable
-
-            ActaScreen(
-                idVisita =
-                    backStack.arguments?.getInt("idVisita") ?: return@composable,
-                usuario = actual,
-                esCliente = (backStack.arguments?.getInt("cliente") ?: 0) == 1,
-                onAtras = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        composable(Ruta.Cliente.ruta) {
-            val actual = usuario ?: return@composable
-
-            ClienteHomeScreen(
-                usuario = actual,
-                onIrEquipo = { idEquipo ->
-                    navController.navigate(rutaClienteEquipo(idEquipo))
-                },
-                onIrActa = { idVisita ->
-                    navController.navigate(rutaActa(idVisita, true))
-                },
-                onSalir = {
-                    salir()
-                }
-            )
-        }
-
-        composable(
-            route = "${Ruta.Cliente.ruta}/equipo/{idEquipo}",
-            arguments = listOf(
-                navArgument("idEquipo") {
-                    type = NavType.IntType
-                }
-            )
-        ) { backStack ->
-            val actual = usuario ?: return@composable
-
-            ClienteEquipoScreen(
-                idEquipo =
-                    backStack.arguments?.getInt("idEquipo") ?: return@composable,
-                usuario = actual,
-                onAtras = {
-                    navController.popBackStack()
-                },
-                onConsultar = {
-                }
-            )
-        }
+        rutasCliente(navController, { usuario }, { irA(it) }, { salir() })
+        rutasPerfil(navController, { irAEquipos() }, { salir() })
     }
 }

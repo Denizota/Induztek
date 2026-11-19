@@ -1,24 +1,23 @@
 <resources>
     <string name="app_name">Induztek</string>
     <string name="nombre_empresa">Induztek</string>
-
-
-
+    <string name="lema_empresa">Ingeniería eléctrica de terreno</string>
 
     <string name="titulo_login"> Protocolos de prueba en terreno</string>
 
-    <string name="eslogan"> Eslogan tierno lindo y adorable, hola que tal. </string>
+    <string name="eslogan"> Registra y respalda cada medición desde el celular, sin papeles. </string>
 
-    <string name="texto_o_correo">O inicia sesión con tu correo</string>
     <string name="enlace_olvido">¿Olvidaste tu contraseña?</string>
     <string name="btn_ingresar">Ingresar</string>
     <string name="texto_o_redes">O inicia sesion con</string>
     <string name="cd_google">Iniciar sesión con Google</string>
     <string name="cd_linkedin">Iniciar sesión con LinkedIn</string>
     <string name="cd_facebook">Iniciar sesión con Facebook</string>
+    <string name="red_no_disponible_titulo">Ingreso con %1$s</string>
+    <string name="red_no_disponible_texto">El ingreso con %1$s todavía no está habilitado en esta instalación. Para activarlo hay que registrar la aplicación en el portal de desarrolladores de %1$s y configurar el acceso. Mientras tanto, puedes entrar con tu correo o con Google.</string>
+    <string name="btn_entendido">Entendido</string>
     <string name="texto_sin_cuenta">¿No tienes una cuenta?</string>
     <string name="enlace_registrate">¡Regístrate aquí!</string>
-    <string name="texto_entrar_como">Entrar como</string>
 
     <string name="titulo_solicitar_acceso">Solicitar acceso</string>
     <string name="subtitulo_solicitar_acceso">Solo para personal de Induztek o personas relacionadas. ¡¡ El jefe técnico podrá revisar solicitud y activar tu cuenta !!</string>
@@ -33,6 +32,10 @@
     <string name="campo_justificacion">Justificación</string>
     <string name="placeholder_justificacion">Escribe aquí por qué deseas ingresar a la app de Induztek...</string>
     <string name="btn_registrarse">Registrarse</string>
+    <string name="sol_aviso_revision">La solicitud queda pendiente hasta que jefatura la revise. La cuenta se crea después de ese paso.</string>
+    <string name="sol_enviada_titulo">Solicitud enviada</string>
+    <string name="sol_enviada_texto">Tu solicitud quedó registrada. Jefatura la revisa y crea la cuenta; después podrás ingresar con tu correo y contraseña.</string>
+    <string name="sol_enviada_volver">Volver al ingreso</string>
     <string name="texto_con_cuenta">¿Ya tienes una cuenta?</string>
     <string name="enlace_inicia_sesion">¡Inicia sesión aquí!</string>
 
@@ -42,7 +45,6 @@
     <string name="placeholder_contrasena">************</string>
     <string name="cd_mostrar_contrasena">Mostrar contraseña</string>
     <string name="cd_ocultar_contrasena">Ocultar contraseña</string>
-
 
     <string name="Equipos">Equipos</string>
     <string name="Potencia">Potencia</string>
@@ -56,7 +58,6 @@
     <string name="Anio_tabla_contrapruebasanteriores">Año</string>
     <string name="Unmin">1 min(MΩ)</string>
     <string name="Variacion">Variación</string>
-
 
     <string name="Nueva_prueba">Nueva prueba</string>
     <string name="Devanado">Devanado</string>
@@ -83,21 +84,16 @@
     <string name="Compatir_acta_nofuncional">Compartir acta en PDF</string>
     <string name="atras_equipos"> Equipos ></string>
 
-
     <string name="ultima_visita">Ultima visita</string>
     <string name="ver_acta_nofuncional">Ver acta (PDF)</string>
     <string name="peqienio_subtitulo">Solo puedes ver el progreso actual del ingeniero! Si algo no te cuadra escribenos desde la pestaña chat !!</string>
-
 
     <string name="volver_homeclient">Mis equipos</string>
     <string name="Pendiente_if">Pendiente de formalización</string>
     <string name="Titulo_graficon">Historial graficado</string>
     <string name="Historial_pruebas_cliente">Historial de pruebas</string>
 
-
     <string name="placeholder_numero">0</string>
-
-
 
     <string name="solicitar_toast_enviada">"¡Tu solicitud ha sido enviada ! "</string>
     <string name="puente_reiniciar">Reiniciar</string>
@@ -129,8 +125,7 @@
     <string name="unidad_umohm">µΩ</string>
     <string name="unidad_ms">ms</string>
 
-    <string name="cliente_solo_visualizar">Solo puedes visualizar ! Si algo no te cuadra puedes escribirnos desde la pestaña \'chat\'</string>
-    <string name="cliente_cerrar_sesion">Cerrar sesión</string>
+    <string name="cliente_solo_visualizar">Solo puedes visualizar ! Si algo no te cuadra, coméntalo con el técnico que atendió tu visita</string>
     <string name="cliente_ultima_visita">Última visita</string>
     <string name="cliente_por_formalizar">Por formalizar</string>
     <string name="cliente_formalizada">Formalizada</string>
@@ -138,10 +133,9 @@
     <string name="cliente_entrega_fecha">Acta entregada el %1$s a las %2$s, %3$d equipos probados</string>
     <string name="cliente_ver_acta">Ver acta</string>
     <string name="cliente_pdf">(PDF)</string>
-    <string name="cliente_buscar">Buscar por usuario o publicación</string>
+    <string name="cliente_buscar">Buscar por equipo o instalación</string>
     <string name="cliente_fila_ultima_prueba">%1$s / Última prueba %2$s</string>
     <string name="cliente_nav_equipos">Mis equipos</string>
-    <string name="cliente_nav_chat">Chat</string>
     <string name="cliente_nav_perfil">Perfil</string>
     <string name="cliente_mis_equipos">Mis equipos</string>
     <string name="cliente_aviso_pendiente">! Pendiente de formalización</string>
@@ -153,10 +147,10 @@
     <string name="cliente_lectura_subio">La lectura subió %1$s%% con respecto al año %2$s.</string>
     <string name="cliente_ingeniero_revisa">El ingeniero a cargo, %1$s, está revisando este resultado.</string>
     <string name="cliente_historial">Historial de pruebas</string>
+    <string name="cliente_formalizado_por">Formalizado por %1$s</string>
     <string name="cliente_sin_aislacion">Sin aislación</string>
     <string name="cliente_detalle_vs">%1$s MΩ · %2$s vs %3$s</string>
     <string name="cliente_detalle_primero">%1$s MΩ · %2$s, primer registro</string>
-    <string name="cliente_consultar_chat">Consultar por chat</string>
 
     <string name="acta_titulo_acta">Acta de prueba en terreno</string>
     <string name="acta_titulo_cerrar">Cerrar visita</string>
@@ -316,5 +310,254 @@
     <string name="vm_hu03">Los valores deben ser positivos: revisa %1$s.</string>
     <string name="vm_faltan_valores">Faltan valores: %1$s.</string>
 
+
+    <string name="barra_equipos">Equipos</string>
+    <string name="barra_perfil">Perfil</string>
+    <string name="perfil_editar">Editar perfil</string>
+    <string name="perfil_protocolos">Protocolos registrados</string>
+    <string name="perfil_equipos">Equipos probados</string>
+    <string name="perfil_visitas">Visitas cerradas</string>
+    <string name="perfil_contacto">Contacto</string>
+    <string name="perfil_correo">Correo</string>
+    <string name="perfil_telefono">Teléfono</string>
+    <string name="perfil_giro">Giro</string>
+    <string name="perfil_nombre">Nombre</string>
+    <string name="perfil_cargo">Cargo</string>
+    <string name="perfil_rut">RUT</string>
+    <string name="perfil_guardar">Guardar cambios</string>
+    <string name="perfil_solicitar">Solicitar cambio de %1$s</string>
+    <string name="perfil_motivo">Motivo del cambio</string>
+    <string name="perfil_guardado">Perfil actualizado.</string>
+    <string name="perfil_nombre_corto">Escribe al menos el nombre y el apellido.</string>
+    <string name="perfil_solicitud_ok">La solicitud quedó registrada para jefatura.</string>
+    <string name="perfil_bloqueado">Lo define jefatura</string>
+    <string name="perfil_empresa">Empresa</string>
+    <string name="perfil_volver">Volver</string>
+
+
+    <string name="perfil_banner_medida">Se ve arriba de tu perfil, en la página inicial ! Medida sugerida 1500x2500px</string>
+    <string name="perfil_cambiar_banner">cambiar banner</string>
+    <string name="perfil_cambiar_foto">Cambiar foto</string>
+    <string name="perfil_acerca">Acerca de mí</string>
+    <string name="perfil_bio_sugerido">Bio…</string>
+    <string name="perfil_guardar_aviso">El nombre y la bio se guardan al tocar Volver.</string>
+    <string name="perfil_consultas">Consultas frecuentes</string>
+    <string name="perfil_borrar_cuenta">Borrar cuenta</string>
+    <string name="perfil_sobre_mi">Sobre mí</string>
+    <string name="perfil_sin_bio">Todavía no escribiste nada sobre ti. Se hace desde Editar perfil.</string>
+    <string name="perfil_calificacion">Calificación promedio</string>
+    <string name="perfil_estrellas">%1$d estrellas</string>
+    <string name="perfil_especialidades">Especialidades</string>
+    <string name="perfil_desde">En Induztek desde</string>
+    <string name="perfil_formacion">Formación</string>
+    <string name="perfil_certificaciones">Certificaciones</string>
+    <string name="perfil_menu_editar">Editar mi perfil</string>
+    <string name="perfil_baja_titulo">Borrar la cuenta</string>
+    <string name="perfil_baja_texto">No se borra al instante: queda como solicitud para que jefatura la apruebe. Mientras tanto tu cuenta sigue funcionando igual.</string>
+    <string name="perfil_baja_motivo">Por qué quieres borrarla</string>
+    <string name="perfil_baja_motivo_sugerido">Escribe el motivo, por ejemplo: cambié de trabajo.</string>
+    <string name="perfil_baja_enviar">Enviar solicitud</string>
+    <string name="perfil_baja_enviada">Tu solicitud para borrar la cuenta quedó enviada a jefatura.</string>
+    <string name="perfil_baja_pendiente">Tu solicitud para borrar la cuenta ya está enviada y espera respuesta.</string>
+    <string name="perfil_baja_corta">Escribe al menos cinco caracteres: sin el motivo no se envía la solicitud.</string>
+    <string name="perfil_valor_nuevo">Valor nuevo de %1$s</string>
+    <string name="perfil_valor_sugerido">Cómo quieres que aparezca</string>
+    <string name="perfil_valor_corto">Escribe el valor nuevo, con al menos dos caracteres.</string>
+    <string name="perfil_motivo_sugerido">Opcional: por ejemplo, cambié de cargo.</string>
+    <string name="perfil_cambio_enviada">El cambio de %1$s quedó enviado a jefatura.</string>
+    <string name="perfil_cambio_pendiente">Esperando respuesta del cambio de %1$s</string>
+    <string name="perfil_cambio_ya_pedida">Ese cambio ya está pedido y espera respuesta: no se manda dos veces.</string>
+    <string name="perfil_sin_calificacion">Sin calificaciones todavía</string>
+    <string name="perfil_califica_n">Vienen de %1$d visitas cerradas</string>
+    <string name="perfil_califica_n_cliente">Vienen de %1$d actas recibidas</string>
+
+
+    <string name="faq_titulo">Consultas frecuentes</string>
+    <string name="faq_intro">Lo que más se pregunta sobre la app y sobre las pruebas que se registran aquí.</string>
+    <string name="faq_abrir">Abrir y cerrar la respuesta</string>
+    <string name="faq_q1">¿Qué hace falta para cerrar una visita?</string>
+    <string name="faq_a1">Todos los protocolos de la visita tienen que estar formalizados y el cliente debe firmar el acta de recepción. Con eso la visita queda cerrada y aparece en sus actas recibidas.</string>
+    <string name="faq_q2">¿Por qué una prueba quedó como no realizada?</string>
+    <string name="faq_a2">Si el equipo no permite medirla, se marca como no realizada y se escribe el motivo. La prueba sigue apareciendo en el protocolo para que quede constancia.</string>
+    <string name="faq_q3">¿Cuándo se rechaza una medición?</string>
+    <string name="faq_a3">Una lectura se acepta si está dentro del rango habilitado y la variación con la prueba anterior no supera el 25%. Si la supera, el protocolo queda pendiente de revisión del ingeniero.</string>
+    <string name="faq_q4">¿Por qué no puedo medir con un instrumento?</string>
+    <string name="faq_a4">Solo se puede medir con instrumentos cuya calibración esté vigente el día de la prueba. Si venció, la app no deja registrar con él hasta que se recalibre.</string>
+    <string name="faq_q5">¿Qué tensiones de prueba se pueden registrar?</string>
+    <string name="faq_a5">Las pruebas de aislación se registran a 5 kV o a 10 kV, que son los dos megóhmetros calibrados con los que trabaja el equipo.</string>
+    <string name="faq_q6">¿Quién cambia mi cargo, correo, teléfono o RUT?</string>
+    <string name="faq_a6">Esos datos los define jefatura. Desde Editar perfil se pide el cambio con un motivo y la solicitud queda registrada para que otra persona la responda.</string>
+    <string name="faq_q7">¿Qué pasa cuando pido borrar mi cuenta?</string>
+    <string name="faq_a7">La solicitud llega a jefatura como las de acceso. Si la aprueba, la cuenta queda inactiva: desaparece del ingreso rápido y ya no permite iniciar sesión, pero los protocolos que registraste se conservan.</string>
+    <string name="faq_q8">¿Puedo trabajar sin señal en la faena?</string>
+    <string name="faq_a8">Si. Todo se guarda en el teléfono: la base de datos es local, asi que las pruebas se registran igual sin cobertura y quedan cuando vuelve la señal.</string>
+
+    <string name="inicio_equipos_por_revisar">Equipos por revisar</string>
+    <string name="inicio_ver_antiguos">Ver antiguos</string>
+    <string name="inicio_ver_pendientes">Ver por revisar</string>
+    <string name="inicio_formalizados">Formalizados (%1$d)</string>
+    <string name="inicio_buscar">Buscar por TAG, serie o nombre (equipo / cliente)</string>
+    <string name="inicio_todos">Todos (%1$d)</string>
+    <string name="inicio_borrador">Borrador (%1$d)</string>
+    <string name="inicio_por_formalizar">Por formalizar (%1$d)</string>
+    <string name="inicio_devueltos">Devueltos (%1$d)</string>
+    <string name="inicio_atrasado">Atrasado</string>
+    <string name="inicio_abrir">Abrir ficha del equipo</string>
+    <string name="inicio_vacio_pendientes">No quedan equipos por revisar.</string>
+    <string name="inicio_vacio_antiguos">Todavía no hay protocolos formalizados.</string>
+    <string name="inicio_vacio_mios">No tienes equipos a tu cargo. Jefatura asigna cada visita a un ingeniero, y aquí aparecen solo las tuyas.</string>
+    <string name="inicio_vacio_mios_antiguos">Todavía no hay protocolos formalizados a tu cargo.</string>
+    <string name="inicio_vacio_busqueda">Ningún equipo coincide con la búsqueda.</string>
+    <string name="inicio_vacio_grupo">En esta pestaña no hay equipos ahora.</string>
+    <string name="inicio_grupo_un_equipo">1 equipo</string>
+    <string name="inicio_grupo_equipos">%1$d equipos</string>
+    <string name="inicio_menu">Menú de la cuenta</string>
+    <string name="inicio_menu_sistema">Predeterminado del sistema</string>
+    <string name="inicio_menu_claro">Modo claro</string>
+    <string name="inicio_menu_oscuro">Modo oscuro</string>
+    <string name="inicio_menu_reiniciar">Reiniciar todo</string>
+    <string name="inicio_menu_salir">Cerrar sesión</string>
+    <string name="inicio_menu_talkback">Activar TalkBack</string>
+    <string name="inicio_menu_abrir_ajustes">Abrir ajustes</string>
+    <string name="inicio_reiniciar_titulo">¿Reiniciar todo?</string>
+    <string name="inicio_reiniciar_texto">Se borra lo que registraste y también los protocolos formalizados: todo vuelve a estar pendiente.</string>
+    <string name="inicio_reiniciar_ok">Reiniciar</string>
+    <string name="inicio_reiniciar_no">Cancelar</string>
+    <string name="inicio_serie">Serie %1$s</string>
+    <string name="inicio_pruebas">%1$d de %2$d pruebas</string>
+    <string name="inicio_prueba_una">%1$d de %2$d prueba</string>
+
+
+    <string name="inicio_otras_tareas">Otras tareas</string>
+    <string name="inicio_otras_instrumentos">Instrumentos y calibración</string>
+    <string name="inicio_otras_vencidos">%1$d con calibración vencida</string>
+    <string name="inicio_otras_al_dia">Todas las calibraciones vigentes</string>
+    <string name="inicio_otras_perfiles">Perfiles</string>
+    <string name="inicio_otras_perfiles_detalle">%1$d personas registradas</string>
+    <string name="inicio_otras_solicitudes">Solicitudes</string>
+    <string name="inicio_otras_solicitudes_detalle">%1$d esperando respuesta de jefatura</string>
+    <string name="inicio_otras_solicitudes_vacio">Nada pendiente de respuesta</string>
+    <string name="admin_volver">Volver</string>
+    <string name="admin_instrumentos">Instrumentos</string>
+    <string name="admin_calibracion">Calibrado el %1$s · vence el %2$s</string>
+    <string name="admin_vencido">Vencido</string>
+    <string name="admin_vigente">Vigente</string>
+    <string name="admin_personal">Personal de Induztek</string>
+    <string name="admin_clientes">Clientes</string>
+    <string name="admin_solicitudes">Solicitudes (%1$d)</string>
+    <string name="admin_col_nombre">Nombre</string>
+    <string name="admin_col_cargo">Cargo</string>
+    <string name="admin_col_contacto">Contacto</string>
+    <string name="admin_agregar">Agregar perfil nuevo</string>
+    <string name="admin_agregar_motivo">El perfil nuevo nace de una solicitud de acceso aprobada por jefatura.</string>
+    <string name="admin_suspender">Suspender perfil</string>
+    <string name="admin_reactivar">Reactivar perfil</string>
+    <string name="admin_elegir_persona">Elige a una persona de la lista para suspender o reactivar su cuenta.</string>
+    <string name="admin_suspendido">Suspendido</string>
+    <string name="admin_suspension_titulo">Suspensión de cuenta</string>
+    <string name="admin_justificativo">Comentario / justificativo</string>
+    <string name="admin_justificativo_sugerido">Escribe aquí el motivo de la suspensión…</string>
+    <string name="admin_suspender_cuenta">Suspender cuenta</string>
+    <string name="admin_sin_motivo">Escribe al menos cinco caracteres: sin el motivo no se suspende la cuenta.</string>
+    <string name="admin_estado_suspendida">Esta cuenta está suspendida.</string>
+    <string name="admin_motivo_guardado">Motivo registrado: %1$s</string>
+    <string name="admin_suspension_nota">La cuenta suspendida seguirá existiendo, pero será inhabilitada por 30 días. Luego de ese plazo, la cuenta será eliminada. La información de la cuenta quedará archivada en una base de datos.</string>
+    <string name="admin_no_propia">Tu propia cuenta no se suspende desde aquí: la cierra otra jefatura.</string>
+    <string name="admin_asignar">Asignar tarea</string>
+    <string name="admin_asignar_elegir">Elige a un ingeniero o a un cliente para asignarle una tarea.</string>
+    <string name="admin_asignar_no_aplica">Las tareas se asignan a ingenieros y a clientes.</string>
+    <string name="admin_asignar_suspendido">La cuenta está suspendida: reactívala antes de asignarle tareas.</string>
+    <string name="asignar_titulo">Asignar tarea</string>
+    <string name="asignar_cliente">Cliente</string>
+    <string name="asignar_ingeniero">Ingeniero</string>
+    <string name="asignar_equipo">Equipo</string>
+    <string name="asignar_elegir_cliente">Elige el cliente</string>
+    <string name="asignar_elegir_ingeniero">Elige el ingeniero</string>
+    <string name="asignar_elegir_equipo">Elige el equipo</string>
+    <string name="asignar_sin_equipos">Ese cliente no tiene equipos registrados.</string>
+    <string name="asignar_solo_personal">Esta pantalla asigna tareas a ingenieros o a clientes.</string>
+    <string name="asignar_hecha">Tarea asignada: %1$s a cargo de %2$s.</string>
+    <string name="perfil_mis_equipos">Mis equipos</string>
+    <string name="perfil_actas_recibidas">Actas recibidas</string>
+
+
+    <string name="perfil_imagenes">Foto y banner</string>
+    <string name="perfil_foto">Foto de perfil</string>
+    <string name="perfil_banner">Banner</string>
+    <string name="perfil_cambiar">Cambiar</string>
+    <string name="perfil_sin_foto">Todavía sin imagen</string>
+    <string name="perfil_foto_art">la foto de perfil</string>
+    <string name="perfil_banner_art">el banner</string>
+    <string name="perfil_imagen_titulo">Elegir %1$s</string>
+    <string name="perfil_desde_telefono">Elegir una imagen del teléfono</string>
+    <string name="perfil_desde_camara">Tomar una foto ahora</string>
+    <string name="perfil_quitar_imagen">Quitar %1$s actual</string>
+    <string name="perfil_imagen_error">No pudimos guardar esa imagen, intenta con otra.</string>
+    <string name="perfil_sin_camara">Este teléfono no tiene una app de cámara para tomar la foto.</string>
+    <string name="perfil_permiso_camara_titulo">Permiso de cámara</string>
+    <string name="perfil_permiso_camara">Sin permiso de cámara no se puede tomar la foto.</string>
+
+
+    <string name="admin_ficha_instrumento">Ficha del instrumento</string>
+    <string name="admin_marca">Marca</string>
+    <string name="admin_modelo">Modelo</string>
+    <string name="admin_serie">Número de serie</string>
+    <string name="admin_ultima_cal">Última calibración</string>
+    <string name="admin_vence">Vence</string>
+    <string name="admin_estado_cal">Estado de la calibración</string>
+    <string name="admin_instrumento_uso">Con este instrumento se registran las pruebas del equipo en terreno. Si la calibración está vencida, la app no deja medir con él.</string>
+    <string name="sol_titulo">Solicitudes</string>
+    <string name="sol_pendientes">Pendientes</string>
+    <string name="sol_aprobadas">Aprobadas, falta el perfil</string>
+    <string name="sol_vacio">No hay solicitudes pendientes.</string>
+    <string name="sol_bajas_vacias">No hay solicitudes de baja pendientes.</string>
+    <string name="sol_aprobadas_vacias">Todavía no hay solicitudes de acceso aprobadas sin perfil.</string>
+    <string name="sol_tipo_ingreso">Solicitud de acceso</string>
+    <string name="sol_tipo_baja">Solicitud de baja de cuenta</string>
+    <string name="sol_desde">Pide acceso desde</string>
+    <string name="sol_justificacion">Justificación</string>
+    <string name="sol_aprobar">Aprobar</string>
+    <string name="sol_rechazar">Rechazar</string>
+    <string name="sol_resuelta">La solicitud quedó %1$s.</string>
+    <string name="sol_aprobada">aprobada</string>
+    <string name="sol_rechazada">rechazada</string>
+    <string name="sol_baja_aprobada">La cuenta de %1$s quedó inactiva y ya no aparece en el ingreso rápido.</string>
+    <string name="sol_baja_rechazada">La cuenta de %1$s sigue activa: se rechazó la solicitud de baja.</string>
+    <string name="sol_crear">Crear perfil</string>
+    <string name="sol_crear_titulo">Crear el perfil de %1$s</string>
+    <string name="sol_rut">RUT</string>
+    <string name="sol_rut_sugerido">12.345.678-5</string>
+    <string name="sol_rol">Rol</string>
+    <string name="sol_clave">Contraseña inicial</string>
+    <string name="sol_clave_sugerido">Al menos cuatro caracteres</string>
+    <string name="sol_crear_boton">Crear cuenta</string>
+    <string name="sol_rut_invalido">El RUT no es válido: revisa el dígito verificador.</string>
+    <string name="sol_rut_repetido">Ese RUT ya está registrado en otra cuenta.</string>
+    <string name="sol_correo_repetido">Ese correo ya está registrado en otra cuenta.</string>
+    <string name="sol_clave_corta">La contraseña inicial necesita al menos cuatro caracteres.</string>
+    <string name="sol_creado">%1$s ya tiene perfil y puede iniciar sesión.</string>
+    <string name="sol_empresa">Empresa cliente</string>
+    <string name="sol_empresa_sugerida">Elige la empresa a la que pertenece</string>
+    <string name="sol_empresa_falta">Para un perfil de cliente hay que elegir la empresa: sin ella no vería ningún equipo.</string>
+    <string name="sol_crear_no">Cancelar</string>
+    <string name="sol_error">La base no respondió, intenta otra vez.</string>
+    <string name="sol_rol_sugerido">Elige el rol que va a tener</string>
+    <string name="sol_rol_falta">Elige primero el rol de la cuenta.</string>
+    <string name="sol_baja_nota">Si se aprueba, la cuenta queda inactiva: no podrá iniciar sesión ni aparecerá en el ingreso rápido.</string>
+    <string name="sol_tipo_cambio">Solicitud de cambio de dato</string>
+    <string name="sol_cambio_dato">Dato que se quiere cambiar</string>
+    <string name="sol_cambio_valor">Valor nuevo</string>
+    <string name="sol_cambio_nota">Si se aprueba, el perfil queda actualizado con el valor nuevo. Un RUT o un correo repetido no se aprueba.</string>
+    <string name="sol_cambio_aprobada">El %1$s de %2$s quedó actualizado en su perfil.</string>
+    <string name="sol_cambio_rechazada">Se rechazó el cambio de %1$s de %2$s: el perfil sigue igual.</string>
+    <string name="sol_cambio_vacio">Falta el valor nuevo: sin ese dato el cambio no se puede aplicar.</string>
+
+
+
+    <string name="google_web_client_id" translatable="false"></string>
+    <string name="google_sin_cuentas">No hay cuentas de Google en este dispositivo. Agrega una en Ajustes y vuelve a intentarlo.</string>
+    <string name="google_error">No se pudo completar el ingreso con Google. Inténtalo de nuevo.</string>
+    <string name="google_no_registrado">La cuenta %1$s no está registrada en Induztek. Solicita acceso con ese correo o usa otra cuenta.</string>
+    <string name="google_inactivo">La cuenta %1$s todavía no está activa. Jefatura tiene que aprobarla.</string>
 
 </resources>
