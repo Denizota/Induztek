@@ -2,10 +2,12 @@
 package cl.duoc.induztek.data.remote
 
 import cl.duoc.induztek.BuildConfig
+import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 sealed class ResultadoRemoto {
     data class Ok(val usuario: UsuarioRemoto) : ResultadoRemoto()
@@ -21,6 +23,12 @@ sealed class ResultadoSolicitud {
 }
 
 object Remoto {
+
+    private val cliente = OkHttpClient
+        .Builder()
+        .connectTimeout(4, TimeUnit.SECONDS)
+        .readTimeout(4, TimeUnit.SECONDS)
+        .build()
 
     private val api: ApiInduztek by lazy {
         Retrofit.Builder()

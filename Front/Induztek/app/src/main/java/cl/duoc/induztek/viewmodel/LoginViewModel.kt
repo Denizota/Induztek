@@ -7,6 +7,10 @@ import cl.duoc.induztek.data.InduztekDbHelper
 import cl.duoc.induztek.data.SesionPreferencias
 import cl.duoc.induztek.data.buscarUsuarioPorCorreo
 import cl.duoc.induztek.data.buscarUsuarioPorId
+import cl.duoc.induztek.data.guardarUsuarioRemoto
+import cl.duoc.induztek.data.remote.Remoto
+import cl.duoc.induztek.data.remote.ResultadoRemoto
+import cl.duoc.induztek.data.sincronizarUsuarios
 import cl.duoc.induztek.data.verificarClave
 import cl.duoc.induztek.model.LoginUiState
 import cl.duoc.induztek.model.Usuario
@@ -67,15 +71,35 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun ingresar(correo: String, contrasena: String): Boolean {
+    private suspend fun ingresar(correo: String, contrasena: String): Boolean {
+        when (val remoto = Remoto.ingresar(correo, contrasena)){
+            is ResultadoRemoto.Ok -> {
+                val usuario = remoto.usuario
+                if (!usuario.activo){
+                    _uiState.value = _uiState.value.copy(errorCorreo = "Su cuenta aun no esta activa !")
+                    return false
+                }
+                baseDatos.guardarUsuarioRemoto(usuario, contrasena)
+                baseDatos.sincronizarUsuarios(Remoto.usuarios())
+                sesion.guardar(usuario.id)
+                return true
+
+            }
+
+            ResultadoRemoto.ClaveMala -> Unit
+            ResultadoRemoto.Suspendido -> {
+                _uiState.value = _uiState.value.copy(errorCorreo = "Tu cuenta no esta activa !")
+                return false
+            }
+            ResultadoRemoto.SinConexion -> Unit
+        }
         val usuario = baseDatos.buscarUsuarioPorCorreo(correo)
-        if (usuario == null || !baseDatos.verificarClave(correo, contrasena)) {
+        if (usuario == null || !baseDatos.verificarClave(correo, contrasena)){
             _uiState.value = _uiState.value.copy(errorContrasena = "Correo o contraseña incorrectos !")
             return false
         }
-
-        if (!usuario.activo) {
-            _uiState.value = _uiState.value.copy(errorCorreo = "Tu cuenta aún no está activa")
+        if (!usuario.activo){
+            _uiState.value = _uiState.value.copy(errorCorreo = "Su cuenta no esta activa !")
             return false
         }
 

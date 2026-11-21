@@ -24,6 +24,21 @@ android {
         buildConfigField("String", "API_URL", "\"http://192.168.1.84:8080/\"")
     }
 
+
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("induztek-release.jks")
+            storePassword = "Induztek2026"
+            keyAlias = "induztek"
+            keyPassword = "Induztek2026"
+        }
+    }
+
+
+
+
+
     buildTypes {
         release {
             optimization {
