@@ -1,0 +1,168 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: induztek-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - microservicios-net
+
+  eureka-server:
+    build: ./eureka-server/eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+  gateway-service:
+    build: ./gateway-service/gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+  roles-service:
+    build: ./roles-service/roles-service
+    container_name: roles-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/induztek_roles?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+  usuarios-service:
+    build: ./usuarios-service/usuarios-service
+    container_name: usuarios-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/induztek_usuarios?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+      ROLES_SERVICE_URL: http://roles-service:8081
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      roles-service:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+  equipos-service:
+    build: ./equipos-service/equipos-service
+    container_name: equipos-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/induztek_equipos?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+  solicitudes-service:
+    build: ./solicitudes-service/solicitudes-service
+    container_name: solicitudes-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/induztek_solicitudes?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+  protocolos-service:
+    build: ./protocolos-service/protocolos-service
+    container_name: protocolos-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/induztek_protocolos?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+  tareas-service:
+    build: ./tareas-service/tareas-service
+    container_name: tareas-service
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/induztek_tareas?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+      PROTOCOLOS_SERVICE_URL: http://protocolos-service:8085
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      protocolos-service:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - microservicios-net
+
+volumes:
+  mysql-data:
+
+networks:
+  microservicios-net:
+    driver: bridge
