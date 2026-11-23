@@ -7,9 +7,11 @@ import cl.duoc.induztek.data.InduztekDbHelper
 import cl.duoc.induztek.data.SesionPreferencias
 import cl.duoc.induztek.data.buscarUsuarioPorCorreo
 import cl.duoc.induztek.data.buscarUsuarioPorId
+import cl.duoc.induztek.data.buscarUsuarioPorRut
 import cl.duoc.induztek.data.guardarUsuarioRemoto
 import cl.duoc.induztek.data.remote.Remoto
 import cl.duoc.induztek.data.remote.ResultadoRemoto
+import cl.duoc.induztek.data.remote.Sincronia
 import cl.duoc.induztek.data.sincronizarUsuarios
 import cl.duoc.induztek.data.verificarClave
 import cl.duoc.induztek.model.LoginUiState
@@ -81,7 +83,10 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 baseDatos.guardarUsuarioRemoto(usuario, contrasena)
                 baseDatos.sincronizarUsuarios(Remoto.usuarios())
-                sesion.guardar(usuario.id)
+                val local = baseDatos.buscarUsuarioPorCorreo(usuario.correo)
+                    ?: baseDatos.buscarUsuarioPorRut(usuario.rut)
+                sesion.guardar(local?.idUsuario ?: usuario.id)
+                Sincronia.sincronizarAhora()
                 return true
 
             }
@@ -104,6 +109,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         sesion.guardar(usuario.idUsuario)
+        Sincronia.sincronizarAhora()
         return true
     }
 

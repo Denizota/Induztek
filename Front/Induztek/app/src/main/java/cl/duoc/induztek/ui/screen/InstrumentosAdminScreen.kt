@@ -53,6 +53,7 @@ fun InstrumentosScreen(
     onAtras: () -> Unit,
     modeloPantalla: InicioViewModel = viewModel()
 ) {
+    versionSincronia()
     InstrumentosContenido(
         instrumentos = modeloPantalla.instrumentos(),
         hoy = fechaHoy(),
@@ -151,6 +152,7 @@ fun InstrumentoScreen(
     onAtras: () -> Unit,
     modeloPantalla: InicioViewModel = viewModel()
 ) {
+    versionSincronia()
     val instrumentoElegido = modeloPantalla.instrumento(idInstrumento)
     if (instrumentoElegido == null) return
     InstrumentoContenido(

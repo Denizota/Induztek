@@ -18,9 +18,10 @@ fun EquipoScreen(
     onIrActa: (Int) -> Unit,
     modeloPantalla: EquipoViewModel = viewModel()
 ) {
-    val equipo = remember(idEquipo) { modeloPantalla.equipo(idEquipo) }
+    val sincronia = versionSincronia()
+    val equipo = remember(idEquipo, sincronia) { modeloPantalla.equipo(idEquipo) }
     if (equipo == null) return
-    LaunchedEffect(idEquipo) { modeloPantalla.refrescar(idEquipo) }
+    LaunchedEffect(idEquipo, sincronia) { modeloPantalla.refrescar(idEquipo) }
 
     modeloPantalla.prepararBorrador(modeloPantalla.protocoloActual)
 
@@ -28,7 +29,8 @@ fun EquipoScreen(
         equipo = equipo, usuario = usuario, protocolo = modeloPantalla.protocoloActual,
         pruebas = modeloPantalla.pruebas, tipos = modeloPantalla.tipos,
         temp = modeloPantalla.temp.value, humedad = modeloPantalla.humedad.value,
-        onTemp = { modeloPantalla.temp.value = it }, onHumedad = { modeloPantalla.humedad.value = it },
+        onTemp = { modeloPantalla.actualizarTemperatura(modeloPantalla.protocoloActual?.idProtocolo, it) },
+        onHumedad = { modeloPantalla.actualizarHumedad(modeloPantalla.protocoloActual?.idProtocolo, it) },
         historial = modeloPantalla.historial, mensaje = modeloPantalla.mensaje, motivo = modeloPantalla.motivoDevolucion.value,
         onMotivo = { modeloPantalla.motivoDevolucion.value = it },
         onAbrirMotivo = { modeloPantalla.motivoDevolucion.value = "" },

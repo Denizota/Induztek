@@ -84,6 +84,12 @@ fun PruebaFormScreen(
         sugerencias = modeloPantalla::sugerencias,
         valorAnterior = modeloPantalla::valorAnterior,
         onAtras = onAtras, onGuardado = onGuardado,
+        onCambioEstado = { clave, valor ->
+            protocoloAbierto?.let { modeloPantalla.guardarBorrador(it.idProtocolo, clave, valor) }
+        },
+        onLimpiarBorrador = { tipoGuardado ->
+            protocoloAbierto?.let { modeloPantalla.limpiarBorrador(it.idProtocolo, tipoGuardado) }
+        },
         onGuardar = modeloPantalla::guardar,
         onGuardarNoRealizada = modeloPantalla::guardarNoRealizada
     )
@@ -102,6 +108,8 @@ internal fun PruebaFormContent(
     valorAnterior: (Int, TipoPrueba, String, Int) -> Double?,
     onAtras: () -> Unit,
     onGuardado: () -> Unit,
+    onCambioEstado: (String, String) -> Unit = { _, _ -> },
+    onLimpiarBorrador: (TipoPrueba) -> Unit = {},
     onGuardar: (
         Int, TipoPrueba, Equipo, String, List<Instrumento>, String, Map<String, String>,
         String, String, Boolean, String
@@ -140,7 +148,11 @@ internal fun PruebaFormContent(
         }
         return valor
     }
-    fun poner(tipo: TipoPrueba, campo: String, valor: String) { estado["${tipo.name}|_$campo"] = valor }
+    fun poner(tipo: TipoPrueba, campo: String, valor: String) {
+        val clave = "${tipo.name}|_$campo"
+        estado[clave] = valor
+        onCambioEstado(clave, valor)
+    }
 
     val opciones = elementosPosibles(equipo, tipoSeleccionado)
 
@@ -156,7 +168,11 @@ internal fun PruebaFormContent(
         }
         return valor
     }
-    fun actualizarValor(parametro: String, valor: String) { estado["$elemento|$tipoSeleccionado|$parametro"] = valor }
+    fun actualizarValor(parametro: String, valor: String) {
+        val clave = "$elemento|$tipoSeleccionado|$parametro"
+        estado[clave] = valor
+        onCambioEstado(clave, valor)
+    }
 
     val instrumentos = remember(tipoSeleccionado) { instrumentosPara(tipoSeleccionado) }
     val instrumentoNombre = dato(tipoSeleccionado, "instrumento")
@@ -306,6 +322,7 @@ internal fun PruebaFormContent(
                         return@BotonPrincipal
                     }
                     onGuardarNoRealizada(datosProtocolo.idProtocolo, tipoSeleccionado, elemento, motivo, comentario)
+                    onLimpiarBorrador(tipoSeleccionado)
                     onGuardado()
                     return@BotonPrincipal
                 }
@@ -323,6 +340,7 @@ internal fun PruebaFormContent(
                 if (resultadoGuardado != null) {
                     errorGuardado = resultadoGuardado
                 } else {
+                    onLimpiarBorrador(tipoSeleccionado)
                     onGuardado()
                 }
             })

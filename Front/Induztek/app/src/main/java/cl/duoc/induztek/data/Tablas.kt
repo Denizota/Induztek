@@ -4,7 +4,7 @@ package cl.duoc.induztek.data
 import android.database.sqlite.SQLiteDatabase
 
 internal val TABLAS = listOf(
-    "solicitud_acceso", "medicion", "prueba", "protocolo", "visita_participante",
+    "cambio_pendiente", "solicitud_acceso", "medicion", "prueba", "protocolo", "visita_participante",
     "recepcion_acta", "visita", "instrumento", "equipo", "tipo_equipo_prueba",
     "tipo_equipo", "instalacion", "usuario", "rol", "tipo_prueba", "historial_estado"
 )
@@ -22,7 +22,7 @@ internal fun crearTablas(bd: SQLiteDatabase) {
                 "id_empresa INTEGER, cargo TEXT DEFAULT '', giro TEXT DEFAULT '', " +
                 "bio TEXT DEFAULT '', especialidades TEXT DEFAULT '', " +
                 "formacion TEXT DEFAULT '', certificaciones TEXT DEFAULT '', " +
-                "desde INTEGER, calificacion INTEGER)"
+                "desde INTEGER, calificacion INTEGER, id_remoto INTEGER UNIQUE)"
     )
     bd.execSQL(
         "CREATE TABLE solicitud_acceso (" +
@@ -31,7 +31,8 @@ internal fun crearTablas(bd: SQLiteDatabase) {
                 "sol_correo TEXT NOT NULL, sol_password_hash TEXT NOT NULL, " +
                 "sol_justificacion TEXT NOT NULL, sol_estado TEXT NOT NULL DEFAULT 'PENDIENTE', " +
                 "sol_tipo TEXT NOT NULL DEFAULT 'INGRESO', sol_id_usuario INTEGER, " +
-                "sol_campo TEXT NOT NULL DEFAULT '', sol_valor TEXT NOT NULL DEFAULT '')"
+                "sol_campo TEXT NOT NULL DEFAULT '', sol_valor TEXT NOT NULL DEFAULT '', " +
+                "id_remoto INTEGER UNIQUE)"
     )
     bd.execSQL(
         "CREATE TABLE instalacion (" +
@@ -63,7 +64,8 @@ internal fun crearTablas(bd: SQLiteDatabase) {
         "CREATE TABLE visita (" +
                 "id_visita INTEGER PRIMARY KEY AUTOINCREMENT, numero_ot TEXT UNIQUE NOT NULL, " +
                 "id_instalacion INTEGER NOT NULL, fecha TEXT NOT NULL, tipo_visita TEXT DEFAULT 'SOLO_PRUEBAS', " +
-                "id_ingeniero_cargo INTEGER, fecha_hora_cierre TEXT, descripcion_mantenimiento TEXT DEFAULT '')"
+                "id_ingeniero_cargo INTEGER, fecha_hora_cierre TEXT, descripcion_mantenimiento TEXT DEFAULT '', " +
+                "id_remoto INTEGER UNIQUE)"
     )
     bd.execSQL(
         "CREATE TABLE visita_participante (id_visita INTEGER NOT NULL, id_usuario INTEGER NOT NULL, " +
@@ -80,6 +82,7 @@ internal fun crearTablas(bd: SQLiteDatabase) {
                 "id_visita INTEGER NOT NULL, id_equipo INTEGER NOT NULL, id_usuario_registra INTEGER NOT NULL, " +
                 "fecha_hora_prueba TEXT NOT NULL, temperatura_c REAL, humedad_pct REAL, " +
                 "estado TEXT NOT NULL DEFAULT 'BORRADOR', observaciones TEXT DEFAULT '', " +
+                "id_remoto INTEGER UNIQUE, " +
                 "UNIQUE(id_visita, id_equipo))"
     )
     bd.execSQL(
@@ -108,5 +111,10 @@ internal fun crearTablas(bd: SQLiteDatabase) {
                 "id_historial INTEGER PRIMARY KEY AUTOINCREMENT, id_protocolo INTEGER NOT NULL, " +
                 "estado_anterior TEXT, estado_nuevo TEXT NOT NULL, id_usuario INTEGER NOT NULL, " +
                 "fecha_hora TEXT NOT NULL, motivo TEXT DEFAULT '')"
+    )
+    bd.execSQL(
+        "CREATE TABLE cambio_pendiente (" +
+                "id_cambio INTEGER PRIMARY KEY AUTOINCREMENT, entidad TEXT NOT NULL, " +
+                "id_local INTEGER NOT NULL, detalle TEXT NOT NULL DEFAULT '')"
     )
 }

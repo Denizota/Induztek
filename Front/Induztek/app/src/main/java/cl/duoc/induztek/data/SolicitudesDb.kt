@@ -56,6 +56,7 @@ fun InduztekDbHelper.insertarSolicitudBaja(persona: Usuario, motivo: String): Bo
             "sol_id_usuario" to persona.idUsuario
         )
     )
+    if (id > 0) encolarCambio(CAMBIO_SOLICITUD, id.toInt())
     return id > 0
 }
 
@@ -94,6 +95,7 @@ fun InduztekDbHelper.insertarSolicitudCambio(
             "sol_valor" to valor
         )
     )
+    if (id > 0) encolarCambio(CAMBIO_SOLICITUD, id.toInt())
     return id > 0
 }
 
@@ -102,7 +104,9 @@ fun InduztekDbHelper.aplicarCambioSolicitud(solicitud: Solicitud): Boolean {
     if (columna == null) return false
     val idUsuario = solicitud.idUsuario
     if (idUsuario == null) return false
-    return actualizar("usuario", mapOf(columna to solicitud.valor), "id_usuario=?", listOf(idUsuario))
+    val cambiado = actualizar("usuario", mapOf(columna to solicitud.valor), "id_usuario=?", listOf(idUsuario))
+    if (cambiado) encolarCambio(CAMBIO_PERFIL, idUsuario)
+    return cambiado
 }
 
 private fun columnaDeCambio(campo: String): String? {
@@ -115,8 +119,11 @@ private fun columnaDeCambio(campo: String): String? {
     return null
 }
 
-fun InduztekDbHelper.cambiarEstadoSolicitud(id: Int, estado: String): Boolean =
-    actualizar("solicitud_acceso", mapOf("sol_estado" to estado), "id_solicitud=?", listOf(id))
+fun InduztekDbHelper.cambiarEstadoSolicitud(id: Int, estado: String): Boolean {
+    val cambiado = actualizar("solicitud_acceso", mapOf("sol_estado" to estado), "id_solicitud=?", listOf(id))
+    if (cambiado) encolarCambio(CAMBIO_SOLICITUD_ESTADO, id)
+    return cambiado
+}
 
 fun InduztekDbHelper.usuarioDeSolicitudBaja(idSolicitud: Int): Usuario? {
     val registro = fila(
@@ -147,6 +154,10 @@ fun InduztekDbHelper.crearCuentaDesdeSolicitud(
     )
     if (empresa != null) datos["id_empresa"] = empresa
     val idCuentaCreada = insertar("usuario", datos).toInt()
-    if (idCuentaCreada > 0) cambiarEstadoSolicitud(solicitud.idSolicitud, "CREADA")
+    if (idCuentaCreada > 0) {
+        cambiarEstadoSolicitud(solicitud.idSolicitud, "CREADA")
+        val detalle = gsonCambios.toJson(DetalleCuenta(idUsuario = idCuentaCreada, clave = clave))
+        encolarCambio(CAMBIO_USUARIO, idCuentaCreada, detalle)
+    }
     return idCuentaCreada
 }

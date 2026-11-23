@@ -17,6 +17,7 @@ import cl.duoc.induztek.model.Usuario
 
 class PruebaFormsViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
     private val baseDatos = InduztekDbHelper.obtener(aplicacion)
+    private val borradores = aplicacion.getSharedPreferences("borradores_pruebas", Context.MODE_PRIVATE)
 
     val estado = mutableStateMapOf<String, String>()
     private var cargadoDe: Int? = null
@@ -95,6 +96,29 @@ class PruebaFormsViewModel(aplicacion: Application) : AndroidViewModel(aplicacio
                 estado["${prueba.elemento}|$tipoPrueba|$parametro"] = formatear(valor)
             }
         }
+        val prefijo = "protocolo_${idProtocolo}_"
+        for ((clave, valor) in borradores.all) {
+            if (clave.startsWith(prefijo) && valor is String) {
+                estado[clave.removePrefix(prefijo)] = valor
+            }
+        }
+    }
+
+    fun guardarBorrador(idProtocolo: Int, campo: String, valor: String) {
+        estado[campo] = valor
+        borradores.edit().putString("protocolo_${idProtocolo}_$campo", valor).apply()
+    }
+
+    fun limpiarBorrador(idProtocolo: Int, tipo: TipoPrueba) {
+        val prefijoProtocolo = "protocolo_${idProtocolo}_"
+        val editor = borradores.edit()
+        for (clave in borradores.all.keys) {
+            if (clave.startsWith(prefijoProtocolo)) {
+                val campo = clave.removePrefix(prefijoProtocolo)
+                if (campo.startsWith("${tipo.name}|_") || campo.contains("|${tipo.name}|")) editor.remove(clave)
+            }
+        }
+        editor.apply()
     }
 
     fun guardarNoRealizada(

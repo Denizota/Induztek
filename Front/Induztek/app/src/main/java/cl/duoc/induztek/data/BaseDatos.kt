@@ -10,7 +10,7 @@ class InduztekDbHelper private constructor(contexto: Context) :
 
     companion object {
         private const val NOMBRE_BD = "induztek.db"
-        private const val VERSION_BD = 7
+        private const val VERSION_BD = 8
 
         const val CLAVE_DEMO = "Induztek2026"
 
@@ -43,6 +43,21 @@ class InduztekDbHelper private constructor(contexto: Context) :
         if (versionVieja < 7) {
             bd.execSQL("ALTER TABLE solicitud_acceso ADD COLUMN sol_campo TEXT NOT NULL DEFAULT ''")
             bd.execSQL("ALTER TABLE solicitud_acceso ADD COLUMN sol_valor TEXT NOT NULL DEFAULT ''")
+        }
+        if (versionVieja < 8) {
+            bd.execSQL("ALTER TABLE usuario ADD COLUMN id_remoto INTEGER")
+            bd.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_usuario_remoto ON usuario(id_remoto)")
+            bd.execSQL("ALTER TABLE solicitud_acceso ADD COLUMN id_remoto INTEGER")
+            bd.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_solicitud_remoto ON solicitud_acceso(id_remoto)")
+            bd.execSQL("ALTER TABLE visita ADD COLUMN id_remoto INTEGER")
+            bd.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_visita_remoto ON visita(id_remoto)")
+            bd.execSQL("ALTER TABLE protocolo ADD COLUMN id_remoto INTEGER")
+            bd.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_protocolo_remoto ON protocolo(id_remoto)")
+            bd.execSQL(
+                "CREATE TABLE IF NOT EXISTS cambio_pendiente (" +
+                        "id_cambio INTEGER PRIMARY KEY AUTOINCREMENT, entidad TEXT NOT NULL, " +
+                        "id_local INTEGER NOT NULL, detalle TEXT NOT NULL DEFAULT '')"
+            )
         }
     }
 

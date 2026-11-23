@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import cl.duoc.induztek.data.remote.Sincronia
 import cl.duoc.induztek.navigation.AppNavegacion
 import cl.duoc.induztek.ui.theme.InduztekTheme
 
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Sincronia.iniciar(applicationContext)
         setContent {
             InduztekTheme {
                 AppNavegacion()

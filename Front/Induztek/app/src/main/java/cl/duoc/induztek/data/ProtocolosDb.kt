@@ -150,7 +150,9 @@ private fun InduztekDbHelper.nuevaVisita(equipo: Equipo, idUsuario: Int, rol: Ro
     if (rol == Rol.INGENIERO) {
         datos["id_ingeniero_cargo"] = idUsuario
     }
-    return insertar("visita", datos).toInt()
+    val idVisita = insertar("visita", datos).toInt()
+    encolarCambio(CAMBIO_VISITA, idVisita)
+    return idVisita
 }
 
 private fun InduztekDbHelper.nuevoProtocolo(idVisita: Int, idEquipo: Int, idUsuario: Int): Protocolo {
@@ -169,6 +171,7 @@ private fun InduztekDbHelper.nuevoProtocolo(idVisita: Int, idEquipo: Int, idUsua
         "INSERT INTO historial_estado(id_protocolo,estado_anterior,estado_nuevo,id_usuario,fecha_hora) VALUES(?,NULL,'BORRADOR',?,?)",
         listOf(idProtocoloNuevo, idUsuario, fechaHoraAhora())
     )
+    encolarCambio(CAMBIO_PROTOCOLO, idProtocoloNuevo)
 
     val creado = protocoloPorId(idProtocoloNuevo)
     if (creado == null) {
@@ -245,6 +248,10 @@ fun InduztekDbHelper.cambiarEstado(
         "INSERT INTO historial_estado(id_protocolo,estado_anterior,estado_nuevo,id_usuario,fecha_hora,motivo) VALUES(?,?,?,?,?,?)",
         listOf(idProtocolo, actual, nuevo.codigo, idUsuario, fechaHoraAhora(), motivo)
     )
+    val detalle = gsonCambios.toJson(
+        DetalleEstado(estado = nuevo.codigo, idUsuario = idUsuario, motivo = motivo)
+    )
+    encolarCambio(CAMBIO_ESTADO, idProtocolo, detalle)
 }
 
 private fun problemaDeCambio(desde: EstadoProtocolo, hacia: EstadoProtocolo, rol: Rol?): String? {
@@ -315,10 +322,12 @@ fun InduztekDbHelper.guardarAmbientes(
         "id_protocolo=?",
         listOf(idProtocolo)
     )
+    encolarCambio(CAMBIO_AMBIENTES, idProtocolo)
 }
 
 fun InduztekDbHelper.guardarObservacionesProtocolo(idProtocolo: Int, texto: String) {
     actualizar("protocolo", mapOf("observaciones" to texto), "id_protocolo=?", listOf(idProtocolo))
+    encolarCambio(CAMBIO_AMBIENTES, idProtocolo)
 }
 
 fun InduztekDbHelper.protocolosDeVisita(idVisita: Int): List<Protocolo> {

@@ -73,8 +73,9 @@ fun ActaScreen(
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     var recarga by remember { mutableStateOf(0) }
+    val sincronia = versionSincronia()
 
-    val visita = remember(recarga) { modeloPantalla.visitaPorId(idVisita) }
+    val visita = remember(recarga, sincronia) { modeloPantalla.visitaPorId(idVisita) }
     if (visita == null) {
         return
     }
@@ -86,7 +87,7 @@ fun ActaScreen(
     if (empresa != null) {
         empresaDelCliente = empresa
     }
-    val protocolos = remember(recarga) {
+    val protocolos = remember(recarga, sincronia) {
         if (esCliente) {
             modeloPantalla.protocolosCliente(idVisita, empresaDelCliente)
         } else {
@@ -94,7 +95,7 @@ fun ActaScreen(
         }
     }
 
-    val recepcion = remember(recarga) { modeloPantalla.recepcionDeVisita(idVisita) }
+    val recepcion = remember(recarga, sincronia) { modeloPantalla.recepcionDeVisita(idVisita) }
     modeloPantalla.preparar(idVisita, recepcion)
 
     val cerrada = visita.fechaHoraCierre != null || esCliente
@@ -106,7 +107,10 @@ fun ActaScreen(
 
     val pendientes = mutableListOf<Protocolo>()
     for (protocolo in protocolos) {
-        if (protocolo.estado != EstadoProtocolo.REGISTRADO && protocolo.estado != EstadoProtocolo.ANULADO) {
+        if (protocolo.estado != EstadoProtocolo.REGISTRADO &&
+            protocolo.estado != EstadoProtocolo.FORMALIZADO &&
+            protocolo.estado != EstadoProtocolo.ANULADO
+        ) {
             pendientes.add(protocolo)
         }
     }

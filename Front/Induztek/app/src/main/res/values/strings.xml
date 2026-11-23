@@ -534,7 +534,7 @@
     <string name="sol_rut_invalido">El RUT no es válido: revisa el dígito verificador.</string>
     <string name="sol_rut_repetido">Ese RUT ya está registrado en otra cuenta.</string>
     <string name="sol_correo_repetido">Ese correo ya está registrado en otra cuenta.</string>
-    <string name="sol_clave_corta">La contraseña inicial necesita al menos cuatro caracteres.</string>
+    <string name="sol_clave_corta">La contraseña inicial necesita al menos seis caracteres.</string>
     <string name="sol_creado">%1$s ya tiene perfil y puede iniciar sesión.</string>
     <string name="sol_empresa">Empresa cliente</string>
     <string name="sol_empresa_sugerida">Elige la empresa a la que pertenece</string>

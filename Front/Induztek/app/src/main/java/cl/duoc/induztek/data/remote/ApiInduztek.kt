@@ -14,5 +14,5 @@ interface ApiInduztek {
     suspend fun usuarios(): List<UsuarioRemoto>
 
     @POST("api/solicitudes")
-    suspend fun crearSolicitud(@Body datos: SolicitudRemota): SolicitudRemota
+    suspend fun crearSolicitud(@Body datos: SolicitudRemota): SolicitudApi
 }

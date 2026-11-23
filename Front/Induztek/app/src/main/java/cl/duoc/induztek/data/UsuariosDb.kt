@@ -52,19 +52,26 @@ fun InduztekDbHelper.correoYaUsado(correo: String): Boolean {
 
 fun InduztekDbHelper.insertarSolicitud(
     nombre: String, apellido: String, pais: String, ciudad: String,
-    correo: String, passwordHash: String, justificacion: String
-): Long = insertar(
-    "solicitud_acceso",
-    mapOf(
-        "sol_nombre" to nombre,
-        "sol_apellido" to apellido,
-        "sol_pais" to pais,
-        "sol_ciudad" to ciudad,
-        "sol_correo" to correo,
-        "sol_password_hash" to passwordHash,
-        "sol_justificacion" to justificacion
+    correo: String, passwordHash: String, justificacion: String, contrasena: String = ""
+): Long {
+    val id = insertar(
+        "solicitud_acceso",
+        mapOf(
+            "sol_nombre" to nombre,
+            "sol_apellido" to apellido,
+            "sol_pais" to pais,
+            "sol_ciudad" to ciudad,
+            "sol_correo" to correo,
+            "sol_password_hash" to passwordHash,
+            "sol_justificacion" to justificacion
+        )
     )
-)
+    if (id > 0) {
+        val detalle = gsonCambios.toJson(DetalleSolicitud(clave = contrasena))
+        encolarCambio(CAMBIO_SOLICITUD, id.toInt(), detalle)
+    }
+    return id
+}
 
 fun InduztekDbHelper.listarPersonal(): List<Usuario> {
     val lista = mutableListOf<Usuario>()
@@ -114,23 +121,28 @@ fun InduztekDbHelper.buscarUsuarioPorRut(rut: String): Usuario? {
     return aUsuario(fila)
 }
 
-fun InduztekDbHelper.guardarPerfil(idUsuario: Int, nombre: String, bio: String): Boolean =
-    actualizar(
+fun InduztekDbHelper.guardarPerfil(idUsuario: Int, nombre: String, bio: String): Boolean {
+    val cambiado = actualizar(
         "usuario",
         mapOf("nombre" to nombre, "bio" to bio),
         "id_usuario=?",
         listOf(idUsuario)
     )
+    if (cambiado) encolarCambio(CAMBIO_PERFIL, idUsuario)
+    return cambiado
+}
 
 fun InduztekDbHelper.marcarActivo(idUsuario: Int, activo: Boolean): Boolean {
     var numero = 0
     if (activo) numero = 1
-    return actualizar(
+    val cambiado = actualizar(
         "usuario",
         mapOf("activo" to numero),
         "id_usuario=?",
         listOf(idUsuario)
     )
+    if (cambiado) encolarCambio(CAMBIO_ACTIVO, idUsuario)
+    return cambiado
 }
 
 internal fun InduztekDbHelper.buscarIdRol(rol: Rol): Int? {

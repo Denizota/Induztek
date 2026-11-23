@@ -27,9 +27,10 @@ fun PerfilScreen(
     val esCliente = usuarioActual.rol == Rol.CLIENTE
 
     var revision by rememberSaveable { mutableIntStateOf(0) }
-    val numeros = remember(revision) { modeloPantalla.estadisticas(usuarioActual.idUsuario) }
-    val equiposPlanta = remember(revision) { if (esCliente) modeloPantalla.equiposDeSuPlanta(usuarioActual.idEmpresa) else 0 }
-    val actas = remember(revision) { if (esCliente) modeloPantalla.actasRecibidas(usuarioActual.idEmpresa) else 0 }
+    val sincronia = versionSincronia()
+    val numeros = remember(revision, sincronia) { modeloPantalla.estadisticas(usuarioActual.idUsuario) }
+    val equiposPlanta = remember(revision, sincronia) { if (esCliente) modeloPantalla.equiposDeSuPlanta(usuarioActual.idEmpresa) else 0 }
+    val actas = remember(revision, sincronia) { if (esCliente) modeloPantalla.actasRecibidas(usuarioActual.idEmpresa) else 0 }
     val empresa = if (esCliente) modeloPantalla.empresaDel(usuarioActual.idEmpresa) else ""
 
     PerfilContenido(

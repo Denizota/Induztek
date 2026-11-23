@@ -118,9 +118,9 @@ class SolicitudAccesoViewModel(application: Application) : AndroidViewModel(appl
                 justificacion = estado.justificacion.trim()
             )
 
-            when (Remoto.crearSolicitud(datos)) {
-                ResultadoSolicitud.Ok -> {
-                    withContext(Dispatchers.IO) { guardarSolicitudLocal(estado, correo) }
+            when (val respuesta = Remoto.crearSolicitud(datos)) {
+                is ResultadoSolicitud.Ok -> {
+                    withContext(Dispatchers.IO) { guardarSolicitudLocal(estado, correo, respuesta.id) }
                     _uiState.value = SolicitudAccesoUiState()
                     enviando = false
                     alTerminar(true)
@@ -144,7 +144,9 @@ class SolicitudAccesoViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    private fun guardarSolicitudLocal(estado: SolicitudAccesoUiState, correo: String): Boolean {
+    private fun guardarSolicitudLocal(
+        estado: SolicitudAccesoUiState, correo: String, idRemoto: Int = 0
+    ): Boolean {
         val id = baseDatos.insertarSolicitud(
             nombre = estado.nombre.trim(),
             apellido = estado.apellido.trim(),
@@ -152,8 +154,17 @@ class SolicitudAccesoViewModel(application: Application) : AndroidViewModel(appl
             ciudad = estado.ciudad,
             correo = correo,
             passwordHash = Seguridad.hashear(estado.contrasena),
-            justificacion = estado.justificacion.trim()
+            justificacion = estado.justificacion.trim(),
+            contrasena = estado.contrasena
         )
+        if (id > 0 && idRemoto > 0) {
+            baseDatos.actualizar(
+                "solicitud_acceso",
+                mapOf("id_remoto" to idRemoto),
+                "id_solicitud=?",
+                listOf(id.toInt())
+            )
+        }
         return id != -1L
     }
 }

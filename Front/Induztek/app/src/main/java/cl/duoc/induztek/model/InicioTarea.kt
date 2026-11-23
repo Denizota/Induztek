@@ -4,6 +4,7 @@ enum class GrupoInicio { BORRADOR, POR_FORMALIZAR, DEVUELTO, CERRADO }
 
 data class InicioTarea(
     val idEquipo: Int,
+    val idVisita: Int,
     val tag: String,
     val tipoEquipo: String,
     val instalacion: String,

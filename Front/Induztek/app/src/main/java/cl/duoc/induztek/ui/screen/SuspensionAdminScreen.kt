@@ -45,6 +45,7 @@ fun SuspensionScreen(
     onAtras: () -> Unit,
     modeloPantalla: InicioViewModel = viewModel()
 ) {
+    versionSincronia()
     val persona = modeloPantalla.usuario(idUsuario)
     if (persona == null) return
 

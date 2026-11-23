@@ -60,6 +60,7 @@ fun PersonalScreen(
     modeloPantalla: InicioViewModel = viewModel()
 ) {
     var seleccion by rememberSaveable { mutableIntStateOf(-1) }
+    versionSincronia()
 
     PersonalContenido(
         solicitudes = modeloPantalla.solicitudesPendientes(),

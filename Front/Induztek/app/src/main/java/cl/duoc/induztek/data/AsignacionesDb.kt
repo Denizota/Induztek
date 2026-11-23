@@ -47,6 +47,7 @@ fun InduztekDbHelper.asignarTarea(idEquipo: Int, idIngeniero: Int, idJefe: Int):
         "INSERT INTO historial_estado(id_protocolo,estado_anterior,estado_nuevo,id_usuario,fecha_hora) VALUES(?,NULL,'BORRADOR',?,?)",
         listOf(idProtocolo, idJefe, fechaHoraAhora())
     )
+    encolarCambio(CAMBIO_PROTOCOLO, idProtocolo)
     return ""
 }
 
@@ -55,7 +56,7 @@ private fun InduztekDbHelper.visitaDeLaTarea(idInstalacion: Int, idIngeniero: In
     if (abierta == null) {
         val anio = fechaHoy().substring(0, 4)
         val cantidad = contar("SELECT COUNT(*) FROM visita") + 1
-        return insertar(
+        val idNueva = insertar(
             "visita",
             mapOf(
                 "numero_ot" to "OT-$anio-${1300 + cantidad}",
@@ -65,6 +66,8 @@ private fun InduztekDbHelper.visitaDeLaTarea(idInstalacion: Int, idIngeniero: In
                 "id_ingeniero_cargo" to idIngeniero
             )
         ).toInt()
+        encolarCambio(CAMBIO_VISITA, idNueva)
+        return idNueva
     }
 
     val registro = fila("SELECT id_ingeniero_cargo FROM visita WHERE id_visita=?", listOf(abierta))
@@ -76,6 +79,8 @@ private fun InduztekDbHelper.visitaDeLaTarea(idInstalacion: Int, idIngeniero: In
             "INSERT OR IGNORE INTO visita_participante(id_visita,id_usuario) VALUES(?,?)",
             listOf(abierta, idIngeniero)
         )
+        val detalle = gsonCambios.toJson(DetalleParticipante(idVisita = abierta, idUsuario = idIngeniero))
+        encolarCambio(CAMBIO_PARTICIPANTE, abierta, detalle)
     }
     return abierta
 }

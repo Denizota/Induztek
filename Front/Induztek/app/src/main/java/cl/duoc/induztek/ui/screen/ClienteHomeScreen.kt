@@ -53,10 +53,11 @@ fun ClienteHomeScreen(
     }
 
     var revision by rememberSaveable { mutableIntStateOf(0) }
-    val equipos = remember(revision) { modeloPantalla.equiposDe(empresaId) }
-    val protocolos = remember(revision) { modeloPantalla.protocolosVisitaCliente(empresaId) }
+    val sincronia = versionSincronia()
+    val equipos = remember(revision, sincronia) { modeloPantalla.equiposDe(empresaId) }
+    val protocolos = remember(revision, sincronia) { modeloPantalla.protocolosVisitaCliente(empresaId) }
 
-    val formalizadores = remember(revision, protocolos) {
+    val formalizadores = remember(revision, protocolos, sincronia) {
         val nombres = mutableMapOf<Int, String>()
         for (protocolo in protocolos) {
             if (protocolo.estado == EstadoProtocolo.FORMALIZADO) {
@@ -66,7 +67,7 @@ fun ClienteHomeScreen(
         nombres
     }
 
-    val ultimaVisita = remember(revision) {
+    val ultimaVisita = remember(revision, sincronia) {
         var laUltima: Visita? = null
         var ultimaFecha = ""
         for (protocolo in protocolos) {

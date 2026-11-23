@@ -47,6 +47,7 @@ import cl.duoc.induztek.viewmodel.InicioViewModel
 @Composable
 fun InicioStaffScreen(
     onIrEquipo: (Int) -> Unit,
+    onIrActa: (Int) -> Unit,
     onIrPerfil: () -> Unit,
     onSalir: () -> Unit,
     onIrInstrumentos: () -> Unit = {},
@@ -70,8 +71,9 @@ fun InicioStaffScreen(
     var pestana by rememberSaveable { mutableIntStateOf(0) }
     var viendoAntiguos by rememberSaveable { mutableStateOf(false) }
     var revision by rememberSaveable { mutableIntStateOf(0) }
+    val sincronia = versionSincronia()
 
-    val todas = remember(revision, viendoAntiguos) {
+    val todas = remember(revision, viendoAntiguos, sincronia) {
         if (viendoAntiguos) modeloPantalla.antiguos() else modeloPantalla.pendientes()
     }
     val texto = busqueda.trim()
@@ -173,7 +175,9 @@ fun InicioStaffScreen(
                         TarjetaCliente(
                             tareas = tareas,
                             modifier = Modifier.padding(horizontal = Dimens.margenHorizontalPantalla),
-                            onIrEquipo = onIrEquipo
+                            onIrTarea = { tarea ->
+                                if (viendoAntiguos) onIrActa(tarea.idVisita) else onIrEquipo(tarea.idEquipo)
+                            }
                         )
                     }
                 }

@@ -62,10 +62,11 @@ fun AsignarTareaScreen(
     var idEquipo by rememberSaveable { mutableIntStateOf(-1) }
     var aviso by rememberSaveable { mutableStateOf("") }
     var avisoBueno by rememberSaveable { mutableStateOf(false) }
+    val sincronia = versionSincronia()
 
-    val clientes = remember { if (persona.rol == Rol.INGENIERO) modeloPantalla.clientes() else emptyList() }
-    val ingenieros = remember { if (persona.rol == Rol.CLIENTE) modeloPantalla.ingenieros() else emptyList() }
-    val equipos = remember(idCliente) {
+    val clientes = remember(sincronia) { if (persona.rol == Rol.INGENIERO) modeloPantalla.clientes() else emptyList() }
+    val ingenieros = remember(sincronia) { if (persona.rol == Rol.CLIENTE) modeloPantalla.ingenieros() else emptyList() }
+    val equipos = remember(idCliente, sincronia) {
         if (idCliente > 0) modeloPantalla.equiposDeCliente(idCliente) else emptyList()
     }
 

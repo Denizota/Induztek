@@ -42,6 +42,7 @@ fun InduztekDbHelper.cerrarVisita(idVisita: Int, nombre: String, rut: String, ca
     val pendientes = mutableListOf<Protocolo>()
     for (protocolo in protocolosDeVisita(idVisita)) {
         if (protocolo.estado != EstadoProtocolo.REGISTRADO &&
+            protocolo.estado != EstadoProtocolo.FORMALIZADO &&
             protocolo.estado != EstadoProtocolo.ANULADO
         ) {
             pendientes.add(protocolo)
@@ -61,4 +62,5 @@ fun InduztekDbHelper.cerrarVisita(idVisita: Int, nombre: String, rut: String, ca
         listOf(idVisita, nombre, rut, cargo, ahora)
     )
     actualizar("visita", mapOf("fecha_hora_cierre" to ahora), "id_visita=?", listOf(idVisita))
+    encolarCambio(CAMBIO_CIERRE, idVisita)
 }

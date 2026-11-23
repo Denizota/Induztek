@@ -17,7 +17,7 @@ sealed class ResultadoRemoto {
 }
 
 sealed class ResultadoSolicitud {
-    object Ok : ResultadoSolicitud()
+    data class Ok(val id: Int) : ResultadoSolicitud()
     object CorreoUsado : ResultadoSolicitud()
     object SinConexion : ResultadoSolicitud()
 }
@@ -62,8 +62,8 @@ object Remoto {
 
     suspend fun crearSolicitud(datos: SolicitudRemota): ResultadoSolicitud {
         return try {
-            api.crearSolicitud(datos)
-            ResultadoSolicitud.Ok
+            val creada = api.crearSolicitud(datos)
+            ResultadoSolicitud.Ok(creada.id ?: 0)
         } catch (e: HttpException) {
             if (e.code() == 409) ResultadoSolicitud.CorreoUsado else ResultadoSolicitud.SinConexion
         } catch (e: IOException) {

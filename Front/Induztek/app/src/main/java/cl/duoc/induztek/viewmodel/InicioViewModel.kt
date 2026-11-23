@@ -195,7 +195,7 @@ class InicioViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
         if (s.correo.isNotBlank() && baseDatos.buscarUsuarioPorCorreo(s.correo) != null) {
             return texto(R.string.sol_correo_repetido)
         }
-        if (clave.length < 4) {
+        if (clave.length < 6) {
             return texto(R.string.sol_clave_corta)
         }
         if (rol == Rol.CLIENTE && empresa == null) {

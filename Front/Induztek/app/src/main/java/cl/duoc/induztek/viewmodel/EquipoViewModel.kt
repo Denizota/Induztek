@@ -1,6 +1,7 @@
 package cl.duoc.induztek.viewmodel
 
 import android.app.Application
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,7 @@ import cl.duoc.induztek.model.Usuario
 
 class EquipoViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
     private val baseDatos = InduztekDbHelper.obtener(aplicacion)
+    private val borradoresAmbiente = aplicacion.getSharedPreferences("borradores_ambiente", Context.MODE_PRIVATE)
 
     val temp = mutableStateOf("")
     val humedad = mutableStateOf("")
@@ -91,6 +93,27 @@ class EquipoViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
         temp.value = trimDecimal(temperatura)
         humedad.value = trimDecimal(humedadGuardada)
         observaciones.value = textoObservaciones
+        if (protocolo != null) {
+            val prefijo = "protocolo_${protocolo.idProtocolo}_"
+            temp.value = borradoresAmbiente.getString(prefijo + "temperatura", temp.value) ?: temp.value
+            humedad.value = borradoresAmbiente.getString(prefijo + "humedad", humedad.value) ?: humedad.value
+            observaciones.value = borradoresAmbiente.getString(prefijo + "observaciones", observaciones.value) ?: observaciones.value
+        }
+    }
+
+    fun actualizarTemperatura(idProtocolo: Int?, valor: String) {
+        temp.value = valor
+        if (idProtocolo != null) borradoresAmbiente.edit().putString("protocolo_${idProtocolo}_temperatura", valor).apply()
+    }
+
+    fun actualizarHumedad(idProtocolo: Int?, valor: String) {
+        humedad.value = valor
+        if (idProtocolo != null) borradoresAmbiente.edit().putString("protocolo_${idProtocolo}_humedad", valor).apply()
+    }
+
+    fun actualizarObservaciones(idProtocolo: Int?, valor: String) {
+        observaciones.value = valor
+        if (idProtocolo != null) borradoresAmbiente.edit().putString("protocolo_${idProtocolo}_observaciones", valor).apply()
     }
 
     private fun trimDecimal(numero: Double?): String {
@@ -134,8 +157,18 @@ class EquipoViewModel(aplicacion: Application) : AndroidViewModel(aplicacion) {
             mensaje = texto(R.string.vm_hu02)
             return
         }
+        try {
+            baseDatos.cambiarEstado(protocolo.idProtocolo, EstadoProtocolo.REGISTRADO, usuario.idUsuario)
+        } catch (error: IllegalStateException) {
+            mensaje = error.message ?: "No se pudo registrar el protocolo."
+            return
+        }
         baseDatos.guardarAmbientes(protocolo.idProtocolo, temperaturaAmbiente, humedadAmbiente, observaciones.value)
-        baseDatos.cambiarEstado(protocolo.idProtocolo, EstadoProtocolo.REGISTRADO, usuario.idUsuario)
+        borradoresAmbiente.edit()
+            .remove("protocolo_${protocolo.idProtocolo}_temperatura")
+            .remove("protocolo_${protocolo.idProtocolo}_humedad")
+            .remove("protocolo_${protocolo.idProtocolo}_observaciones")
+            .apply()
         mensaje = texto(R.string.vm_registrado)
         refrescar(protocolo.idEquipo)
     }

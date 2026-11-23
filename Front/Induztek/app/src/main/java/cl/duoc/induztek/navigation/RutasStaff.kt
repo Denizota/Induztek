@@ -23,6 +23,7 @@ internal fun RutaInicio(
 ) {
     InicioStaffScreen(
         onIrEquipo = { idEquipo -> nav.navigate(rutaEquipo(idEquipo)) },
+        onIrActa = { idVisita -> nav.navigate(rutaActa(idVisita, false)) },
         onIrPerfil = onIrPerfil,
         onSalir = onSalir,
         onIrInstrumentos = { nav.navigate(Ruta.Instrumentos.ruta) },

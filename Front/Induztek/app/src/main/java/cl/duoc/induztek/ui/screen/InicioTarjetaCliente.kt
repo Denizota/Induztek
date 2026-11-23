@@ -42,7 +42,7 @@ import cl.duoc.induztek.ui.theme.VerdeAprobado
 
 
 @Composable
-internal fun TarjetaCliente(tareas: List<InicioTarea>, modifier: Modifier = Modifier, onIrEquipo: (Int) -> Unit) {
+internal fun TarjetaCliente(tareas: List<InicioTarea>, modifier: Modifier = Modifier, onIrTarea: (InicioTarea) -> Unit) {
     val primera = tareas[0]
     Tarjeta(modifier.padding(vertical = Dimens.salto1)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -86,7 +86,7 @@ internal fun TarjetaCliente(tareas: List<InicioTarea>, modifier: Modifier = Modi
         for (indice in tareas.indices) {
             val tarea = tareas[indice]
             if (indice > 0) HorizontalDivider(thickness = Dimens.grosorDivisor, color = BordeSuave())
-            FilaEquipo(tarea) { onIrEquipo(tarea.idEquipo) }
+            FilaEquipo(tarea) { onIrTarea(tarea) }
         }
     }
 }

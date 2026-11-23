@@ -75,6 +75,7 @@ fun InduztekDbHelper.guardarPrueba(
             )
         }
     }
+    encolarCambio(CAMBIO_PRUEBA, idProtocolo)
 }
 
 fun InduztekDbHelper.valorAnterior(

@@ -2,6 +2,7 @@
 package cl.duoc.induztek.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
 import cl.duoc.induztek.data.*
+import cl.duoc.induztek.data.remote.Sincronia
 import cl.duoc.induztek.model.Rol
 import cl.duoc.induztek.model.TipoPrueba
 import cl.duoc.induztek.model.Usuario
@@ -50,6 +52,8 @@ fun AppNavegacion() {
         mutableStateOf(inicial)
     }
 
+    val versionSincronia = Sincronia.version
+
     fun limpiarPila() {
         navController.popBackStack(navController.graph.startDestinationId, inclusive = true)
     }
@@ -71,6 +75,18 @@ fun AppNavegacion() {
 
         navController.navigate(Ruta.Login.ruta) {
             launchSingleTop = true
+        }
+    }
+
+    LaunchedEffect(versionSincronia) {
+        val actual = usuario
+        if (actual != null) {
+            val fresco = baseDatos.buscarUsuarioPorId(actual.idUsuario)
+            if (fresco == null || !fresco.activo) {
+                salir()
+            } else {
+                usuario = fresco
+            }
         }
     }
 

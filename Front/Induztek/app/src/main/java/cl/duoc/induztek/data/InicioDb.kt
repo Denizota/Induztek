@@ -16,11 +16,15 @@ fun InduztekDbHelper.listarTareasInicio(antiguos: Boolean, idIngeniero: Int? = n
     }
 
     val consulta = if (antiguos) {
-        "SELECT e.id_equipo,e.tag,te.nombre AS tipo,i.nombre AS instalacion,e.numero_serie," +
+        "SELECT e.id_equipo,p.id_visita AS id_visita,e.tag,te.nombre AS tipo,i.nombre AS instalacion,e.numero_serie," +
                 "p.numero AS numero,p.estado AS estado," +
                 "strftime('%d-%m-%Y',substr(p.fecha_hora_prueba,1,10)) AS fecha,0 AS atrasado, " +
-                "(SELECT COUNT(*) FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo) AS total_pruebas, " +
-                "(SELECT COUNT(*) FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo AND (pr.realizada=0 OR pr.resultado<>'APROBADO')) AS pendientes," +
+                "(SELECT COUNT(*) FROM tipo_equipo_prueba tep WHERE tep.id_tipo_equipo=e.id_tipo_equipo) AS total_pruebas, " +
+                "(SELECT COUNT(*) FROM tipo_equipo_prueba tep JOIN tipo_prueba tp ON tp.id_tipo_prueba=tep.id_tipo_prueba " +
+                "WHERE tep.id_tipo_equipo=e.id_tipo_equipo AND (" +
+                "NOT EXISTS (SELECT 1 FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo AND pr.codigo_tipo_prueba=tp.codigo) " +
+                "OR EXISTS (SELECT 1 FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo AND pr.codigo_tipo_prueba=tp.codigo " +
+                "AND (pr.realizada=0 OR pr.resultado IS NULL OR pr.resultado<>'APROBADO')))) AS pendientes," +
                 "i.id_usuario_cliente AS id_cliente,u.nombre AS cliente," +
                 "IFNULL((SELECT c.nombre FROM usuario c WHERE c.id_empresa=i.id_usuario_cliente ORDER BY c.id_usuario LIMIT 1),'') AS contacto " +
                 "FROM protocolo p JOIN equipo e ON e.id_equipo=p.id_equipo " +
@@ -33,12 +37,16 @@ fun InduztekDbHelper.listarTareasInicio(antiguos: Boolean, idIngeniero: Int? = n
                 filtro +
                 " ORDER BY p.fecha_hora_prueba DESC"
     } else {
-        "SELECT e.id_equipo,e.tag,te.nombre AS tipo,i.nombre AS instalacion,e.numero_serie," +
+        "SELECT e.id_equipo,v.id_visita AS id_visita,te.nombre AS tipo,i.nombre AS instalacion,e.numero_serie," +
                 "IFNULL(p.numero,'') AS numero,IFNULL(p.estado,'') AS estado," +
                 "strftime('%d-%m-%Y',v.fecha) AS fecha, " +
                 "CASE WHEN p.estado IN ('REGISTRADO','OBSERVADO') AND substr(p.fecha_hora_prueba,1,10)<date('now','localtime') THEN 1 ELSE 0 END AS atrasado, " +
-                "(SELECT COUNT(*) FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo) AS total_pruebas, " +
-                "(SELECT COUNT(*) FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo AND (pr.realizada=0 OR pr.resultado<>'APROBADO')) AS pendientes," +
+                "(SELECT COUNT(*) FROM tipo_equipo_prueba tep WHERE tep.id_tipo_equipo=e.id_tipo_equipo) AS total_pruebas, " +
+                "(SELECT COUNT(*) FROM tipo_equipo_prueba tep JOIN tipo_prueba tp ON tp.id_tipo_prueba=tep.id_tipo_prueba " +
+                "WHERE tep.id_tipo_equipo=e.id_tipo_equipo AND (" +
+                "NOT EXISTS (SELECT 1 FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo AND pr.codigo_tipo_prueba=tp.codigo) " +
+                "OR EXISTS (SELECT 1 FROM prueba pr WHERE pr.id_protocolo=p.id_protocolo AND pr.codigo_tipo_prueba=tp.codigo " +
+                "AND (pr.realizada=0 OR pr.resultado IS NULL OR pr.resultado<>'APROBADO')))) AS pendientes," +
                 "i.id_usuario_cliente AS id_cliente,u.nombre AS cliente," +
                 "IFNULL((SELECT c.nombre FROM usuario c WHERE c.id_empresa=i.id_usuario_cliente ORDER BY c.id_usuario LIMIT 1),'') AS contacto " +
                 "FROM equipo e JOIN tipo_equipo te ON te.id_tipo_equipo=e.id_tipo_equipo " +
@@ -82,6 +90,7 @@ fun InduztekDbHelper.listarTareasInicio(antiguos: Boolean, idIngeniero: Int? = n
 
         val tarea = InicioTarea(
             idEquipo = filaTarea.entero("id_equipo"),
+            idVisita = filaTarea.entero("id_visita"),
             tag = filaTarea.texto("tag"),
             tipoEquipo = filaTarea.texto("tipo"),
             instalacion = filaTarea.texto("instalacion"),

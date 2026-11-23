@@ -39,6 +39,7 @@ fun SolicitudesScreen(
     modeloPantalla: InicioViewModel = viewModel()
 ) {
     var version by rememberSaveable { mutableIntStateOf(0) }
+    val sincronia = versionSincronia()
     var aviso by rememberSaveable { mutableStateOf<String?>(null) }
     var creando by rememberSaveable { mutableStateOf<Int?>(null) }
     var rut by rememberSaveable { mutableStateOf("") }
@@ -50,9 +51,9 @@ fun SolicitudesScreen(
     var errorClave by rememberSaveable { mutableStateOf<String?>(null) }
     var errorGeneral by rememberSaveable { mutableStateOf<String?>(null) }
 
-    val pendientes = remember(version) { modeloPantalla.solicitudes() }
-    val aprobadas = remember(version) { modeloPantalla.solicitudesAprobadas() }
-    val empresas = remember(version) { modeloPantalla.empresas() }
+    val pendientes = remember(version, sincronia) { modeloPantalla.solicitudes() }
+    val aprobadas = remember(version, sincronia) { modeloPantalla.solicitudesAprobadas() }
+    val empresas = remember(version, sincronia) { modeloPantalla.empresas() }
     val tErrorBase = stringResource(R.string.sol_error)
     val tRolFalta = stringResource(R.string.sol_rol_falta)
     val tRutInvalido = stringResource(R.string.sol_rut_invalido)

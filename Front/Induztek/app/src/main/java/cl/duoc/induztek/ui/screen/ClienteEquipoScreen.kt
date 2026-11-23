@@ -52,7 +52,8 @@ fun ClienteEquipoScreen(
 ) {
 
     val empresa = usuario.idEmpresa
-    val equipo = remember(idEquipo) {
+    val sincronia = versionSincronia()
+    val equipo = remember(idEquipo, sincronia) {
         if (empresa == null) {
             null
         } else {
@@ -63,13 +64,13 @@ fun ClienteEquipoScreen(
         return
     }
 
-    val historial = remember { modeloPantalla.historial(idEquipo) }
+    val historial = remember(sincronia) { modeloPantalla.historial(idEquipo) }
 
     var empresaDelCliente = -1
     if (empresa != null) {
         empresaDelCliente = empresa
     }
-    val protocolos = remember { modeloPantalla.protocolosDeEquipo(idEquipo, empresaDelCliente) }
+    val protocolos = remember(sincronia) { modeloPantalla.protocolosDeEquipo(idEquipo, empresaDelCliente) }
 
     val formalizadores = remember(protocolos) {
         val nombres = mutableMapOf<Int, String>()
