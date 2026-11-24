@@ -1,4 +1,5 @@
-package cl.induztek.equipos_service.service;
+package service;
+import cl.induztek.equipos_service.service.EquipoService;
 
 import cl.induztek.equipos_service.dto.EquipoRequest;
 import cl.induztek.equipos_service.model.Instalacion;
